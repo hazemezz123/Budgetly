@@ -20,6 +20,31 @@ export const houseApi = {
     return data;
   },
 
+  getRoleRotation: async (houseId) => {
+    const { data } = await api.get(`/houses/${houseId}/rotation`);
+    return data;
+  },
+
+  updateRoleRotation: async ({ houseId, payload }) => {
+    const { data } = await api.put(`/houses/${houseId}/rotation`, payload);
+    return data;
+  },
+
+  startRoleRotationCycle: async (houseId) => {
+    const { data } = await api.post(`/houses/${houseId}/rotation/cycles`);
+    return data;
+  },
+
+  resetRoleRotation: async (houseId) => {
+    const { data } = await api.post(`/houses/${houseId}/rotation/reset`);
+    return data;
+  },
+
+  deleteRoleRotation: async (houseId) => {
+    const { data } = await api.delete(`/houses/${houseId}/rotation`);
+    return data;
+  },
+
   updateHouseName: ({ houseId, name }) => api.patch(`/houses/${houseId}/name`, { name }),
 
   updateHousePassword: ({ houseId, password }) =>

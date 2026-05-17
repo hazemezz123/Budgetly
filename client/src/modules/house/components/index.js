@@ -1,2 +1,2 @@
-export { default as DishwashingSettings } from "./DishwashingSettings";
-export { default as DishwashingWidget } from "./DishwashingWidget";
+export { default as RoleRotationSettings } from "./RoleRotationSettings";
+export { default as RoleRotationWidget } from "./RoleRotationWidget";

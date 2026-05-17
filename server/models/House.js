@@ -1,20 +1,61 @@
 import mongoose from "mongoose";
 
-// Subdocument schema for dishwashing rotation
-const dishwashingRotationSchema = new mongoose.Schema(
+const roleRotationSchema = new mongoose.Schema(
   {
     enabled: {
       type: Boolean,
       default: false,
     },
-    startDate: {
-      type: String, // YYYY-MM-DD format for timezone safety
-      default: null,
-    },
-    order: [
+    participants: [
       {
         type: mongoose.Schema.Types.ObjectId,
         ref: "User",
+      },
+    ],
+    roles: [
+      {
+        name: {
+          type: String,
+          trim: true,
+        },
+        count: {
+          type: Number,
+          min: 1,
+        },
+      },
+    ],
+    cycleIndex: {
+      type: Number,
+      default: 0,
+    },
+    currentCycle: {
+      cycleNumber: Number,
+      startedAt: String,
+      assignments: [
+        {
+          slotIndex: Number,
+          roleName: String,
+          participant: {
+            type: mongoose.Schema.Types.ObjectId,
+            ref: "User",
+          },
+        },
+      ],
+    },
+    history: [
+      {
+        cycleNumber: Number,
+        startedAt: String,
+        assignments: [
+          {
+            slotIndex: Number,
+            roleName: String,
+            participant: {
+              type: mongoose.Schema.Types.ObjectId,
+              ref: "User",
+            },
+          },
+        ],
       },
     ],
   },
@@ -50,9 +91,16 @@ const houseSchema = new mongoose.Schema(
       type: String,
       required: true,
     },
-    dishwashingRotation: {
-      type: dishwashingRotationSchema,
-      default: () => ({ enabled: false, startDate: null, order: [] }),
+    roleRotation: {
+      type: roleRotationSchema,
+      default: () => ({
+        enabled: false,
+        participants: [],
+        roles: [],
+        cycleIndex: 0,
+        currentCycle: null,
+        history: [],
+      }),
     },
   },
   {

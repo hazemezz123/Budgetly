@@ -43,11 +43,11 @@ export const queryKeys = {
     chats: ["aiChats"],
     chat: (chatId) => ["aiChat", chatId],
   },
-  dishwashing: {
-    all: (houseId) => ["dishwashing", houseId],
-    settings: (houseId) => ["dishwashing", houseId, "settings"],
-    today: (houseId) => ["dishwashing", houseId, "today"],
-    schedule: (houseId) => ["dishwashing", houseId, "schedule"],
+  roleRotation: {
+    all: (houseId) => ["roleRotation", houseId],
+    settings: (houseId) => ["roleRotation", houseId, "settings"],
+    current: (houseId) => ["roleRotation", houseId, "current"],
+    history: (houseId) => ["roleRotation", houseId, "history"],
   },
   house: {
     byId: (houseId) => ["house", houseId],

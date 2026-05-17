@@ -1,7 +1,7 @@
 import { Wallet } from "lucide-react";
 import { useAuth } from "../../../shared/context/AuthContext";
 import { Loader } from "../../../shared/components";
-import { DishwashingWidget } from "../../house/components";
+import { RoleRotationWidget } from "../../house/components";
 import { LowStockWidget } from "../../inventory/components";
 import { useDashboardStats } from "../hooks";
 import {
@@ -39,10 +39,10 @@ const Dashboard = () => {
 
       <WelcomeModal />
 
-      {/* Dishwashing Widget */}
+      {/* Role Rotation Widget */}
       {houseId && (
         <div className="mb-6">
-          <DishwashingWidget houseId={houseId} />
+          <RoleRotationWidget houseId={houseId} />
         </div>
       )}
 
