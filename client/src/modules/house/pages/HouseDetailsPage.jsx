@@ -15,10 +15,10 @@ import {
   Download,
   FileSpreadsheet,
   AlertTriangle,
-  UtensilsCrossed,
+  RotateCcw,
 } from "lucide-react";
 import { ConfirmModal, Input, Loader } from "../../../shared/components";
-import { DishwashingSettings } from "../components";
+import { RoleRotationSettings } from "../components";
 import { useHouse } from "../hooks";
 
 const HouseDetails = () => {
@@ -264,21 +264,21 @@ const HouseDetails = () => {
             </div>
           </button>
         )}
-        {isAdmin && (
-          <button
-            onClick={() => setActiveTab("dishwashing")}
-            className={`min-w-[120px] sm:min-w-0 sm:flex-1 py-2 px-4 rounded-lg font-bold whitespace-nowrap transition-all ${
-              activeTab === "dishwashing"
-                ? "bg-(--color-primary) text-white shadow-md"
-                : "text-(--color-muted) hover:bg-(--color-bg)"
-            }`}
-          >
-            <div className="flex items-center justify-center gap-2">
-              <UtensilsCrossed size={18} />
-              <span>الأطباق</span>
-            </div>
-          </button>
-        )}
+          {isAdmin && (
+            <button
+              onClick={() => setActiveTab("rotation")}
+              className={`min-w-[120px] sm:min-w-0 sm:flex-1 py-2 px-4 rounded-lg font-bold whitespace-nowrap transition-all ${
+                activeTab === "rotation"
+                  ? "bg-(--color-primary) text-white shadow-md"
+                  : "text-(--color-muted) hover:bg-(--color-bg)"
+              }`}
+            >
+              <div className="flex items-center justify-center gap-2">
+                <RotateCcw size={18} />
+                <span>المهام</span>
+              </div>
+            </button>
+          )}
         </div>
       </div>
 
@@ -475,8 +475,8 @@ const HouseDetails = () => {
           </div>
         )}
 
-        {activeTab === "dishwashing" && isAdmin && (
-          <DishwashingSettings
+        {activeTab === "rotation" && isAdmin && (
+          <RoleRotationSettings
             houseId={houseId}
             members={house?.members || []}
             isAdmin={isAdmin}
