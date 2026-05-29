@@ -70,14 +70,24 @@ export const getUserStats = async (req, res) => {
       return acc;
     }, {});
 
-    const recentInvoices = await Invoice.find({
+    const recentExpenses = await Expense.find({
       house: currentUser.house,
-      user: userId,
+      "splits.user": userId,
     })
       .sort({ createdAt: -1 })
       .limit(5)
-      .populate("expense", "description category")
       .lean();
+
+    // Calculate user's share for each expense
+    const recentExpensesWithShare = recentExpenses.map((expense) => {
+      const userSplit = expense.splits.find(
+        (split) => split.user.toString() === userId.toString()
+      );
+      return {
+        ...expense,
+        userShare: userSplit ? userSplit.amount : 0,
+      };
+    });
 
     res.json({
       balance: stats.balance,
@@ -85,7 +95,7 @@ export const getUserStats = async (req, res) => {
       totalOwed: stats.invoicesAssigned,
       invoiceCount: userInvoices.length,
       categoryBreakdown,
-      recentInvoices,
+      recentExpenses: recentExpensesWithShare,
     });
   } catch (error) {
     console.error("Get user stats error:", error);

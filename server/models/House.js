@@ -29,18 +29,21 @@ const roleRotationSchema = new mongoose.Schema(
       default: 0,
     },
     currentCycle: {
-      cycleNumber: Number,
-      startedAt: String,
-      assignments: [
-        {
-          slotIndex: Number,
-          roleName: String,
-          participant: {
-            type: mongoose.Schema.Types.ObjectId,
-            ref: "User",
+      type: {
+        cycleNumber: Number,
+        startedAt: String,
+        assignments: [
+          {
+            slotIndex: Number,
+            roleName: String,
+            participant: {
+              type: mongoose.Schema.Types.ObjectId,
+              ref: "User",
+            },
           },
-        },
-      ],
+        ],
+      },
+      default: null,
     },
     history: [
       {

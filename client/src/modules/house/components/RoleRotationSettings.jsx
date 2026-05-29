@@ -10,12 +10,7 @@ import {
   Users,
 } from "lucide-react";
 import useRoleRotation from "../hooks/useRoleRotation";
-
-const getId = (value) => {
-  if (!value) return "";
-  if (typeof value === "string") return value;
-  return value._id || value.id || "";
-};
+import { getId, getParticipantLabel, groupAssignmentsByRole } from "../utils/rotationUtils";
 
 const RoleRotationSettings = ({ houseId, members = [], isAdmin }) => {
   const {
@@ -58,17 +53,6 @@ const RoleRotationSettings = ({ houseId, members = [], isAdmin }) => {
   const rolesAreValid = roles.length > 0 && roles.every((role) => role.name.trim() && Number(role.count) > 0);
   const canSave = isAdmin && participants.length === totalSlots && rolesAreValid && hasUniqueRoles;
   const canStartCycle = canSave && participants.length > 0;
-
-  const getParticipantLabel = (participant) => {
-    const id = getId(participant);
-    if (!id) return "غير معروف";
-
-    if (participant && typeof participant === "object" && participant.name) {
-      return participant.name;
-    }
-
-    return memberLookup.get(id)?.name || memberLookup.get(id)?.username || id;
-  };
 
   const handleAddMember = (memberId) => {
     if (!memberId || participants.includes(memberId)) return;
@@ -249,7 +233,7 @@ const RoleRotationSettings = ({ houseId, members = [], isAdmin }) => {
             <div className="space-y-3">
               {roles.map((role, index) => (
                 <div
-                  key={`${role.name || "role"}-${index}`}
+                  key={index}
                   className="grid gap-2 rounded-xl border border-(--color-border) p-3 sm:grid-cols-[1fr_120px_auto]"
                 >
                   <input
@@ -348,13 +332,7 @@ const RoleRotationSettings = ({ houseId, members = [], isAdmin }) => {
           <p className="text-sm text-(--color-muted)">مفيش دورة شغالة حالياً.</p>
         ) : (
           <div className="space-y-3">
-            {Object.entries(
-              currentCycle.assignments.reduce((acc, assignment) => {
-                acc[assignment.roleName] = acc[assignment.roleName] || [];
-                acc[assignment.roleName].push(assignment);
-                return acc;
-              }, {}),
-            ).map(([roleName, assignments]) => (
+            {Object.entries(groupAssignmentsByRole(currentCycle.assignments)).map(([roleName, assignments]) => (
               <div key={roleName} className="rounded-xl bg-(--color-bg) p-3">
                 <p className="mb-2 font-bold text-(--color-dark)">{roleName}</p>
                 <div className="space-y-2">
@@ -362,7 +340,7 @@ const RoleRotationSettings = ({ houseId, members = [], isAdmin }) => {
                     <div key={assignment.slotIndex} className="flex items-center justify-between text-sm text-(--color-secondary)">
                       <span>مهمة {assignment.slotIndex + 1}</span>
                       <span className="font-medium text-(--color-dark)">
-                        {getParticipantLabel(assignment.participant)}
+                        {getParticipantLabel(assignment.participant, memberLookup)}
                       </span>
                     </div>
                   ))}
@@ -389,7 +367,7 @@ const RoleRotationSettings = ({ houseId, members = [], isAdmin }) => {
                     <div key={assignment.slotIndex} className="flex items-center justify-between text-sm">
                       <span className="text-(--color-muted)">{assignment.roleName}</span>
                       <span className="font-medium text-(--color-dark)">
-                        {getParticipantLabel(assignment.participant)}
+                        {getParticipantLabel(assignment.participant, memberLookup)}
                       </span>
                     </div>
                   ))}

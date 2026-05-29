@@ -48,8 +48,6 @@ export const normalizeRoleRotation = (house) => {
   };
 };
 
-
-
 export const resetRoleRotation = () => ({
   enabled: false,
   participants: [],
@@ -58,3 +56,32 @@ export const resetRoleRotation = () => ({
   currentCycle: null,
   history: [],
 });
+
+export const validateRotationPayload = ({ participants = [], roles = [], memberIds = [] }) => {
+  if (!Array.isArray(participants) || !Array.isArray(roles)) {
+    return "Invalid rotation payload";
+  }
+
+  const totalSlots = roles.reduce((sum, role) => sum + Number(role.count || 0), 0);
+  if (participants.length !== totalSlots) {
+    return "Participant count must match total role slots";
+  }
+
+  const roleNames = roles.map((role) => String(role.name || "").trim());
+  if (roleNames.some((name) => !name)) return "Role names are required";
+  if (new Set(roleNames).size !== roleNames.length) return "Role names must be unique";
+  if (roles.some((role) => Number(role.count) < 1)) return "Role counts must be at least 1";
+
+  const memberSet = new Set(memberIds.map((id) => id.toString()));
+  if (participants.some((id) => !memberSet.has(id.toString()))) {
+    return "All participants must be house members";
+  }
+
+  return null;
+};
+
+export const isMemberOfHouse = (userHouseId, houseId) =>
+  userHouseId && houseId && userHouseId.toString() === houseId.toString();
+
+export const isAdminOfHouse = (houseAdminId, userId) =>
+  houseAdminId && userId && houseAdminId.toString() === userId.toString();

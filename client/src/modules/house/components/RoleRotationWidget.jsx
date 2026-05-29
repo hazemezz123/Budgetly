@@ -1,11 +1,6 @@
 import { Users } from "lucide-react";
 import useRoleRotation from "../hooks/useRoleRotation";
-
-const getId = (value) => {
-  if (!value) return "";
-  if (typeof value === "string") return value;
-  return value._id || value.id || "";
-};
+import { getParticipantLabel } from "../utils/rotationUtils";
 
 const RoleRotationWidget = ({ houseId }) => {
   const { settings, currentCycle, loadingSettings } = useRoleRotation(houseId);
@@ -13,15 +8,6 @@ const RoleRotationWidget = ({ houseId }) => {
   if (loadingSettings || !settings?.enabled || !currentCycle) {
     return null;
   }
-
-  const getParticipantLabel = (participant) => {
-    if (participant && typeof participant === "object" && participant.name) {
-      return participant.name;
-    }
-
-    const id = getId(participant);
-    return id || "غير معروف";
-  };
 
   return (
     <div className="rounded-2xl border border-(--color-border) bg-(--color-surface) p-4 shadow-sm">
