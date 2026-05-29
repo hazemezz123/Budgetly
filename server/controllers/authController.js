@@ -44,7 +44,7 @@ export const register = async (req, res) => {
     const token = jwt.sign(
       { id: user._id, username: user.username, role: user.role },
       process.env.JWT_SECRET,
-      { expiresIn: "30d" }
+      { expiresIn: "30d" },
     );
 
     res.status(201).json({
@@ -74,7 +74,7 @@ export const login = async (req, res) => {
     // Find user and populate house
     const user = await User.findOne({ username }).populate(
       "house",
-      "name admin members"
+      "name admin members",
     );
     if (!user) {
       return res.status(401).json({ message: "Invalid credentials" });
@@ -95,7 +95,7 @@ export const login = async (req, res) => {
     const token = jwt.sign(
       { id: user._id, username: user.username, role: user.role },
       process.env.JWT_SECRET,
-      { expiresIn: "30d" }
+      { expiresIn: "30d" },
     );
 
     res.json({
@@ -145,6 +145,10 @@ export const getCurrentUser = async (req, res) => {
 // Forgot Password
 export const forgotPassword = async (req, res) => {
   const { email } = req.body;
+
+  if (!email) {
+    return res.status(400).json({ message: "Email is required" });
+  }
 
   try {
     const user = await User.findOne({ email });

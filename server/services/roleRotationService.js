@@ -48,6 +48,8 @@ export const normalizeRoleRotation = (house) => {
   };
 };
 
+
+
 export const resetRoleRotation = () => ({
   enabled: false,
   participants: [],
