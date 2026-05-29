@@ -1,4 +1,3 @@
-import { buildInventoryListQueryKeyParts } from "../../modules/inventory/api/inventoryFilters";
 
 export const queryKeys = {
   houses: {
@@ -54,11 +53,6 @@ export const queryKeys = {
   },
   notes: {
     all: ["notes"],
-  },
-  inventory: {
-    all: (houseId) => ["inventory", houseId],
-    list: (houseId, filters = {}) => ["inventory", houseId, "list", ...buildInventoryListQueryKeyParts(filters)],
-    summary: (houseId) => ["inventory", houseId, "summary"],
   },
   analytics: {
     all: ["analytics"],

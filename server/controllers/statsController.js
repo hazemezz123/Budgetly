@@ -120,6 +120,9 @@ export const getAdminDashboard = async (req, res) => {
       .filter((b) => b.balance > 0)
       .map((u) => ({ ...u, extra: u.balance }));
 
+    // Get admin's personal balance
+    const adminBalance = getBalanceForUser(balancesByUserId, req.user.id);
+
     const totalExpenseAmount = approvedExpenses.reduce(
       (sum, e) => sum + e.totalAmount,
       0
@@ -158,6 +161,7 @@ export const getAdminDashboard = async (req, res) => {
         totalPaymentsAmount,
         totalExpenseAmount, // Restored for Frontend
         totalOwed, // Restored (Outstanding Debt)
+        adminBalance: adminBalance.balance, // Admin's personal balance
       },
       categoryBreakdown,
       usersOwing,

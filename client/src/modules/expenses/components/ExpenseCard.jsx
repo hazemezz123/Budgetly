@@ -88,7 +88,7 @@ export default function ExpenseCard({
           <div className="flex items-center gap-1.5">
             <User size={12} />
             <span>
-              {expense.createdBy ? expense.createdBy.name : "مستخدم محذوف"}
+              {expense.paidBy ? expense.paidBy.name : "مستخدم محذوف"}
             </span>
           </div>
         </div>

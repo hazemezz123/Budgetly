@@ -19,7 +19,6 @@ import {
   Sun,
   Moon,
   StickyNote,
-  Package,
 } from "lucide-react";
 
 import { useState } from "react";
@@ -347,7 +346,6 @@ const Navbar = () => {
 
         <div className="mt-3 flex items-center gap-2 md:hidden" role="group" aria-label="أدوات إضافية">
           {[
-            { path: "/inventory", label: "المخزون", icon: Package },
             { path: "/notes", label: "الملاحظات", icon: StickyNote },
           ].map((item) => {
             const active = isActive(item.path);

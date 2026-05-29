@@ -16,7 +16,7 @@ export const getExpenses = async (req, res) => {
       return res.status(400).json({ message: "User not in a house" });
     }
 
-    const query = { house: currentUser.house };
+    const query = { house: currentUser.house, status: "approved" };
     if (req.query.status) {
       query.status = req.query.status;
     }
@@ -29,6 +29,7 @@ export const getExpenses = async (req, res) => {
 
     const expenses = await Expense.find(query)
       .populate("createdBy", "name username")
+      .populate("paidBy", "name username")
       .populate("splits.user", "name username")
       .sort({ date: -1 })
       .skip(skip)

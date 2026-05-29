@@ -191,6 +191,22 @@ export default function ExpenseDetailsModal({ expense, isOpen, onClose }) {
             </div>
           </div>
 
+          {/* Paid By */}
+          <div className="flex items-start gap-3">
+            <DollarSign size={20} style={{ color: "var(--color-success)" }} />
+            <div>
+              <p
+                className="text-sm mb-1"
+                style={{ color: "var(--color-muted)" }}
+              >
+                دفع بواسطة
+              </p>
+              <p className="font-medium" style={{ color: "var(--color-dark)" }}>
+                {expense.paidBy?.name || "مستخدم محذوف"}
+              </p>
+            </div>
+          </div>
+
           {/* Split Type */}
           <div className="flex items-start gap-3">
             <Tag size={20} style={{ color: "var(--color-secondary)" }} />
