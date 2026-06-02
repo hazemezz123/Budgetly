@@ -11,7 +11,7 @@ const callGroq = async ({ apiKey, userMessage, systemContext }) => {
       Authorization: `Bearer ${apiKey}`,
     },
     body: JSON.stringify({
-      model: "llama-3.1-8b-instant",
+      model: "openai/gpt-oss-20b",
       messages: [
         { role: "system", content: systemContext },
         { role: "user", content: userMessage },
@@ -31,7 +31,7 @@ const callGroq = async ({ apiKey, userMessage, systemContext }) => {
 
   if (!response.ok) {
     const error = new Error(
-      data?.error?.message || `Groq API request failed with ${response.status}`
+      data?.error?.message || `Groq API request failed with ${response.status}`,
     );
     error.status = response.status;
     throw error;
@@ -138,7 +138,8 @@ export const handleChat = async (req, res) => {
     });
   } catch (error) {
     console.error("AI Chat Error:", error);
-    const status = error.status && Number.isInteger(error.status) ? error.status : 500;
+    const status =
+      error.status && Number.isInteger(error.status) ? error.status : 500;
     res.status(status).json({
       error:
         status === 401
