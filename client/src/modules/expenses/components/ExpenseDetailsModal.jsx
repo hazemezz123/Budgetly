@@ -123,7 +123,7 @@ export default function ExpenseDetailsModal({ expense, isOpen, onClose }) {
 
         {/* Content */}
         <div className="p-6 space-y-5 max-h-[60vh] overflow-y-auto">
-          {/* Description */}
+          {/* Title */}
           <div className="flex items-start gap-3">
             <FileText size={20} style={{ color: "var(--color-primary)" }} />
             <div>
@@ -131,13 +131,31 @@ export default function ExpenseDetailsModal({ expense, isOpen, onClose }) {
                 className="text-sm mb-1"
                 style={{ color: "var(--color-muted)" }}
               >
-                الوصف
+                العنوان
               </p>
               <p className="font-medium" style={{ color: "var(--color-dark)" }}>
-                {expense.description}
+                {expense.title}
               </p>
             </div>
           </div>
+
+          {/* Description */}
+          {expense.description && (
+            <div className="flex items-start gap-3">
+              <FileText size={20} style={{ color: "var(--color-secondary)" }} />
+              <div>
+                <p
+                  className="text-sm mb-1"
+                  style={{ color: "var(--color-muted)" }}
+                >
+                  الوصف
+                </p>
+                <p className="font-medium" style={{ color: "var(--color-dark)" }}>
+                  {expense.description}
+                </p>
+              </div>
+            </div>
+          )}
 
           {/* Amount */}
           <div className="flex items-start gap-3">

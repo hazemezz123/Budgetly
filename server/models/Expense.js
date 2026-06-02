@@ -2,10 +2,15 @@ import mongoose from "mongoose";
 
 const expenseSchema = new mongoose.Schema(
   {
-    description: {
+    title: {
       type: String,
       required: true,
       trim: true,
+    },
+    description: {
+      type: String,
+      trim: true,
+      default: "",
     },
     category: {
       type: String,

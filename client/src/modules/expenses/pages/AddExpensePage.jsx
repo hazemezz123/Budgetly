@@ -42,13 +42,22 @@ const AddExpense = () => {
         className="backdrop-blur-xl p-8 rounded-3xl space-y-6 shadow-lg bg-(--color-surface) border border-(--color-border)"
       >
         <Input
-          label="وصف المصروف"
+          label="عنوان المصروف"
           type="text"
-          value={formData.description}
-          onChange={(e) => handleInputChange("description", e.target.value)}
+          value={formData.title}
+          onChange={(e) => handleInputChange("title", e.target.value)}
           icon={FileText}
           placeholder="مثال: فاتورة الكهرباء"
           required
+        />
+
+        <Input
+          label="وصف المصروف"
+          multiline
+          rows={3}
+          value={formData.description}
+          onChange={(e) => handleInputChange("description", e.target.value)}
+          placeholder="تفاصيل إضافية عن المصروف..."
         />
 
         {user?.role === "admin" && (

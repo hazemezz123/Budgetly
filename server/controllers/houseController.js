@@ -526,6 +526,7 @@ export const exportHouseData = async (req, res) => {
       data = expenses.map((exp) => ({
         التاريخ: new Date(exp.date).toLocaleDateString("ar-EG"),
         الوصف: exp.description,
+        العنوان: exp.title,
         الفئة: exp.category,
         "المبلغ الإجمالي": exp.totalAmount,
         "نوع التقسيم": exp.splitType,
