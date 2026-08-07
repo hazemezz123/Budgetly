@@ -327,24 +327,31 @@ export const updateProfile = async (req, res) => {
 
 // Google login (ID token from Google Identity Services)
 export const googleLogin = async (req, res) => {
-  try {
-    const { idToken } = req.body;
-    if (!idToken) {
-      return res.status(400).json({ message: "معرّف جوجل مطلوب" });
-    }
+  const { idToken } = req.body;
+  if (!idToken) {
+    return res.status(400).json({ message: "معرّف جوجل مطلوب" });
+  }
 
+  let payload;
+  try {
     const googleClient = new OAuth2Client(process.env.GOOGLE_CLIENT_ID);
     const ticket = await googleClient.verifyIdToken({
       idToken,
       audience: process.env.GOOGLE_CLIENT_ID,
     });
-    const payload = ticket.getPayload();
+    payload = ticket.getPayload();
+  } catch (error) {
+    console.error("Google token verification failed:", error);
+    return res.status(401).json({ message: "فشل تسجيل الدخول عبر جوجل" });
+  }
 
+  try {
     if (!payload.email_verified) {
       return res.status(401).json({ message: "البريد الإلكتروني غير مؤكد" });
     }
 
-    const user = await resolveGoogleUser(payload, User);
+    let user = await resolveGoogleUser(payload, User);
+    user = await User.findById(user._id).populate("house", "name admin members");
 
     if (!user.isActive) {
       return res.status(401).json({ message: "الحساب غير نشط" });
@@ -371,6 +378,6 @@ export const googleLogin = async (req, res) => {
     });
   } catch (error) {
     console.error("Google login error:", error);
-    res.status(401).json({ message: "فشل تسجيل الدخول عبر جوجل" });
+    res.status(500).json({ message: "Server error" });
   }
 };

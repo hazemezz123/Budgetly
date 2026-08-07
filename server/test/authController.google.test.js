@@ -11,6 +11,7 @@ import User from "../models/User.js";
 const originalVerify = OAuth2Client.prototype.verifyIdToken;
 const originalFindOne = User.findOne;
 const originalCreate = User.create;
+const originalFindById = User.findById;
 
 const createRes = () => {
   const res = {
@@ -32,6 +33,7 @@ test.afterEach(() => {
   OAuth2Client.prototype.verifyIdToken = originalVerify;
   User.findOne = originalFindOne;
   User.create = originalCreate;
+  User.findById = originalFindById;
 });
 
 test("returns 401 when the ID token is invalid or expired", async () => {
@@ -74,18 +76,20 @@ test("returns 200 with a token and user on success", async () => {
       picture: null,
     }),
   });
-  User.findOne = async () => null;
-  User.create = async (doc) => ({
+  const created = {
     _id: "u1",
-    username: doc.username,
-    name: doc.name,
-    email: doc.email,
+    username: "x",
+    name: "X",
+    email: "x@example.com",
     role: "user",
     house: null,
     profilePicture: null,
     isActive: true,
     createdAt: new Date(),
-  });
+  };
+  User.findOne = async () => null;
+  User.create = async () => created;
+  User.findById = () => ({ populate: async () => created });
 
   const res = createRes();
   await googleLogin({ body: { idToken: "valid" } }, res);
@@ -94,4 +98,26 @@ test("returns 200 with a token and user on success", async () => {
   assert.ok(res.body.token);
   assert.equal(res.body.user.email, "x@example.com");
   assert.equal(res.body.user.username, "x");
+});
+
+test("returns 401 when the account is inactive", async () => {
+  OAuth2Client.prototype.verifyIdToken = async () => ({
+    getPayload: () => ({
+      sub: "g1",
+      email: "x@example.com",
+      email_verified: true,
+      name: "X",
+      picture: null,
+    }),
+  });
+  User.findOne = async () => ({ _id: "u1", isActive: false });
+  User.findById = () => ({
+    populate: async () => ({ _id: "u1", isActive: false }),
+  });
+
+  const res = createRes();
+  await googleLogin({ body: { idToken: "valid" } }, res);
+
+  assert.equal(res.statusCode, 401);
+  assert.equal(res.body.message, "الحساب غير نشط");
 });
