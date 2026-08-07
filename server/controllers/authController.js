@@ -3,6 +3,8 @@ import jwt from "jsonwebtoken";
 import crypto from "crypto";
 import User from "../models/User.js";
 import sendEmail from "../utils/sendEmail.js";
+import { OAuth2Client } from "google-auth-library";
+import { resolveGoogleUser } from "../services/googleAuthService.js";
 
 // Register
 export const register = async (req, res) => {
@@ -320,5 +322,55 @@ export const updateProfile = async (req, res) => {
   } catch (error) {
     console.error(error);
     res.status(500).json({ message: "Server Error" });
+  }
+};
+
+// Google login (ID token from Google Identity Services)
+export const googleLogin = async (req, res) => {
+  try {
+    const { idToken } = req.body;
+    if (!idToken) {
+      return res.status(400).json({ message: "معرّف جوجل مطلوب" });
+    }
+
+    const googleClient = new OAuth2Client(process.env.GOOGLE_CLIENT_ID);
+    const ticket = await googleClient.verifyIdToken({
+      idToken,
+      audience: process.env.GOOGLE_CLIENT_ID,
+    });
+    const payload = ticket.getPayload();
+
+    if (!payload.email_verified) {
+      return res.status(401).json({ message: "البريد الإلكتروني غير مؤكد" });
+    }
+
+    const user = await resolveGoogleUser(payload, User);
+
+    if (!user.isActive) {
+      return res.status(401).json({ message: "الحساب غير نشط" });
+    }
+
+    const token = jwt.sign(
+      { id: user._id, username: user.username, role: user.role },
+      process.env.JWT_SECRET,
+      { expiresIn: "30d" },
+    );
+
+    res.json({
+      token,
+      user: {
+        id: user._id,
+        username: user.username,
+        name: user.name,
+        email: user.email,
+        role: user.role,
+        house: user.house,
+        profilePicture: user.profilePicture,
+        createdAt: user.createdAt,
+      },
+    });
+  } catch (error) {
+    console.error("Google login error:", error);
+    res.status(401).json({ message: "فشل تسجيل الدخول عبر جوجل" });
   }
 };
