@@ -46,6 +46,13 @@ export const AuthProvider = ({ children }) => {
     return data.user;
   };
 
+  const loginWithGoogle = async (idToken) => {
+    const { data } = await api.post("/auth/google", { idToken });
+    localStorage.setItem("token", data.token);
+    setUser(data.user);
+    return data.user;
+  };
+
   const createHouse = async (name, password) => {
     const { data } = await api.post("/houses", { name, password });
     // Save the new token with admin role
@@ -97,6 +104,7 @@ export const AuthProvider = ({ children }) => {
       value={{
         user,
         login,
+        loginWithGoogle,
         logout,
         register,
         createHouse,
