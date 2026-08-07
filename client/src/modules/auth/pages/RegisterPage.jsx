@@ -1,7 +1,7 @@
 import { Link } from "react-router-dom";
 import { User, AtSign, Lock, Mail } from "lucide-react";
 import { Input } from "../../../shared/components";
-import { AuthCard } from "../components";
+import { AuthCard, GoogleSignInButton } from "../components";
 import { useRegister } from "../hooks";
 
 const Register = () => {
@@ -116,6 +116,7 @@ const Register = () => {
           {loading ? "جاري التسجيل..." : "إنشاء الحساب"}
         </button>
       </form>
+      <GoogleSignInButton />
     </AuthCard>
   );
 };

@@ -1,7 +1,7 @@
 import { Link } from "react-router-dom";
 import { User, Lock } from "lucide-react";
 import { Input } from "../../../shared/components";
-import { AuthCard } from "../components";
+import { AuthCard, GoogleSignInButton } from "../components";
 import { useLogin } from "../hooks";
 
 // صفحة تسجيل الدخول - محسّنة للإتاحة
@@ -78,6 +78,7 @@ const Login = () => {
           ادخل
         </button>
       </form>
+      <GoogleSignInButton />
     </AuthCard>
   );
 };
