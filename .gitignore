@@ -40,3 +40,6 @@ Thumbs.db
 coverage/
 *.sln
 *.sw?
+
+# Google Cloud credential export
+Google.json
