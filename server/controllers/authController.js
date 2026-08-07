@@ -85,6 +85,11 @@ export const login = async (req, res) => {
       return res.status(401).json({ message: "Account is inactive" });
     }
 
+    // Passwordless accounts (Google sign-in) cannot use password login
+    if (!user.password) {
+      return res.status(401).json({ message: "Invalid credentials" });
+    }
+
     // Check password
     const isMatch = await bcrypt.compare(password, user.password);
     if (!isMatch) {
