@@ -40,3 +40,27 @@ CLIENT_URL=http://localhost:5173
 ## 3. No Email (Local Testing)
 
 If no variables are set, emails will be logged to the **server console**.
+
+## Google Sign-In (Login with Google)
+
+Add to `server/.env`:
+
+```env
+GOOGLE_CLIENT_ID=<your-google-oauth-client-id>
+```
+
+And to `client/.env` (same value — client ID is public by design):
+
+```env
+VITE_GOOGLE_CLIENT_ID=<your-google-oauth-client-id>
+```
+
+### Google Cloud Console setup
+
+1. Go to https://console.cloud.google.com and create/select a project.
+2. **APIs & Services → OAuth consent screen** → External → add your account as a test user (or publish the app).
+3. **APIs & Services → Credentials → Create credentials → OAuth client ID → Web application**.
+4. Add **Authorized JavaScript origins** (no redirect URIs needed for this flow):
+   - `http://localhost:5173`
+   - `https://budgetly-frontend.vercel.app`
+5. Copy the Client ID into both env files above, then restart both dev servers.
