@@ -55,7 +55,6 @@ export function useGoogleSignIn() {
         size: "large",
         shape: "pill",
         locale: "ar",
-        width: 320,
       });
     };
 
@@ -67,8 +66,9 @@ export function useGoogleSignIn() {
     const script = document.createElement("script");
     script.src = SCRIPT_URL;
     script.async = true;
-    script.defer = true;
     script.onload = render;
+    script.onerror = () =>
+      setError("تعذر تحميل زر تسجيل الدخول عبر جوجل");
     document.head.appendChild(script);
   }, []);
 
