@@ -3,6 +3,7 @@ import { useEffect, useRef, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { useAuth } from "../../../shared/context/AuthContext";
 import { useToast } from "../../../shared/context/ToastContext";
+import { useTheme } from "../../../shared/context/ThemeContext";
 
 const CLIENT_ID = import.meta.env.VITE_GOOGLE_CLIENT_ID;
 const SCRIPT_URL = "https://accounts.google.com/gsi/client";
@@ -13,6 +14,7 @@ export function useGoogleSignIn() {
   const buttonRef = useRef(null);
   const handlerRef = useRef();
   const { loginWithGoogle } = useAuth();
+  const { themeMode } = useTheme();
   const toast = useToast();
   const navigate = useNavigate();
 
@@ -41,17 +43,17 @@ export function useGoogleSignIn() {
       if (
         !window.google?.accounts?.id ||
         !buttonRef.current ||
-        buttonRef.current.dataset.gsiRendered
+        buttonRef.current.dataset.gsiRendered === themeMode
       ) {
         return;
       }
-      buttonRef.current.dataset.gsiRendered = "true";
+      buttonRef.current.dataset.gsiRendered = themeMode;
       google.accounts.id.initialize({
         client_id: CLIENT_ID,
         callback: (resp) => handlerRef.current(resp),
       });
       google.accounts.id.renderButton(buttonRef.current, {
-        theme: "outline",
+        theme: themeMode === "dark" ? "filled_black" : "outline",
         size: "large",
         shape: "pill",
         locale: "ar",
@@ -63,6 +65,8 @@ export function useGoogleSignIn() {
       return;
     }
 
+    if (document.querySelector(`script[src="${SCRIPT_URL}"]`)) return;
+
     const script = document.createElement("script");
     script.src = SCRIPT_URL;
     script.async = true;
@@ -70,7 +74,7 @@ export function useGoogleSignIn() {
     script.onerror = () =>
       setError("تعذر تحميل زر تسجيل الدخول عبر جوجل");
     document.head.appendChild(script);
-  }, []);
+  }, [themeMode]);
 
   return { buttonRef, error, loading };
 }
