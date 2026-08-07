@@ -346,11 +346,23 @@ export const leaveHouse = async (req, res) => {
       return res.status(400).json({ message: "You are not in this house" });
     }
 
-    // Admin cannot leave their own house
+    // Admin leaving: transfer admin to first remaining member, or delete house if last member
     if (house.admin.toString() === user._id.toString()) {
-      return res.status(400).json({
-        message:
-          "House admin cannot leave. Delete the house or transfer admin rights first.",
+      const remainingMembers = house.members.filter(
+        (memberId) => memberId.toString() !== user._id.toString(),
+      );
+
+      if (remainingMembers.length === 0) {
+        await House.findByIdAndDelete(house._id);
+        user.house = null;
+        user.role = "user";
+        await user.save();
+        return res.json({ message: "House deleted (you were the last member)" });
+      }
+
+      house.admin = remainingMembers[0];
+      await User.findByIdAndUpdate(remainingMembers[0], {
+        $set: { role: "admin" },
       });
     }
 

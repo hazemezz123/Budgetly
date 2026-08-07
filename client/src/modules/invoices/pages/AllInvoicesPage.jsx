@@ -1,5 +1,4 @@
 import { useState } from "react";
-import { format } from "date-fns";
 import {
   RefreshCw,
   User as UserIcon,
@@ -84,7 +83,11 @@ export default function AllInvoices() {
                 {pendingRequests.map((req) => (
                   <tr key={req._id} className="hover:bg-(--color-hover)">
                     <td className="py-3 px-4 text-sm text-(--color-secondary) text-start">
-                      {format(new Date(req.createdAt), "MMM d, yyyy")}
+                      {new Date(req.createdAt).toLocaleDateString("en-US", {
+                        month: "short",
+                        day: "numeric",
+                        year: "numeric",
+                      })}
                     </td>
                     <td className="py-3 px-4 text-sm font-medium text-(--color-dark) text-start">
                       <div className="flex items-center gap-2">

@@ -1,5 +1,3 @@
-import { format } from "date-fns";
-
 export default function MobileRequestCard({
   request,
   onOpenDetails,
@@ -16,7 +14,11 @@ export default function MobileRequestCard({
           <div>
             <h4 className="font-bold text-(--color-dark)">{request.createdBy?.name}</h4>
             <p className="text-sm text-(--color-secondary)">
-              {format(new Date(request.createdAt), "MMM d, yyyy")}
+              {new Date(request.createdAt).toLocaleDateString("en-US", {
+                month: "short",
+                day: "numeric",
+                year: "numeric",
+              })}
             </p>
           </div>
         </div>

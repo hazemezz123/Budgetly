@@ -1,4 +1,3 @@
-import { format } from "date-fns";
 import { Trash2 } from "lucide-react";
 
 export default function RequestCard({ request, onDelete }) {
@@ -34,7 +33,11 @@ export default function RequestCard({ request, onDelete }) {
         <div>
           <h3 className="font-semibold text-(--color-dark)">{request.description}</h3>
           <p className="text-sm text-(--color-secondary)">
-            {categoryTranslations[request.category] || "عام"} • {format(new Date(request.createdAt), "MMM d, yyyy")}
+            {categoryTranslations[request.category] || "عام"} • {new Date(request.createdAt).toLocaleDateString("en-US", {
+              month: "short",
+              day: "numeric",
+              year: "numeric",
+            })}
           </p>
         </div>
         <span
