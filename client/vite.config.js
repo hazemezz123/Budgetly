@@ -16,7 +16,7 @@ export default defineConfig({
             "lucide-react",
             "@tanstack/react-table",
           ],
-          "vendor-utils": ["axios", "date-fns"],
+          "vendor-utils": ["axios"],
         },
       },
     },
