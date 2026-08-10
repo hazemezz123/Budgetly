@@ -2,7 +2,6 @@ import { Wallet } from "lucide-react";
 import { useAuth } from "../../../shared/context/AuthContext";
 import { Loader } from "../../../shared/components";
 import { RoleRotationWidget } from "../../house/components";
-import { LowStockWidget } from "../../inventory/components";
 import { useDashboardStats } from "../hooks";
 import {
   AdminDashboard,
@@ -43,12 +42,6 @@ const Dashboard = () => {
       {houseId && (
         <div className="mb-6">
           <RoleRotationWidget houseId={houseId} />
-        </div>
-      )}
-
-      {houseId && (
-        <div className="mb-6">
-          <LowStockWidget />
         </div>
       )}
 

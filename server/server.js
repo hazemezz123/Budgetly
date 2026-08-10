@@ -13,7 +13,6 @@ import noteRoutes from "./routes/notes.js";
 import housesRoutes from "./routes/houses.js";
 import aiRoutes from "./routes/ai.js";
 import invoiceRoutes from "./routes/invoices.js";
-import inventoryRoutes from "./routes/inventory.js";
 import rotationRoutes from "./routes/rotation.js";
 import { connectToDatabase, getDatabaseStatus } from "./config/db.js";
 
@@ -76,7 +75,6 @@ app.use("/api/analytics", analyticsRoutes);
 app.use("/api/notes", noteRoutes);
 app.use("/api/ai", aiRoutes);
 app.use("/api/invoices", invoiceRoutes);
-app.use("/api/inventory", inventoryRoutes);
 app.use("/api/houses", rotationRoutes); // Role rotation routes under houses
 
 // Health check

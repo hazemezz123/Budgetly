@@ -1,5 +1,4 @@
 import { useMemo, useState } from "react";
-import { format } from "date-fns";
 import { Search, Check, X, ArrowUpDown } from "lucide-react";
 import {
   useReactTable,
@@ -29,7 +28,11 @@ export default function InvoicesTable({
         accessorFn: (row) => row.createdAt,
         cell: (info) => (
           <span className="text-sm text-(--color-secondary)">
-            {format(new Date(info.getValue()), "MMM d, yyyy")}
+            {new Date(info.getValue()).toLocaleDateString("en-US", {
+              month: "short",
+              day: "numeric",
+              year: "numeric",
+            })}
           </span>
         ),
       },

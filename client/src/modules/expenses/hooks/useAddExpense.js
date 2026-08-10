@@ -14,6 +14,7 @@ export function useAddExpense() {
   const queryClient = useQueryClient();
 
   const [formData, setFormData] = useState({
+    title: "",
     description: "",
     category: "General",
     totalAmount: "",

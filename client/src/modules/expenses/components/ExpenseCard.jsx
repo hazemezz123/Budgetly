@@ -45,14 +45,24 @@ export default function ExpenseCard({
         </div>
       </div>
 
-      {/* Description */}
+      {/* Title */}
       <h3
         className="font-semibold mb-2 line-clamp-1"
         style={{ color: "var(--color-secondary)" }}
-        title={expense.description}
+        title={expense.title}
       >
-        {expense.description}
+        {expense.title}
       </h3>
+
+      {/* Description */}
+      {expense.description && (
+        <p
+          className="text-sm mb-2 line-clamp-1"
+          style={{ color: "var(--color-muted)" }}
+        >
+          {expense.description}
+        </p>
+      )}
 
       {/* Category Tag */}
       <span
@@ -88,7 +98,7 @@ export default function ExpenseCard({
           <div className="flex items-center gap-1.5">
             <User size={12} />
             <span>
-              {expense.createdBy ? expense.createdBy.name : "مستخدم محذوف"}
+              {expense.paidBy ? expense.paidBy.name : "مستخدم محذوف"}
             </span>
           </div>
         </div>

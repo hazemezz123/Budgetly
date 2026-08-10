@@ -1,4 +1,3 @@
-import { format } from "date-fns";
 import { CreditCard, CheckCircle, Clock } from "lucide-react";
 
 export default function InvoiceCard({ invoice, onPay }) {
@@ -33,7 +32,11 @@ export default function InvoiceCard({ invoice, onPay }) {
         <div>
           <h3 className="font-semibold text-(--color-dark)">{invoice.description}</h3>
           <p className="text-sm text-(--color-secondary)">
-            {categoryTranslations[invoice.expense?.category] || "عام"} • {format(new Date(invoice.createdAt), "MMM d, yyyy")}
+            {categoryTranslations[invoice.expense?.category] || "عام"} • {new Date(invoice.createdAt).toLocaleDateString("en-US", {
+              month: "short",
+              day: "numeric",
+              year: "numeric",
+            })}
           </p>
         </div>
         <span

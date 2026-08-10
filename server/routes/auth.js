@@ -3,6 +3,7 @@ import { authenticate } from "../middleware/auth.js";
 import {
   register,
   login,
+  googleLogin,
   getCurrentUser,
   forgotPassword,
   resetPassword,
@@ -15,6 +16,9 @@ router.post("/register", register);
 
 // Login
 router.post("/login", login);
+
+// Google login
+router.post("/google", googleLogin);
 
 // Get current user
 router.get("/me", authenticate, getCurrentUser);

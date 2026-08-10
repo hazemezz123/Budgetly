@@ -1,4 +1,3 @@
-import { format } from "date-fns";
 import { Check, X } from "lucide-react";
 import StatusBadge from "./StatusBadge";
 
@@ -22,7 +21,11 @@ export default function MobileInvoiceCard({
               <h4 className="font-bold text-(--color-dark)">{invoice.user?.name}</h4>
             )}
             <p className="text-sm text-(--color-secondary)">
-              {format(new Date(invoice.createdAt), "MMM d, yyyy")}
+              {new Date(invoice.createdAt).toLocaleDateString("en-US", {
+                month: "short",
+                day: "numeric",
+                year: "numeric",
+              })}
             </p>
           </div>
         </div>

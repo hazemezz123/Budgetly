@@ -47,7 +47,7 @@ export default function UserDashboard({ stats }) {
                   className="p-5 flex justify-between items-center hover:bg-ios-hover transition-colors"
                 >
                   <span className="text-ios-dark font-medium">
-                    {expense.description}
+                    {expense.title}
                   </span>
                   <div className="flex flex-col items-end gap-1">
                     <span className="font-bold text-ios-primary">

@@ -3,6 +3,8 @@ import jwt from "jsonwebtoken";
 import crypto from "crypto";
 import User from "../models/User.js";
 import sendEmail from "../utils/sendEmail.js";
+import { OAuth2Client } from "google-auth-library";
+import { resolveGoogleUser } from "../services/googleAuthService.js";
 
 // Register
 export const register = async (req, res) => {
@@ -44,7 +46,7 @@ export const register = async (req, res) => {
     const token = jwt.sign(
       { id: user._id, username: user.username, role: user.role },
       process.env.JWT_SECRET,
-      { expiresIn: "30d" }
+      { expiresIn: "30d" },
     );
 
     res.status(201).json({
@@ -74,7 +76,7 @@ export const login = async (req, res) => {
     // Find user and populate house
     const user = await User.findOne({ username }).populate(
       "house",
-      "name admin members"
+      "name admin members",
     );
     if (!user) {
       return res.status(401).json({ message: "Invalid credentials" });
@@ -83,6 +85,11 @@ export const login = async (req, res) => {
     // Check if user is active
     if (!user.isActive) {
       return res.status(401).json({ message: "Account is inactive" });
+    }
+
+    // Passwordless accounts (Google sign-in) cannot use password login
+    if (!user.password) {
+      return res.status(401).json({ message: "Invalid credentials" });
     }
 
     // Check password
@@ -95,7 +102,7 @@ export const login = async (req, res) => {
     const token = jwt.sign(
       { id: user._id, username: user.username, role: user.role },
       process.env.JWT_SECRET,
-      { expiresIn: "30d" }
+      { expiresIn: "30d" },
     );
 
     res.json({
@@ -145,6 +152,10 @@ export const getCurrentUser = async (req, res) => {
 // Forgot Password
 export const forgotPassword = async (req, res) => {
   const { email } = req.body;
+
+  if (!email) {
+    return res.status(400).json({ message: "Email is required" });
+  }
 
   try {
     const user = await User.findOne({ email });
@@ -311,5 +322,62 @@ export const updateProfile = async (req, res) => {
   } catch (error) {
     console.error(error);
     res.status(500).json({ message: "Server Error" });
+  }
+};
+
+// Google login (ID token from Google Identity Services)
+export const googleLogin = async (req, res) => {
+  const { idToken } = req.body;
+  if (!idToken) {
+    return res.status(400).json({ message: "معرّف جوجل مطلوب" });
+  }
+
+  let payload;
+  try {
+    const googleClient = new OAuth2Client(process.env.GOOGLE_CLIENT_ID);
+    const ticket = await googleClient.verifyIdToken({
+      idToken,
+      audience: process.env.GOOGLE_CLIENT_ID,
+    });
+    payload = ticket.getPayload();
+  } catch (error) {
+    console.error("Google token verification failed:", error);
+    return res.status(401).json({ message: "فشل تسجيل الدخول عبر جوجل" });
+  }
+
+  try {
+    if (!payload.email_verified) {
+      return res.status(401).json({ message: "البريد الإلكتروني غير مؤكد" });
+    }
+
+    let user = await resolveGoogleUser(payload, User);
+    user = await User.findById(user._id).populate("house", "name admin members");
+
+    if (!user.isActive) {
+      return res.status(401).json({ message: "الحساب غير نشط" });
+    }
+
+    const token = jwt.sign(
+      { id: user._id, username: user.username, role: user.role },
+      process.env.JWT_SECRET,
+      { expiresIn: "30d" },
+    );
+
+    res.json({
+      token,
+      user: {
+        id: user._id,
+        username: user.username,
+        name: user.name,
+        email: user.email,
+        role: user.role,
+        house: user.house,
+        profilePicture: user.profilePicture,
+        createdAt: user.createdAt,
+      },
+    });
+  } catch (error) {
+    console.error("Google login error:", error);
+    res.status(500).json({ message: "Server error" });
   }
 };

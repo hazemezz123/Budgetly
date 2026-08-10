@@ -1,4 +1,3 @@
-import { format } from "date-fns";
 import { X, CreditCard, User as UserIcon } from "lucide-react";
 
 export default function RequestDetailsModal({ isOpen, onClose, request }) {
@@ -41,7 +40,11 @@ export default function RequestDetailsModal({ isOpen, onClose, request }) {
             <div className="bg-(--color-bg) p-4 rounded-xl border border-(--color-border)">
               <p className="text-xs text-(--color-secondary) mb-1">التاريخ</p>
               <p className="font-medium text-(--color-dark)">
-                {format(new Date(request.createdAt), "MMM d, yyyy")}
+                {new Date(request.createdAt).toLocaleDateString("en-US", {
+                  month: "short",
+                  day: "numeric",
+                  year: "numeric",
+                })}
               </p>
             </div>
             <div className="bg-(--color-bg) p-4 rounded-xl border border-(--color-border)">

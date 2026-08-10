@@ -16,7 +16,7 @@ export const getExpenses = async (req, res) => {
       return res.status(400).json({ message: "User not in a house" });
     }
 
-    const query = { house: currentUser.house };
+    const query = { house: currentUser.house, status: "approved" };
     if (req.query.status) {
       query.status = req.query.status;
     }
@@ -29,6 +29,7 @@ export const getExpenses = async (req, res) => {
 
     const expenses = await Expense.find(query)
       .populate("createdBy", "name username")
+      .populate("paidBy", "name username")
       .populate("splits.user", "name username")
       .sort({ date: -1 })
       .skip(skip)
@@ -50,6 +51,7 @@ export const getExpenses = async (req, res) => {
 export const createExpense = async (req, res) => {
   try {
     const {
+      title,
       description,
       category,
       totalAmount,
@@ -103,13 +105,14 @@ export const createExpense = async (req, res) => {
     }
 
     const expense = await Expense.create({
+      title,
       description,
       category,
       totalAmount,
       splitType,
       splits: finalSplits,
-      createdBy: req.user.id, // Always the user who created the request
-      paidBy: payerId, // The person who paid (selected by admin or default to creator)
+      createdBy: req.user.id,
+      paidBy: payerId,
       house: user.house,
       status,
     });
@@ -122,7 +125,7 @@ export const createExpense = async (req, res) => {
           user: split.user,
           expense: expense._id,
           amount: split.amount,
-          description: description,
+          description: title,
           status: isPayer ? "paid" : "pending",
           house: user.house,
         });
@@ -166,7 +169,7 @@ export const approveExpense = async (req, res) => {
         user: split.user,
         expense: expense._id,
         amount: split.amount,
-        description: expense.description,
+        description: expense.title,
         status: isPayer ? "paid" : "pending",
         house: expense.house,
       });
@@ -207,6 +210,7 @@ export const rejectExpense = async (req, res) => {
 export const updateExpense = async (req, res) => {
   try {
     const {
+      title,
       description,
       category,
       totalAmount,
@@ -254,6 +258,7 @@ export const updateExpense = async (req, res) => {
     const expense = await Expense.findByIdAndUpdate(
       req.params.id,
       {
+        title,
         description,
         category,
         totalAmount,

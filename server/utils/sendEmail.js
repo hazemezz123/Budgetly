@@ -1,20 +1,19 @@
 import nodemailer from "nodemailer";
 
 const sendEmail = async (options) => {
-  // Use a mock transporter for development if no env vars
-  // Or configure real one
-  // For now, logging to console for safety in dev mode if env vars missing
-
-  const hasGmail = process.env.EMAIL_USERNAME && process.env.EMAIL_PASSWORD;
+  // ── Priority 1: Custom SMTP ──
   const hasSMTP =
     process.env.SMTP_HOST &&
     process.env.SMTP_PORT &&
     (process.env.SMTP_EMAIL || process.env.EMAIL_USERNAME) &&
     (process.env.SMTP_PASSWORD || process.env.EMAIL_PASSWORD);
 
-  if (!hasGmail && !hasSMTP) {
+  // ── Priority 2: Gmail SMTP ──
+  const hasGmail = process.env.EMAIL_USERNAME && process.env.EMAIL_PASSWORD;
+
+  if (!hasSMTP && !hasGmail) {
     console.log(
-      "No Email Service Configured (Gmail or Custom SMTP). Email content:"
+      "⚠️ No Email Service Configured (Gmail or Custom SMTP). Email content:"
     );
     console.log(`To: ${options.email}`);
     console.log(`Subject: ${options.subject}`);
@@ -24,18 +23,22 @@ const sendEmail = async (options) => {
 
   let transporter;
 
-  if (process.env.SMTP_HOST && process.env.SMTP_PORT) {
+  if (hasSMTP) {
     console.log(
       `Using Custom SMTP: ${process.env.SMTP_HOST}:${process.env.SMTP_PORT}`
     );
     transporter = nodemailer.createTransport({
       host: process.env.SMTP_HOST,
-      port: process.env.SMTP_PORT,
-      secure: process.env.SMTP_PORT == 465, // true for 465, false for other ports
+      port: Number(process.env.SMTP_PORT),
+      secure: process.env.SMTP_PORT == 465,
       auth: {
         user: process.env.SMTP_EMAIL || process.env.EMAIL_USERNAME,
         pass: process.env.SMTP_PASSWORD || process.env.EMAIL_PASSWORD,
       },
+      // Longer timeout for serverless cold starts
+      connectionTimeout: 10000,
+      greetingTimeout: 10000,
+      socketTimeout: 10000,
     });
   } else {
     console.log("Using Gmail Service");
@@ -45,6 +48,9 @@ const sendEmail = async (options) => {
         user: process.env.EMAIL_USERNAME,
         pass: process.env.EMAIL_PASSWORD,
       },
+      connectionTimeout: 10000,
+      greetingTimeout: 10000,
+      socketTimeout: 10000,
     });
   }
 
@@ -70,10 +76,11 @@ const sendEmail = async (options) => {
     to: options.email,
     subject: options.subject,
     text: options.message,
-    html: options.html, // Optional HTML
+    html: options.html,
   };
 
   await transporter.sendMail(mailOptions);
+  console.log(`✅ Email sent via SMTP to: ${options.email}`);
 };
 
 export default sendEmail;
