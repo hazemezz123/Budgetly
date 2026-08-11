@@ -34,4 +34,6 @@ const chatHistorySchema = new mongoose.Schema(
   }
 );
 
+chatHistorySchema.index({ user: 1, updatedAt: -1 });
+
 export default mongoose.model("ChatHistory", chatHistorySchema);

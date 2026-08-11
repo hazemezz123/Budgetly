@@ -77,6 +77,7 @@ expenseSchema.index({ house: 1, status: 1, date: -1 });
 expenseSchema.index({ house: 1, createdBy: 1, date: -1 });
 expenseSchema.index({ house: 1, paidBy: 1, status: 1 });
 expenseSchema.index({ "splits.user": 1, date: -1 });
+expenseSchema.index({ "splits.user": 1, status: 1, date: -1 });
 
 // Validate that splits add up to totalAmount
 expenseSchema.pre("save", function (next) {

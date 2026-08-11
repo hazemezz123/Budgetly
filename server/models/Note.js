@@ -45,4 +45,6 @@ const noteSchema = new mongoose.Schema(
   }
 );
 
+noteSchema.index({ house: 1, createdAt: -1 });
+
 export default mongoose.model("Note", noteSchema);
