@@ -14,7 +14,6 @@ import {
   Home,
   Lock,
   StickyNote,
-  ChevronLeft,
   ChevronRight,
   Mail,
   Sun,
@@ -122,7 +121,7 @@ const Sidebar = () => {
 
   return (
     <aside
-      className={`hidden md:flex flex-col h-screen sticky top-0 transition-all duration-300 border-l z-40 select-none ${
+      className={`hidden md:flex flex-col h-screen sticky top-0 border-l z-40 select-none overflow-hidden transition-all duration-300 ease-in-out ${
         collapsed ? "w-20" : "w-64"
       }`}
       style={{
@@ -132,65 +131,85 @@ const Sidebar = () => {
     >
       {/* Header / Logo */}
       <div
-        className={`p-4 flex items-center border-b ${
+        className={`p-4 flex items-center border-b transition-all duration-300 ease-in-out ${
           collapsed ? "justify-center" : "justify-between"
         }`}
         style={{ borderColor: "var(--color-border)" }}
       >
-        {!collapsed && (
-          <div className="flex items-center gap-2 overflow-hidden">
-            <img
-              src="/assets/logo.png"
-              alt="Budgetly"
-              className="h-14 dark:invert transition-all shrink-0"
-            />
-          </div>
-        )}
+        <div
+          className={`flex items-center gap-2 overflow-hidden transition-all duration-300 ease-in-out ${
+            collapsed
+              ? "opacity-0 max-w-0 pointer-events-none"
+              : "opacity-100 max-w-xs"
+          }`}
+        >
+          <img
+            src="/assets/logo.png"
+            alt="Budgetly"
+            className="h-14 dark:invert transition-all shrink-0"
+          />
+        </div>
         <button
           onClick={() => setCollapsed(!collapsed)}
-          className="p-2.5 rounded-xl hover:bg-(--color-hover) transition-colors hover:text-(--color-primary) text-(--color-secondary) cursor-pointer"
+          className="p-2.5 rounded-xl hover:bg-(--color-hover) transition-colors hover:text-(--color-primary) text-(--color-secondary) cursor-pointer shrink-0"
           title={collapsed ? "توسيع القائمة" : "طي القائمة"}
         >
-          {collapsed ? <ChevronLeft size={20} /> : <ChevronRight size={20} />}
+          <ChevronRight
+            size={20}
+            className={`transition-transform duration-300 ease-in-out ${
+              collapsed ? "rotate-180" : "rotate-0"
+            }`}
+          />
         </button>
       </div>
 
       <div
-        className={`flex-1 py-4 custom-scrollbar space-y-4 ${
+        className={`flex-1 py-4 custom-scrollbar space-y-4 transition-all duration-300 ease-in-out ${
           collapsed
             ? "overflow-visible px-2"
             : "overflow-y-auto overflow-x-hidden px-3"
         }`}
       >
-        {isLocked && !collapsed && (
+        {isLocked && (
           <div
-            className="mb-4 px-3 py-2 rounded-lg flex items-center gap-2 text-xs"
+            className={`px-3 py-2 rounded-lg flex items-center gap-2 text-xs overflow-hidden transition-all duration-300 ease-in-out ${
+              collapsed
+                ? "max-h-0 opacity-0 mb-0 py-0 border-0"
+                : "max-h-20 opacity-100 mb-4 py-2"
+            }`}
             style={{
               backgroundColor: "var(--color-status-pending-bg)",
               color: "var(--color-status-pending)",
-              border: "1px solid var(--color-status-pending-border)",
+              borderColor: "var(--color-status-pending-border)",
             }}
           >
-            <Lock size={14} />
-            <span>انضم لبيت أولاً</span>
+            <Lock size={14} className="shrink-0" />
+            <span className="whitespace-nowrap">انضم لبيت أولاً</span>
           </div>
         )}
 
         {navGroups.map((group, groupIndex) => (
           <div key={groupIndex}>
-            {!collapsed ? (
-              <h3
-                className="px-3 mb-2 text-xs font-semibold uppercase tracking-wider"
-                style={{ color: "var(--color-muted)" }}
-              >
-                {group.title}
-              </h3>
-            ) : groupIndex > 0 ? (
+            <h3
+              className={`px-3 text-xs font-semibold uppercase tracking-wider whitespace-nowrap overflow-hidden transition-all duration-300 ease-in-out ${
+                collapsed
+                  ? "opacity-0 max-h-0 mb-0 py-0"
+                  : "opacity-100 max-h-8 mb-2"
+              }`}
+              style={{ color: "var(--color-muted)" }}
+            >
+              {group.title}
+            </h3>
+            {groupIndex > 0 && (
               <div
-                className="my-3 mx-auto w-8 border-t"
+                className={`mx-auto border-t transition-all duration-300 ease-in-out ${
+                  collapsed
+                    ? "opacity-100 w-8 my-3"
+                    : "opacity-0 w-0 my-0 border-transparent"
+                }`}
                 style={{ borderColor: "var(--color-border)" }}
               />
-            ) : null}
+            )}
             <div className="space-y-1">
               {group.items.map((item) => {
                 if (item.roles && !item.roles.includes(user.role)) return null;
@@ -205,10 +224,10 @@ const Sidebar = () => {
                   <Link
                     key={item.path}
                     to={item.path}
-                    className={`flex items-center rounded-xl transition-all duration-200 group relative ${
+                    className={`flex items-center rounded-xl transition-all duration-300 ease-in-out group relative ${
                       collapsed
-                        ? "justify-center h-11 w-11 mx-auto"
-                        : "gap-3 px-3 py-2.5"
+                        ? "justify-center h-11 w-11 mx-auto px-0 py-0"
+                        : "gap-3 px-3 py-2.5 w-full"
                     } ${itemLocked ? "opacity-50 cursor-not-allowed" : ""}`}
                     style={{
                       backgroundColor: active
@@ -233,17 +252,19 @@ const Sidebar = () => {
                       } transition-colors shrink-0`}
                     />
 
-                    {!collapsed && (
-                      <span
-                        className={`font-medium text-sm whitespace-nowrap ${
-                          active
-                            ? "text-(--color-on-fill)"
-                            : "text-(--color-dark)"
-                        }`}
-                      >
-                        {item.label}
-                      </span>
-                    )}
+                    <span
+                      className={`font-medium text-sm whitespace-nowrap overflow-hidden transition-all duration-300 ease-in-out ${
+                        collapsed
+                          ? "opacity-0 max-w-0 pointer-events-none"
+                          : "opacity-100 max-w-xs"
+                      } ${
+                        active
+                          ? "text-(--color-on-fill)"
+                          : "text-(--color-dark)"
+                      }`}
+                    >
+                      {item.label}
+                    </span>
 
                     {collapsed && (
                       <div className="absolute right-full top-1/2 -translate-y-1/2 px-3 py-1.5 bg-gray-900 dark:bg-gray-800 text-white text-xs font-medium rounded-lg opacity-0 group-hover:opacity-100 transition-all duration-200 whitespace-nowrap z-50 pointer-events-none mr-2.5 shadow-xl border border-gray-700/50 flex items-center gap-1.5">
@@ -271,7 +292,7 @@ const Sidebar = () => {
         style={{ borderColor: "var(--color-border)" }}
       >
         <div
-          className={`flex ${
+          className={`flex transition-all duration-300 ease-in-out ${
             collapsed
               ? "flex-col gap-3 items-center"
               : "flex-row items-center justify-between"
@@ -295,16 +316,20 @@ const Sidebar = () => {
           </div>
 
           {/* User Info (Expanded only) */}
-          {!collapsed && (
-            <div className="flex flex-col items-end">
-              <span className="text-sm font-semibold text-(--color-dark)">
-                {user.name}
-              </span>
-              <span className="text-xs text-(--color-muted)">
-                {user.role === "admin" ? "مشرف" : "عضو"}
-              </span>
-            </div>
-          )}
+          <div
+            className={`flex flex-col items-end whitespace-nowrap overflow-hidden transition-all duration-300 ease-in-out ${
+              collapsed
+                ? "opacity-0 max-w-0 pointer-events-none"
+                : "opacity-100 max-w-xs"
+            }`}
+          >
+            <span className="text-sm font-semibold text-(--color-dark)">
+              {user.name}
+            </span>
+            <span className="text-xs text-(--color-muted)">
+              {user.role === "admin" ? "مشرف" : "عضو"}
+            </span>
+          </div>
 
           {/* Logout */}
           <div className="relative group">
