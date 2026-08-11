@@ -121,8 +121,8 @@ const Sidebar = () => {
 
   return (
     <aside
-      className={`hidden md:flex flex-col h-screen sticky top-0 border-l z-40 select-none overflow-hidden transition-all duration-300 ease-in-out ${
-        collapsed ? "w-20" : "w-64"
+      className={`hidden md:flex flex-col h-screen sticky top-0 border-l z-40 select-none transition-all duration-300 ease-in-out ${
+        collapsed ? "w-20 overflow-visible" : "w-64 overflow-hidden"
       }`}
       style={{
         backgroundColor: "var(--color-surface)",
