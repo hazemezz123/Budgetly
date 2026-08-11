@@ -6,6 +6,17 @@ import sendEmail from "../utils/sendEmail.js";
 import { OAuth2Client } from "google-auth-library";
 import { resolveGoogleUser } from "../services/googleAuthService.js";
 
+export const setAuthCookie = (res, token) => {
+  if (res && typeof res.cookie === "function") {
+    res.cookie("token", token, {
+      httpOnly: true,
+      secure: process.env.NODE_ENV === "production",
+      sameSite: "lax",
+      maxAge: 7 * 24 * 60 * 60 * 1000,
+    });
+  }
+};
+
 // Register
 export const register = async (req, res) => {
   try {
@@ -48,6 +59,8 @@ export const register = async (req, res) => {
       process.env.JWT_SECRET,
       { expiresIn: "30d" },
     );
+
+    setAuthCookie(res, token);
 
     res.status(201).json({
       token,
@@ -104,6 +117,8 @@ export const login = async (req, res) => {
       process.env.JWT_SECRET,
       { expiresIn: "30d" },
     );
+
+    setAuthCookie(res, token);
 
     res.json({
       token,
@@ -363,6 +378,8 @@ export const googleLogin = async (req, res) => {
       { expiresIn: "30d" },
     );
 
+    setAuthCookie(res, token);
+
     res.json({
       token,
       user: {
@@ -380,4 +397,11 @@ export const googleLogin = async (req, res) => {
     console.error("Google login error:", error);
     res.status(500).json({ message: "Server error" });
   }
+};
+
+export const logoutUser = (req, res) => {
+  if (res && typeof res.clearCookie === "function") {
+    res.clearCookie("token");
+  }
+  res.json({ message: "Logged out successfully" });
 };

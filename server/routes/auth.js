@@ -9,6 +9,7 @@ import {
   getCurrentUser,
   forgotPassword,
   resetPassword,
+  logoutUser,
 } from "../controllers/authController.js";
 
 const router = express.Router();
@@ -18,6 +19,9 @@ router.post("/register", validate({ body: registerSchema }), register);
 
 // Login
 router.post("/login", validate({ body: loginSchema }), login);
+
+// Logout
+router.post("/logout", logoutUser);
 
 // Google login
 router.post("/google", googleLogin);
