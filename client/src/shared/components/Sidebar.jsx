@@ -288,18 +288,20 @@ const Sidebar = () => {
 
       {/* Footer / User Tools */}
       <div
-        className="p-4 border-t relative"
+        className={`border-t relative transition-all duration-300 ease-in-out ${
+          collapsed ? "p-3" : "p-4"
+        }`}
         style={{ borderColor: "var(--color-border)" }}
       >
         <div
           className={`flex transition-all duration-300 ease-in-out ${
             collapsed
-              ? "flex-col gap-3 items-center"
+              ? "flex-col gap-3 items-center justify-center"
               : "flex-row items-center justify-between"
           }`}
         >
           {/* Theme Toggle */}
-          <div className="relative group">
+          <div className="relative group flex items-center justify-center">
             <button
               onClick={toggleTheme}
               className="p-2.5 rounded-xl hover:bg-(--color-hover) transition-colors text-(--color-secondary) cursor-pointer flex items-center justify-center"
@@ -316,23 +318,19 @@ const Sidebar = () => {
           </div>
 
           {/* User Info (Expanded only) */}
-          <div
-            className={`flex flex-col items-end whitespace-nowrap overflow-hidden transition-all duration-300 ease-in-out ${
-              collapsed
-                ? "opacity-0 max-w-0 pointer-events-none"
-                : "opacity-100 max-w-xs"
-            }`}
-          >
-            <span className="text-sm font-semibold text-(--color-dark)">
-              {user.name}
-            </span>
-            <span className="text-xs text-(--color-muted)">
-              {user.role === "admin" ? "مشرف" : "عضو"}
-            </span>
-          </div>
+          {!collapsed && (
+            <div className="flex flex-col items-end whitespace-nowrap overflow-hidden transition-all duration-300 ease-in-out">
+              <span className="text-sm font-semibold text-(--color-dark)">
+                {user.name}
+              </span>
+              <span className="text-xs text-(--color-muted)">
+                {user.role === "admin" ? "مشرف" : "عضو"}
+              </span>
+            </div>
+          )}
 
           {/* Logout */}
-          <div className="relative group">
+          <div className="relative group flex items-center justify-center">
             <button
               onClick={() => setShowLogoutModal(true)}
               className="p-2.5 rounded-xl hover:bg-(--color-error)/10 cursor-pointer text-(--color-error) transition-colors flex items-center justify-center"
