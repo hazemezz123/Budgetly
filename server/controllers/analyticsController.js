@@ -1,3 +1,4 @@
+import mongoose from "mongoose";
 import Invoice from "../models/Invoice.js";
 import Expense from "../models/Expense.js";
 import User from "../models/User.js";
@@ -6,25 +7,64 @@ import User from "../models/User.js";
 export const getMonthlyAnalytics = async (req, res) => {
   try {
     const userId = req.user.id;
+    const userObjId = mongoose.Types.ObjectId.isValid(userId)
+      ? new mongoose.Types.ObjectId(userId)
+      : userId;
 
-    // Get all expenses for this user
-    const expenses = await Expense.find({
-      "splits.user": userId,
-    }).sort({ date: -1 });
+    const expenseAgg = await Expense.aggregate([
+      {
+        $match: {
+          "splits.user": userObjId,
+        },
+      },
+      { $unwind: "$splits" },
+      {
+        $match: {
+          "splits.user": userObjId,
+        },
+      },
+      {
+        $group: {
+          _id: {
+            month: { $dateToString: { format: "%Y-%m", date: "$date" } },
+            category: "$category",
+          },
+          total: { $sum: "$splits.amount" },
+          count: { $sum: 1 },
+        },
+      },
+      { $sort: { "_id.month": -1 } },
+    ]);
 
-    // Get all paid invoices for this user instead of payments
-    const paidInvoices = await Invoice.find({
-      user: userId,
-      status: "paid",
-    }).sort({ createdAt: -1 });
+    const paymentAgg = await Invoice.aggregate([
+      {
+        $match: {
+          user: userObjId,
+          status: "paid",
+        },
+      },
+      {
+        $group: {
+          _id: {
+            month: { $dateToString: { format: "%Y-%m", date: "$createdAt" } },
+          },
+          total: { $sum: "$amount" },
+          count: { $sum: 1 },
+        },
+      },
+      { $sort: { "_id.month": -1 } },
+    ]);
 
-    // Group expenses by month
     const monthlyExpenses = {};
-    expenses.forEach((expense) => {
-      const month = new Date(expense.date).toISOString().slice(0, 7); // YYYY-MM
-      const userSplit = expense.splits.find(
-        (s) => s.user.toString() === userId
-      );
+    const categoryBreakdown = {};
+    let totalAllTime = 0;
+    let totalTransactions = 0;
+
+    expenseAgg.forEach((item) => {
+      const month = item._id.month;
+      const category = item._id.category;
+      const amount = item.total;
+      const count = item.count;
 
       if (!monthlyExpenses[month]) {
         monthlyExpenses[month] = {
@@ -34,48 +74,33 @@ export const getMonthlyAnalytics = async (req, res) => {
         };
       }
 
-      monthlyExpenses[month].total += userSplit?.amount || 0;
-      monthlyExpenses[month].count += 1;
+      monthlyExpenses[month].total += amount;
+      monthlyExpenses[month].count += count;
 
-      // Group by category
-      if (!monthlyExpenses[month].categories[expense.category]) {
-        monthlyExpenses[month].categories[expense.category] = 0;
+      if (!monthlyExpenses[month].categories[category]) {
+        monthlyExpenses[month].categories[category] = 0;
       }
-      monthlyExpenses[month].categories[expense.category] +=
-        userSplit?.amount || 0;
-    });
+      monthlyExpenses[month].categories[category] += amount;
 
-    // Group paid invoices by month
-    const monthlyPayments = {};
-    paidInvoices.forEach((invoice) => {
-      const month = new Date(invoice.createdAt).toISOString().slice(0, 7);
-
-      if (!monthlyPayments[month]) {
-        monthlyPayments[month] = {
-          total: 0,
-          count: 0,
-        };
+      if (!categoryBreakdown[category]) {
+        categoryBreakdown[category] = 0;
       }
+      categoryBreakdown[category] += amount;
 
-      monthlyPayments[month].total += invoice.amount;
-      monthlyPayments[month].count += 1;
-    });
-
-    // Calculate category breakdown (all time)
-    const categoryBreakdown = {};
-    let totalAllTime = 0;
-
-    expenses.forEach((expense) => {
-      const userSplit = expense.splits.find(
-        (s) => s.user.toString() === userId
-      );
-      const amount = userSplit?.amount || 0;
-
-      if (!categoryBreakdown[expense.category]) {
-        categoryBreakdown[expense.category] = 0;
-      }
-      categoryBreakdown[expense.category] += amount;
       totalAllTime += amount;
+      totalTransactions += count;
+    });
+
+    const monthlyPayments = {};
+    let totalPayments = 0;
+
+    paymentAgg.forEach((item) => {
+      const month = item._id.month;
+      monthlyPayments[month] = {
+        total: item.total,
+        count: item.count,
+      };
+      totalPayments += item.total;
     });
 
     // Convert to percentages
@@ -100,10 +125,10 @@ export const getMonthlyAnalytics = async (req, res) => {
       categoryBreakdown: categoryPercentages,
       summary: {
         totalExpenses: totalAllTime,
-        totalPayments: paidInvoices.reduce((sum, inv) => sum + inv.amount, 0),
+        totalPayments,
         avgMonthlyExpense: avgMonthlyExpense.toFixed(2),
         monthsTracked: monthCount,
-        totalTransactions: expenses.length,
+        totalTransactions,
       },
     });
   } catch (error) {
@@ -116,34 +141,50 @@ export const getMonthlyAnalytics = async (req, res) => {
 export const getCategoryTrends = async (req, res) => {
   try {
     const userId = req.user.id;
-    const months = parseInt(req.query.months) || 6; // Last 6 months by default
+    const userObjId = mongoose.Types.ObjectId.isValid(userId)
+      ? new mongoose.Types.ObjectId(userId)
+      : userId;
+    const months = parseInt(req.query?.months) || 6; // Last 6 months by default
 
     const sixMonthsAgo = new Date();
     sixMonthsAgo.setMonth(sixMonthsAgo.getMonth() - months);
 
-    const expenses = await Expense.find({
-      "splits.user": userId,
-      date: { $gte: sixMonthsAgo },
-    }).sort({ date: 1 });
+    const trendAgg = await Expense.aggregate([
+      {
+        $match: {
+          "splits.user": userObjId,
+          date: { $gte: sixMonthsAgo },
+        },
+      },
+      { $unwind: "$splits" },
+      {
+        $match: {
+          "splits.user": userObjId,
+        },
+      },
+      {
+        $group: {
+          _id: {
+            month: { $dateToString: { format: "%Y-%m", date: "$date" } },
+            category: "$category",
+          },
+          total: { $sum: "$splits.amount" },
+        },
+      },
+      { $sort: { "_id.month": 1 } },
+    ]);
 
     const trends = {};
 
-    expenses.forEach((expense) => {
-      const month = new Date(expense.date).toISOString().slice(0, 7);
-      const userSplit = expense.splits.find(
-        (s) => s.user.toString() === userId
-      );
-      const amount = userSplit?.amount || 0;
+    trendAgg.forEach((item) => {
+      const month = item._id.month;
+      const category = item._id.category;
 
       if (!trends[month]) {
         trends[month] = {};
       }
 
-      if (!trends[month][expense.category]) {
-        trends[month][expense.category] = 0;
-      }
-
-      trends[month][expense.category] += amount;
+      trends[month][category] = item.total;
     });
 
     res.json({ trends });
@@ -152,3 +193,4 @@ export const getCategoryTrends = async (req, res) => {
     res.status(500).json({ message: "Server error" });
   }
 };
+
