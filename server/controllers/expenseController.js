@@ -11,7 +11,7 @@ export const getExpenses = async (req, res) => {
     const skip = (page - 1) * limit;
 
     // Get user's house for filtering
-    const currentUser = await User.findById(req.user.id);
+    const currentUser = await User.findById(req.user.id).select("house").lean();
     if (!currentUser || !currentUser.house) {
       return res.status(400).json({ message: "User not in a house" });
     }
@@ -33,7 +33,8 @@ export const getExpenses = async (req, res) => {
       .populate("splits.user", "name username")
       .sort({ date: -1 })
       .skip(skip)
-      .limit(limit);
+      .limit(limit)
+      .lean();
 
     res.json({
       expenses,

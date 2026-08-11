@@ -6,7 +6,7 @@ import User from "../models/User.js";
 // Get invoices for the logged in user
 export const getMyInvoices = async (req, res) => {
   try {
-    const user = await User.findById(req.user.id);
+    const user = await User.findById(req.user.id).select("house").lean();
     if (!user || !user.house) {
       return res.status(400).json({ message: "User not in a house" });
     }
@@ -16,7 +16,8 @@ export const getMyInvoices = async (req, res) => {
       house: user.house,
     })
       .populate("expense", "description category date createdBy")
-      .sort({ createdAt: -1 });
+      .sort({ createdAt: -1 })
+      .lean();
 
     res.json(invoices);
   } catch (error) {
@@ -28,7 +29,7 @@ export const getMyInvoices = async (req, res) => {
 // Get all invoices (Admin only)
 export const getAllInvoices = async (req, res) => {
   try {
-    const user = await User.findById(req.user.id);
+    const user = await User.findById(req.user.id).select("house").lean();
     if (!user || !user.house) {
       return res.status(400).json({ message: "User not in a house" });
     }
@@ -42,7 +43,8 @@ export const getAllInvoices = async (req, res) => {
         path: "paymentRequest",
         populate: { path: "recordedBy", select: "name" },
       })
-      .sort({ createdAt: -1 });
+      .sort({ createdAt: -1 })
+      .lean();
 
     res.json(invoices);
   } catch (error) {

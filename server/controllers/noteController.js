@@ -4,8 +4,8 @@ import User from "../models/User.js";
 // Get all notes for the user's house
 export const getNotes = async (req, res) => {
   try {
-    const user = await User.findById(req.user.id);
-    if (!user.house) {
+    const user = await User.findById(req.user.id).select("house").lean();
+    if (!user || !user.house) {
       return res
         .status(400)
         .json({ message: "You must be in a house to view notes" });
@@ -14,7 +14,8 @@ export const getNotes = async (req, res) => {
     const notes = await Note.find({ house: user.house })
       .populate("createdBy", "name username")
       .populate("replies.createdBy", "name username")
-      .sort({ date: -1 });
+      .sort({ date: -1 })
+      .lean();
 
     res.json(notes);
   } catch (error) {
@@ -27,9 +28,9 @@ export const getNotes = async (req, res) => {
 export const createNote = async (req, res) => {
   try {
     const { content } = req.body;
-    const user = await User.findById(req.user.id);
+    const user = await User.findById(req.user.id).select("house").lean();
 
-    if (!user.house) {
+    if (!user || !user.house) {
       return res
         .status(400)
         .json({ message: "You must be in a house to create notes" });
