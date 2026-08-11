@@ -58,7 +58,7 @@ const Navbar = () => {
 
   const navLinkStyle = (path) => ({
     backgroundColor: isActive(path) ? "var(--color-primary)" : "transparent",
-    color: isActive(path) ? "white" : "var(--color-dark)",
+    color: isActive(path) ? "var(--color-on-fill)" : "var(--color-dark)",
   });
 
   const navLinkClass = () => {
@@ -430,7 +430,7 @@ const Navbar = () => {
                 isLocked ? "opacity-50 cursor-not-allowed" : ""
               }`}
               style={{
-                color: "#ffffff",
+                color: "var(--color-on-fill)",
                 backgroundColor: "var(--color-primary)",
                 boxShadow: isActive("/add-expense")
                   ? "0 8px 20px rgba(0, 0, 0, 0.2)"

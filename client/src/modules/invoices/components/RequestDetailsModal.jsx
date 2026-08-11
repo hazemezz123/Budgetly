@@ -1,17 +1,28 @@
 import { X, CreditCard, User as UserIcon } from "lucide-react";
+import useModalA11y from "../../../shared/hooks/useModalA11y";
 
 export default function RequestDetailsModal({ isOpen, onClose, request }) {
+  const modalRef = useModalA11y(isOpen, onClose);
+
   if (!isOpen || !request) return null;
 
   return (
     <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/50 backdrop-blur-sm animate-in fade-in duration-200">
       <div
+        ref={modalRef}
+        role="dialog"
+        aria-modal="true"
+        aria-labelledby="request-details-title"
+        tabIndex={-1}
         className="bg-(--color-surface) rounded-2xl shadow-xl w-full max-w-lg overflow-hidden border border-(--color-border) transform transition-all scale-100 max-h-[90vh] flex flex-col"
         dir="rtl"
       >
         <div className="p-4 sm:p-6 border-b border-(--color-border) flex justify-between items-start shrink-0">
           <div>
-            <h3 className="text-lg sm:text-xl font-bold text-(--color-dark) flex items-center gap-2">
+            <h3
+              id="request-details-title"
+              className="text-lg sm:text-xl font-bold text-(--color-dark) flex items-center gap-2"
+            >
               <CreditCard className="text-(--color-primary)" size={24} />
               تفاصيل الفاتورة
             </h3>

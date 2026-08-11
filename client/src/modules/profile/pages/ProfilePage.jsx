@@ -13,6 +13,7 @@ import {
   Edit,
 } from "lucide-react";
 import { Input, Loader } from "../../../shared/components";
+import useModalA11y from "../../../shared/hooks/useModalA11y";
 import useProfile from "../hooks/useProfile";
 
 // Available profile pictures
@@ -57,6 +58,10 @@ const Profile = () => {
   } = useProfile(user, updateUser);
 
   const [showAvatarModal, setShowAvatarModal] = useState(false);
+  const avatarModalRef = useModalA11y(
+    showAvatarModal,
+    () => setShowAvatarModal(false)
+  );
   const [selectedAvatar, setSelectedAvatar] = useState(
     user.profilePicture || null
   );
@@ -213,7 +218,7 @@ const Profile = () => {
               className="absolute bottom-0 right-0 p-2 rounded-full shadow-lg transition-all hover:scale-110"
               style={{
                 backgroundColor: "var(--color-primary)",
-                color: "white",
+                color: "var(--color-on-fill)",
               }}
             >
               <Edit size={16} className="cursor-pointer" />
@@ -496,8 +501,8 @@ const Profile = () => {
                 style={{
                   color:
                     stats.balance < 0
-                      ? "var(--color-error)"
-                      : "var(--color-success)",
+                      ? "var(--color-error-text)"
+                      : "var(--color-success-text)",
                 }}
               >
                 {stats.balance < 0
@@ -683,6 +688,11 @@ const Profile = () => {
           onClick={() => setShowAvatarModal(false)}
         >
           <div
+            ref={avatarModalRef}
+            role="dialog"
+            aria-modal="true"
+            aria-labelledby="avatar-modal-title"
+            tabIndex={-1}
             className="backdrop-blur-xl p-4 sm:p-6 rounded-3xl shadow-2xl max-w-2xl w-full max-h-[80vh] overflow-y-auto"
             style={{
               backgroundColor: "var(--color-surface)",
@@ -691,6 +701,7 @@ const Profile = () => {
             onClick={(e) => e.stopPropagation()}
           >
               <h3
+                id="avatar-modal-title"
                 className="text-xl sm:text-2xl font-bold mb-4"
                 style={{ color: "var(--color-dark)" }}
               >
@@ -701,7 +712,15 @@ const Profile = () => {
               {availableAvatars.map((avatar) => (
                 <div
                   key={avatar}
+                  role="button"
+                  tabIndex={0}
                   onClick={() => setSelectedAvatar(avatar)}
+                  onKeyDown={(e) => {
+                    if (e.key === "Enter" || e.key === " ") {
+                      e.preventDefault();
+                      setSelectedAvatar(avatar);
+                    }
+                  }}
                   className="cursor-pointer transition-all hover:scale-105"
                   style={{
                     padding: "4px",
@@ -725,8 +744,8 @@ const Profile = () => {
               <div className="flex flex-col-reverse sm:flex-row gap-3">
               <button
                 onClick={handleSaveAvatar}
-                className="flex-1 py-3 px-4 text-white font-bold rounded-2xl transition-all duration-200 shadow-lg hover:shadow-xl"
-                style={{ backgroundColor: "var(--color-primary)" }}
+                className="flex-1 py-3 px-4 font-bold rounded-2xl transition-all duration-200 shadow-lg hover:shadow-xl"
+                style={{ backgroundColor: "var(--color-primary)", color: "var(--color-on-fill)" }}
                 onMouseEnter={(e) =>
                   (e.currentTarget.style.backgroundColor = "var(--color-dark)")
                 }

@@ -62,7 +62,7 @@ export default function AllInvoices() {
       </div>
 
       {pendingRequests.length > 0 && (
-        <div className="bg-(--color-surface) border border-(--color-border) rounded-2xl p-4 sm:p-6 shadow-sm border-r-4 border-r-(--color-status-pending)">
+        <div className="bg-(--color-surface) border border-(--color-border) rounded-2xl p-4 sm:p-6 shadow-sm">
           <h2 className="text-xl font-bold mb-4 flex items-center gap-2 text-(--color-dark)">
             <Clock className="text-(--color-status-pending)" />
             طلبات معلقة ({pendingRequests.length})
@@ -71,7 +71,7 @@ export default function AllInvoices() {
           <div className="hidden md:block overflow-x-auto">
             <table className="w-full text-left border-collapse">
               <thead>
-                <tr className="bg-(--color-bg) text-xs uppercase text-(--color-secondary)">
+                <tr className="bg-(--color-bg) text-xs uppercase text-(--color-muted)">
                   <th className="py-3 px-4 text-start rounded-r-lg">التاريخ</th>
                   <th className="py-3 px-4 text-start">المستخدم</th>
                   <th className="py-3 px-4 text-start">الوصف</th>
@@ -91,7 +91,7 @@ export default function AllInvoices() {
                     </td>
                     <td className="py-3 px-4 text-sm font-medium text-(--color-dark) text-start">
                       <div className="flex items-center gap-2">
-                        <div className="w-6 h-6 rounded-full bg-(--color-primary-bg) text-(--color-primary) flex items-center justify-center text-xs font-bold">
+                        <div className="w-6 h-6 rounded-full bg-(--color-primary-bg) text-(--color-primary-text) flex items-center justify-center text-xs font-bold">
                           {req.createdBy?.name?.charAt(0) || "?"}
                         </div>
                         {req.createdBy?.name}
@@ -149,12 +149,20 @@ export default function AllInvoices() {
         {userStats.map((u) => (
           <div
             key={u._id}
+            role="button"
+            tabIndex={0}
             onClick={() =>
               setSelectedUserId((prev) => (prev === u._id ? null : u._id))
             }
+            onKeyDown={(e) => {
+              if (e.key === "Enter" || e.key === " ") {
+                e.preventDefault();
+                setSelectedUserId((prev) => (prev === u._id ? null : u._id));
+              }
+            }}
             className={`cursor-pointer rounded-xl p-3 sm:p-4 border transition-all duration-200 relative overflow-hidden group ${
               selectedUserId === u._id
-                ? " text-(--color-primary) border-(--color-primary) shadow-lg transform scale-[1.02] bg-(--color-primary)/20"
+                ? " border-(--color-primary) shadow-lg transform scale-[1.02] bg-(--color-primary)/20"
                 : " border-(--color-border) border hover:border-(--color-primary) hover:shadow-md"
             }`}
           >
@@ -162,27 +170,17 @@ export default function AllInvoices() {
               <div
                 className={`w-10 h-10 sm:w-12 sm:h-12 rounded-full flex items-center justify-center text-sm sm:text-lg font-bold shadow-sm ${
                   selectedUserId === u._id
-                    ? " border-(--color-primary) border text-(--color-primary)"
-                    : "  text-(--color-primary)"
+                    ? " border-(--color-primary) border text-(--color-primary-text)"
+                    : "  text-(--color-primary-text)"
                 }`}
               >
                 {u.name.charAt(0)}
               </div>
               <div className="overflow-hidden">
-                <h3
-                  className={`font-bold truncate ${
-                    selectedUserId === u._id ? "text-white" : "text-(--color-dark)"
-                  }`}
-                >
+                <h3 className="font-bold truncate text-(--color-dark)">
                   {u.name}
                 </h3>
-                <p
-                  className={`text-xs truncate ${
-                    selectedUserId === u._id
-                      ? "text-white/80"
-                      : "text-(--color-secondary)"
-                  }`}
-                >
+                <p className="text-xs truncate text-(--color-secondary)">
                   @{u.username}
                 </p>
               </div>
@@ -216,7 +214,7 @@ export default function AllInvoices() {
                   className={`px-2 py-0.5 rounded-md text-[10px] sm:text-xs flex items-center gap-1 ${
                     selectedUserId === u._id
                       ? "bg-white/90 text-(--color-primary) font-bold shadow-sm"
-                      : "bg-(--color-success-bg) text-(--color-success)"
+                      : "bg-(--color-success-bg) text-(--color-success-text)"
                   }`}
                 >
                   <CheckCircle2 size={10} /> خالص

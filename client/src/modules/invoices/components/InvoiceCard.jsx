@@ -63,13 +63,13 @@ export default function InvoiceCard({ invoice, onPay }) {
           </button>
         )}
         {invoice.status === "awaiting_approval" && (
-          <div className="flex items-center gap-2 text-blue-600 text-sm font-medium">
+          <div className="flex items-center gap-2 text-(--color-info) text-sm font-medium">
             <Clock size={18} />
             جاري المعالجة
           </div>
         )}
         {invoice.status === "paid" && (
-          <div className="flex items-center gap-2 text-green-600 text-sm font-medium">
+          <div className="flex items-center gap-2 text-(--color-success-text) text-sm font-medium">
             <CheckCircle size={18} />
             تم الدفع
           </div>

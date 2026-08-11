@@ -97,7 +97,7 @@ export default function InvoicesTable({
         accessorFn: (row) => row.user?.name,
         cell: (info) => (
           <div className="flex items-center gap-2">
-            <div className="w-6 h-6 rounded-full bg-(--color-primary-bg) text-(--color-primary) flex items-center justify-center text-xs font-bold">
+            <div className="w-6 h-6 rounded-full bg-(--color-primary-bg) text-(--color-primary-text) flex items-center justify-center text-xs font-bold">
               {info.getValue()?.charAt(0) || "?"}
             </div>
             <span className="font-medium text-(--color-dark) text-sm">{info.getValue()}</span>
@@ -140,7 +140,7 @@ export default function InvoicesTable({
 
       {loading ? (
         <div className="flex justify-center py-12">
-          <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-(--color-primary)"></div>
+          <div className="animate-spin rounded-full h-8 w-8 border-2 border-(--color-primary) border-t-transparent"></div>
         </div>
       ) : table.getRowModel().rows.length === 0 ? (
         <div className="text-center py-12 bg-(--color-bg) rounded-xl border-dashed border-2 border-(--color-border)">
@@ -156,7 +156,7 @@ export default function InvoicesTable({
                     {headerGroup.headers.map((header) => (
                       <th
                         key={header.id}
-                        className="py-3 px-4 text-xs font-semibold text-(--color-secondary) uppercase border-b border-(--color-border) cursor-pointer hover:text-(--color-primary) transition-colors"
+                        className="py-3 px-4 text-xs font-semibold text-(--color-muted) uppercase border-b border-(--color-border) cursor-pointer hover:text-(--color-primary) transition-colors"
                         onClick={header.column.getToggleSortingHandler()}
                       >
                         <div className="flex items-center gap-1">

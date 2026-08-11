@@ -41,7 +41,7 @@ const ResetPassword = () => {
             </p>
             <Link
               to="/login"
-              className="text-(--color-primary) hover:underline"
+              className="text-(--color-primary-text) hover:underline"
             >
               الذهاب لتسجيل الدخول الآن
             </Link>

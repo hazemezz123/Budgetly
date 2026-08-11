@@ -21,7 +21,7 @@ const Login = () => {
       معندكش حساب؟{" "}
       <Link
         to="/register"
-        className="text-ios-primary hover:underline font-semibold transition-colors"
+        className="text-ios-primary-text hover:underline font-semibold transition-colors"
       >
         سجل دلوقتي
       </Link>
@@ -64,7 +64,7 @@ const Login = () => {
         <div className="flex justify-end">
           <Link
             to="/forgot-password"
-            className="text-sm font-medium text-[var(--color-primary)] hover:text-[var(--color-primary)]/80 transition-colors"
+            className="text-sm font-medium text-[var(--color-primary-text)] hover:text-[var(--color-primary-text)]/80 transition-colors"
           >
             نسيت كلمة المرور؟
           </Link>

@@ -122,7 +122,7 @@ const Sidebar = () => {
 
   return (
     <aside
-      className={`hidden md:flex flex-col h-screen sticky top-0 transition-all duration-300 border-l z-40 ${
+      className={`hidden md:flex flex-col h-screen sticky top-0 transition-all duration-300 border-l z-40 select-none ${
         collapsed ? "w-20" : "w-64"
       }`}
       style={{
@@ -132,27 +132,36 @@ const Sidebar = () => {
     >
       {/* Header / Logo */}
       <div
-        className="p-4 flex items-center justify-between border-b"
+        className={`p-4 flex items-center border-b ${
+          collapsed ? "justify-center" : "justify-between"
+        }`}
         style={{ borderColor: "var(--color-border)" }}
       >
         {!collapsed && (
-          <div className="flex items-center gap-2">
+          <div className="flex items-center gap-2 overflow-hidden">
             <img
               src="/assets/logo.png"
               alt="Budgetly"
-              className=" h-14 dark:invert transition-all"
+              className="h-14 dark:invert transition-all shrink-0"
             />
           </div>
         )}
         <button
           onClick={() => setCollapsed(!collapsed)}
-          className="p-2 rounded-lg hover:bg-(--color-surface) transition-colors hover:text-(--color-primary) text-(--color-secondary) cursor-pointer"
+          className="p-2.5 rounded-xl hover:bg-(--color-hover) transition-colors hover:text-(--color-primary) text-(--color-secondary) cursor-pointer"
+          title={collapsed ? "توسيع القائمة" : "طي القائمة"}
         >
           {collapsed ? <ChevronLeft size={20} /> : <ChevronRight size={20} />}
         </button>
       </div>
 
-      <div className="flex-1 overflow-y-auto py-4 px-3 custom-scrollbar space-y-6">
+      <div
+        className={`flex-1 py-4 custom-scrollbar space-y-4 ${
+          collapsed
+            ? "overflow-visible px-2"
+            : "overflow-y-auto overflow-x-hidden px-3"
+        }`}
+      >
         {isLocked && !collapsed && (
           <div
             className="mb-4 px-3 py-2 rounded-lg flex items-center gap-2 text-xs"
@@ -169,42 +178,48 @@ const Sidebar = () => {
 
         {navGroups.map((group, groupIndex) => (
           <div key={groupIndex}>
-            {!collapsed && (
+            {!collapsed ? (
               <h3
-                className="px-3 mb-2 text-xs font-semibold uppercase tracking-wider opacity-50"
-                style={{ color: "var(--color-secondary)" }}
+                className="px-3 mb-2 text-xs font-semibold uppercase tracking-wider"
+                style={{ color: "var(--color-muted)" }}
               >
                 {group.title}
               </h3>
-            )}
+            ) : groupIndex > 0 ? (
+              <div
+                className="my-3 mx-auto w-8 border-t"
+                style={{ borderColor: "var(--color-border)" }}
+              />
+            ) : null}
             <div className="space-y-1">
               {group.items.map((item) => {
                 if (item.roles && !item.roles.includes(user.role)) return null;
 
                 const active = isActive(item.path);
+                const itemLocked =
+                  isLocked &&
+                  item.path !== "/profile" &&
+                  item.path !== "/house-selection";
+
                 return (
                   <Link
                     key={item.path}
                     to={item.path}
-                    className={`flex items-center gap-3 px-3 py-2.5 rounded-xl transition-all duration-200 group relative ${
-                      isLocked &&
-                      item.path !== "/profile" &&
-                      item.path !== "/house-selection"
-                        ? "opacity-50 cursor-not-allowed"
-                        : ""
-                    }`}
+                    className={`flex items-center rounded-xl transition-all duration-200 group relative ${
+                      collapsed
+                        ? "justify-center h-11 w-11 mx-auto"
+                        : "gap-3 px-3 py-2.5"
+                    } ${itemLocked ? "opacity-50 cursor-not-allowed" : ""}`}
                     style={{
                       backgroundColor: active
                         ? "var(--color-primary)"
                         : "transparent",
-                      color: active ? "white" : "var(--color-secondary)",
+                      color: active
+                        ? "var(--color-on-fill)"
+                        : "var(--color-secondary)",
                     }}
                     onClick={(e) => {
-                      if (
-                        isLocked &&
-                        item.path !== "/profile" &&
-                        item.path !== "/house-selection"
-                      ) {
+                      if (itemLocked) {
                         e.preventDefault();
                       }
                     }}
@@ -213,15 +228,17 @@ const Sidebar = () => {
                       size={20}
                       className={`${
                         active
-                          ? "text-white"
+                          ? "text-(--color-on-fill)"
                           : "text-(--color-secondary) group-hover:text-(--color-primary)"
-                      } transition-colors`}
+                      } transition-colors shrink-0`}
                     />
 
                     {!collapsed && (
                       <span
-                        className={`font-medium text-sm ${
-                          active ? "text-white" : "text-(--color-dark)"
+                        className={`font-medium text-sm whitespace-nowrap ${
+                          active
+                            ? "text-(--color-on-fill)"
+                            : "text-(--color-dark)"
                         }`}
                       >
                         {item.label}
@@ -229,8 +246,15 @@ const Sidebar = () => {
                     )}
 
                     {collapsed && (
-                      <div className="absolute right-full top-1/2 -translate-y-1/2 px-2 py-1 bg-gray-900 text-white text-xs rounded opacity-0 group-hover:opacity-100 transition-opacity whitespace-nowrap z-50 pointer-events-none mr-2 shadow-lg">
-                        {item.label}
+                      <div className="absolute right-full top-1/2 -translate-y-1/2 px-3 py-1.5 bg-gray-900 dark:bg-gray-800 text-white text-xs font-medium rounded-lg opacity-0 group-hover:opacity-100 transition-all duration-200 whitespace-nowrap z-50 pointer-events-none mr-2.5 shadow-xl border border-gray-700/50 flex items-center gap-1.5">
+                        {itemLocked && <Lock size={12} className="text-amber-400" />}
+                        <span>{item.label}</span>
+                        {itemLocked && (
+                          <span className="text-[10px] text-amber-300 font-normal">
+                            (مقفل)
+                          </span>
+                        )}
+                        <div className="absolute top-1/2 -translate-y-1/2 -right-1 border-y-4 border-y-transparent border-l-4 border-l-gray-900 dark:border-l-gray-800" />
                       </div>
                     )}
                   </Link>
@@ -249,19 +273,25 @@ const Sidebar = () => {
         <div
           className={`flex ${
             collapsed
-              ? "flex-col gap-4 items-center"
+              ? "flex-col gap-3 items-center"
               : "flex-row items-center justify-between"
           }`}
         >
-          <div className="flex items-center gap-1">
-            {/* Theme Toggle */}
+          {/* Theme Toggle */}
+          <div className="relative group">
             <button
               onClick={toggleTheme}
-              className="p-2 rounded-lg hover:bg-(--color-bg) transition-colors text-(--color-secondary)"
-              title={themeMode === "dark" ? "الوضع النهاري" : "الوضع الليلي"}
+              className="p-2.5 rounded-xl hover:bg-(--color-hover) transition-colors text-(--color-secondary) cursor-pointer flex items-center justify-center"
+              title={!collapsed ? (themeMode === "dark" ? "الوضع النهاري" : "الوضع الليلي") : undefined}
             >
-              {themeMode === "dark" ? <Sun size={22} /> : <Moon size={22} />}
+              {themeMode === "dark" ? <Sun size={20} /> : <Moon size={20} />}
             </button>
+            {collapsed && (
+              <div className="absolute right-full top-1/2 -translate-y-1/2 px-3 py-1.5 bg-gray-900 dark:bg-gray-800 text-white text-xs font-medium rounded-lg opacity-0 group-hover:opacity-100 transition-all duration-200 whitespace-nowrap z-50 pointer-events-none mr-2.5 shadow-xl border border-gray-700/50">
+                {themeMode === "dark" ? "الوضع النهاري" : "الوضع الليلي"}
+                <div className="absolute top-1/2 -translate-y-1/2 -right-1 border-y-4 border-y-transparent border-l-4 border-l-gray-900 dark:border-l-gray-800" />
+              </div>
+            )}
           </div>
 
           {/* User Info (Expanded only) */}
@@ -270,20 +300,28 @@ const Sidebar = () => {
               <span className="text-sm font-semibold text-(--color-dark)">
                 {user.name}
               </span>
-              <span className="text-xs text-(--color-secondary)">
+              <span className="text-xs text-(--color-muted)">
                 {user.role === "admin" ? "مشرف" : "عضو"}
               </span>
             </div>
           )}
 
           {/* Logout */}
-          <button
-            onClick={() => setShowLogoutModal(true)}
-            className="p-2 rounded-lg hover:bg-(--color-error)/10 cursor-pointer text-(--color-error) transition-colors"
-            title="تسجيل الخروج"
-          >
-            <LogOut size={22} />
-          </button>
+          <div className="relative group">
+            <button
+              onClick={() => setShowLogoutModal(true)}
+              className="p-2.5 rounded-xl hover:bg-(--color-error)/10 cursor-pointer text-(--color-error) transition-colors flex items-center justify-center"
+              title={!collapsed ? "تسجيل الخروج" : undefined}
+            >
+              <LogOut size={20} />
+            </button>
+            {collapsed && (
+              <div className="absolute right-full top-1/2 -translate-y-1/2 px-3 py-1.5 bg-gray-900 dark:bg-gray-800 text-white text-xs font-medium rounded-lg opacity-0 group-hover:opacity-100 transition-all duration-200 whitespace-nowrap z-50 pointer-events-none mr-2.5 shadow-xl border border-gray-700/50">
+                تسجيل الخروج
+                <div className="absolute top-1/2 -translate-y-1/2 -right-1 border-y-4 border-y-transparent border-l-4 border-l-gray-900 dark:border-l-gray-800" />
+              </div>
+            )}
+          </div>
         </div>
       </div>
 

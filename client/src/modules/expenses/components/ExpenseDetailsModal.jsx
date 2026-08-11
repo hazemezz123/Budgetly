@@ -12,8 +12,11 @@ import {
   getCategoryIcon,
   getCategoryStyles,
 } from "../../../utils/expenseUtils.jsx";
+import useModalA11y from "../../../shared/hooks/useModalA11y";
 
 export default function ExpenseDetailsModal({ expense, isOpen, onClose }) {
+  const modalRef = useModalA11y(isOpen, onClose);
+
   if (!isOpen || !expense) return null;
 
   const formatDate = (dateString) => {
@@ -80,6 +83,11 @@ export default function ExpenseDetailsModal({ expense, isOpen, onClose }) {
 
       {/* Modal */}
       <div
+        ref={modalRef}
+        role="dialog"
+        aria-modal="true"
+        aria-labelledby="expense-details-title"
+        tabIndex={-1}
         className="relative w-full max-w-lg rounded-3xl shadow-2xl overflow-hidden animate-in fade-in zoom-in duration-200"
         style={{ backgroundColor: "var(--color-surface)" }}
       >
@@ -98,6 +106,7 @@ export default function ExpenseDetailsModal({ expense, isOpen, onClose }) {
               </div>
               <div>
                 <h2
+                  id="expense-details-title"
                   className="text-xl font-bold"
                   style={{ color: "var(--color-dark)" }}
                 >
@@ -113,7 +122,7 @@ export default function ExpenseDetailsModal({ expense, isOpen, onClose }) {
             </div>
             <button
               onClick={onClose}
-              className="p-2 rounded-xl transition-colors hover:bg-gray-100 dark:hover:bg-gray-800"
+              className="p-2 rounded-xl transition-colors hover:bg-(--color-hover)"
               style={{ color: "var(--color-muted)" }}
             >
               <X size={20} />

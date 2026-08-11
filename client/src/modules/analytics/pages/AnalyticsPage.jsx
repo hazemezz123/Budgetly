@@ -77,7 +77,7 @@ const Analytics = () => {
         <div className="bg-linear-to-br from-ios-primary/5 to-ios-primary/10 p-5 rounded-2xl border border-ios-primary/20">
           <div className="flex items-center gap-2 mb-2">
             <DollarSign size={20} className="text-ios-primary" />
-            <p className="text-sm text-ios-primary">إجمالي المصاريف</p>
+            <p className="text-sm text-(--color-primary-text)">إجمالي المصاريف</p>
           </div>
           <p className="text-2xl font-bold text-(--color-dark)">
             {summary.totalExpenses.toFixed(2)}
@@ -88,7 +88,7 @@ const Analytics = () => {
         <div className="bg-linear-to-br from-(--color-success)/5 to-(--color-success)/10 p-5 rounded-2xl border border-(--color-success)/20">
           <div className="flex items-center gap-2 mb-2">
             <TrendingUp size={20} className="text-(--color-success)" />
-            <p className="text-sm text-(--color-success)">متوسط شهري</p>
+            <p className="text-sm text-(--color-success-text)">متوسط شهري</p>
           </div>
           <p className="text-2xl font-bold text-(--color-dark)">
             {summary.avgMonthlyExpense}
@@ -99,7 +99,7 @@ const Analytics = () => {
         <div className="bg-linear-to-br from-(--color-info)/5 to-(--color-info)/10 p-5 rounded-2xl border border-(--color-info)/20">
           <div className="flex items-center gap-2 mb-2">
             <Calendar size={20} className="text-(--color-info)" />
-            <p className="text-sm text-(--color-info)">الأشهر المتتبعة</p>
+            <p className="text-sm text-(--color-info-text)">الأشهر المتتبعة</p>
           </div>
           <p className="text-2xl font-bold text-(--color-dark)">
             {summary.monthsTracked}
@@ -109,7 +109,7 @@ const Analytics = () => {
         <div className="bg-linear-to-br from-(--color-warning)/5 to-(--color-warning)/10 p-5 rounded-2xl border border-(--color-warning)/20">
           <div className="flex items-center gap-2 mb-2">
             <BarChart3 size={20} className="text-(--color-warning)" />
-            <p className="text-sm text-(--color-warning)">عدد المعاملات</p>
+            <p className="text-sm text-(--color-warning-text)">عدد المعاملات</p>
           </div>
           <p className="text-2xl font-bold text-(--color-dark)">
             {summary.totalTransactions}

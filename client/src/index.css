@@ -14,6 +14,7 @@
   --font-family-decorative: "Handjet", serif;
   --color-ios-dark: var(--color-dark);
   --color-ios-primary: var(--color-primary);
+  --color-ios-primary-text: var(--color-primary-text);
   --color-ios-secondary: var(--color-secondary);
   --color-ios-light: var(--color-light);
   --color-ios-bg: var(--color-bg);
@@ -24,6 +25,7 @@
   --color-ios-info: var(--color-info);
   --color-ios-border: var(--color-border);
   --color-ios-hover: var(--color-hover);
+  --color-ios-text: var(--color-dark);
 
   --shadow-sm: 0 1px 2px 0 rgb(0 0 0 / 0.07);
   --shadow-md: 0 4px 6px -1px rgb(0 0 0 / 0.12);
@@ -49,6 +51,7 @@
   /* Colors — WCAG Contrast Fix */
   --color-dark: #0e1628;
   --color-primary: #ca8a04; /* Yellow-600 */
+  --color-primary-text: #a16207; /* Yellow-700: gold text on light surfaces */
   --color-primary-bg: #fefce8; /* Yellow-50 */
   --color-primary-border: #fef08a; /* Yellow-200 */
   --color-secondary: #475569;
@@ -60,6 +63,12 @@
   --color-error: #dc2626;
   --color-warning: #ca8a04;
   --color-info: #0284c7;
+
+  /* 700-shades: colored text on light surfaces */
+  --color-success-text: #15803d;
+  --color-warning-text: #a16207;
+  --color-info-text: #0369a1;
+  --color-error-text: #b91c1c;
 
   /* تحسين contrast الخلفيات الفاتحة */
   --color-muted-bg: #f3f6fa;
@@ -82,6 +91,10 @@
   --gradient-bg: linear-gradient(135deg, #f8fafc 0%, #e5eaf1 100%);
   --zigzag-color: #f9fafb;
 
+  /* Text on filled action/success/error targets: ink keeps AAA on all
+     token fills (white fails 2.9:1 on Ledger Gold) */
+  --color-on-fill: #0e1628;
+
   --transition-fast: 150ms ease;
   --transition-base: 200ms ease;
   --transition-slow: 300ms ease;
@@ -99,6 +112,7 @@
   --color-bg: #0b0b0d;
   --color-surface: #151518;
   --color-primary: #ffc400;
+  --color-primary-text: #ffc400;
   --color-primary-border: #ffb300;
   --color-primary-bg: #2a2a2e;
   --color-dark: #f2f2f2;
@@ -115,6 +129,11 @@
   --color-warning: #f59e0b;
   --color-info: #60a5fa;
 
+  --color-success-text: #22c55e;
+  --color-warning-text: #f59e0b;
+  --color-info-text: #60a5fa;
+  --color-error-text: #ff4d4d;
+
   --color-status-pending: #f59e0b;
   --color-status-pending-bg: #422006;
   --color-status-pending-border: #78350f;
@@ -129,6 +148,14 @@
 
   --gradient-bg: linear-gradient(135deg, #0b0b0d 0%, #151518 100%);
   --zigzag-color: #151518;
+}
+
+/* Token-filled buttons carry ink text, not white: Ledger Gold #ca8a04
+   and Candlelight #ffc400 fail contrast with white (2.9:1 / 1.6:1);
+   ink passes AAA on every token fill in both modes. */
+[class*="bg-("][class~="text-white"],
+[class*="bg-ios-"][class~="text-white"] {
+  color: var(--color-on-fill);
 }
 
 /* ============================
@@ -221,7 +248,7 @@ input[type="number"],
   top: -40px;
   left: 0;
   background: var(--color-primary);
-  color: white;
+  color: var(--color-on-fill);
   padding: 8px;
   text-decoration: none;
   z-index: 100;

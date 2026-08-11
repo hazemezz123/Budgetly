@@ -9,7 +9,7 @@ const NotFound = () => {
         404
       </h1>
       <div className="absolute mt-2 flex flex-col items-center">
-        <div className=" p-4 rounded-full mb-4 animate-bounce border-2 border-(--color-primary)">
+        <div className=" p-4 rounded-full mb-4 animate-slide-in border-2 border-(--color-primary)">
           <Frown size={48} className="text-(--color-primary)" />
         </div>
         <div className="text-3xl font-bold text-(--color-dark) mb-2 font-cairo">

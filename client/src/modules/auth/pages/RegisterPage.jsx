@@ -13,7 +13,7 @@ const Register = () => {
       لديك حساب بالفعل؟{" "}
       <Link
         to="/login"
-        className="text-ios-primary hover:underline font-semibold transition-colors"
+        className="text-ios-primary-text hover:underline font-semibold transition-colors"
       >
         تسجيل الدخول
       </Link>

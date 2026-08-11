@@ -131,7 +131,7 @@ const HouseSelection = () => {
                       className="w-full p-4 rounded-2xl bg-(--color-bg) hover:bg-(--color-hover) border border-(--color-border) transition-all flex items-center justify-between group text-right"
                     >
                       <div className="flex items-center gap-3">
-                        <div className="w-10 h-10 rounded-full bg-(--color-surface) flex items-center justify-center text-(--color-primary) font-bold border border-(--color-border)">
+                        <div className="w-10 h-10 rounded-full bg-(--color-surface) flex items-center justify-center text-(--color-primary-text) font-bold border border-(--color-border)">
                           {house.name.charAt(0)}
                         </div>
                         <div>
@@ -144,7 +144,7 @@ const HouseSelection = () => {
                           </div>
                         </div>
                       </div>
-                      <div className="px-3 py-1 rounded-full bg-(--color-surface) text-xs font-semibold text-(--color-secondary) group-hover:bg-(--color-primary) group-hover:text-white transition-colors">
+                      <div className="px-3 py-1 rounded-full bg-(--color-surface) text-xs font-semibold text-(--color-secondary) group-hover:bg-(--color-primary) group-hover:text-(--color-on-fill) transition-colors">
                         انضمام
                       </div>
                     </button>
@@ -160,13 +160,14 @@ const HouseSelection = () => {
 
           {view === "create" && (
             <div className="p-6">
-              <div
+              <button
+                type="button"
                 className="flex items-center gap-2 mb-6 text-(--color-muted) cursor-pointer hover:text-(--color-dark)"
                 onClick={() => setView("list")}
               >
                 <ArrowRight size={18} className="transform rotate-180" />
                 <span className="text-sm font-bold">رجوع</span>
-              </div>
+              </button>
 
               <h2 className="text-xl font-bold mb-4 text-(--color-dark)">
                 إنشاء بيت جديد

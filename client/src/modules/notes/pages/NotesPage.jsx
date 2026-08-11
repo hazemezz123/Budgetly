@@ -19,7 +19,7 @@ export default function NotesPage() {
   return (
     <div className="max-w-2xl mx-auto pb-20">
       <div className="mb-8 text-center">
-        <h1 className="text-3xl font-bold text-(--color-primary) mb-2 flex items-center justify-center gap-3">
+        <h1 className="text-3xl font-bold text-(--color-primary-text) mb-2 flex items-center justify-center gap-3">
           <StickyNote className="w-8 h-8" />
           ملاحظات البيت
         </h1>

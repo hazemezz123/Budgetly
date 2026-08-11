@@ -70,7 +70,7 @@ export default function MyInvoicesFilters({
             onChange={(e) => onSearchChange(e.target.value)}
           />
           <Search
-            className="absolute right-3 top-1/2 -translate-y-1/2 text-gray-400"
+            className="absolute right-3 top-1/2 -translate-y-1/2 text-(--color-secondary)"
             size={18}
           />
         </div>
@@ -88,7 +88,7 @@ export default function MyInvoicesFilters({
             <option value="status">الحالة</option>
           </select>
           <ArrowUpDown
-            className="absolute left-2 top-1/2 -translate-y-1/2 text-gray-400 pointer-events-none"
+            className="absolute left-2 top-1/2 -translate-y-1/2 text-(--color-secondary) pointer-events-none"
             size={16}
           />
         </div>

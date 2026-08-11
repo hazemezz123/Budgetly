@@ -133,7 +133,7 @@ const AddExpense = () => {
                     onClick={() => toggleUserSelection(u._id)}
                     className={`relative p-4 rounded-xl border-2 cursor-pointer transition-all duration-200 group flex flex-col items-center gap-3 ${
                       isSelected
-                        ? "bg-(--color-primary)/10 border-(--color-primary) text-white shadow-lg scale-[1.02]"
+                        ? "bg-(--color-primary)/10 border-(--color-primary) shadow-lg scale-[1.02]"
                         : "bg-(--color-surface) border-(--color-border) hover:border-(--color-primary) hover:shadow-md"
                     }`}
                   >
@@ -146,7 +146,7 @@ const AddExpense = () => {
                     <div
                       className={`w-12 h-12 rounded-full flex items-center justify-center text-lg font-bold border-2 ${
                         isSelected
-                          ? "bg-white/20 border-white/50 text-white"
+                          ? "bg-(--color-primary) border-(--color-primary) text-(--color-on-fill)"
                           : "bg-(--color-bg) border-(--color-border) text-(--color-primary)"
                       }`}
                     >
@@ -155,18 +155,12 @@ const AddExpense = () => {
 
                     <div className="text-center w-full">
                       <p
-                        className={`font-bold truncate text-sm mb-0.5 ${
-                          isSelected ? "text-white" : "text-(--color-dark)"
-                        }`}
+                        className="font-bold truncate text-sm mb-0.5 text-(--color-dark)"
                       >
                         {u.name}
                       </p>
                       <p
-                        className={`text-xs truncate ${
-                          isSelected
-                            ? "text-white/80"
-                            : "text-(--color-secondary)"
-                        }`}
+                        className="text-xs truncate text-(--color-secondary)"
                       >
                         @{u.username}
                       </p>

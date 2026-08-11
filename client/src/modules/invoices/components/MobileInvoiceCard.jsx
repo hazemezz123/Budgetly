@@ -12,7 +12,7 @@ export default function MobileInvoiceCard({
       <div className="flex justify-between items-start">
         <div className="flex items-center gap-3">
           {showUser && (
-            <div className="w-10 h-10 rounded-full bg-(--color-primary-bg) text-(--color-primary) flex items-center justify-center text-sm font-bold">
+            <div className="w-10 h-10 rounded-full bg-(--color-primary-bg) text-(--color-primary-text) flex items-center justify-center text-sm font-bold">
               {invoice.user?.name?.charAt(0) || "?"}
             </div>
           )}
@@ -34,7 +34,7 @@ export default function MobileInvoiceCard({
 
       <div>
         <p className="font-medium text-(--color-dark) line-clamp-2">{invoice.description}</p>
-        <p className="text-xl font-bold text-(--color-primary) mt-1">
+        <p className="text-xl font-bold text-(--color-primary-text) mt-1">
           {Number(invoice.amount).toFixed(2)} جنيه
         </p>
       </div>

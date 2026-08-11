@@ -1,5 +1,6 @@
 import { motion, AnimatePresence } from "framer-motion";
 import { AlertTriangle, X } from "lucide-react";
+import useModalA11y from "../hooks/useModalA11y";
 
 const _motion = motion;
 
@@ -25,39 +26,42 @@ const ConfirmModal = ({
   cancelText = "إلغاء",
   isLoading = false,
 }) => {
+  const modalRef = useModalA11y(isOpen, onClose);
+
   if (!isOpen) return null;
 
   const getTypeStyles = () => {
+    const onFill = "var(--color-on-fill)";
     switch (type) {
       case "danger":
         return {
           iconColor: "var(--color-error)",
           buttonBg: "var(--color-error)",
-          buttonText: "white",
+          buttonText: onFill,
         };
       case "warning":
         return {
           iconColor: "var(--color-warning)",
           buttonBg: "var(--color-warning)",
-          buttonText: "white",
+          buttonText: onFill,
         };
       case "info":
         return {
           iconColor: "var(--color-info)",
           buttonBg: "var(--color-info)",
-          buttonText: "white",
+          buttonText: onFill,
         };
       case "primary":
         return {
           iconColor: "var(--color-primary)",
           buttonBg: "var(--color-primary)",
-          buttonText: "white",
+          buttonText: onFill,
         };
       default:
         return {
           iconColor: "var(--color-primary)",
           buttonBg: "var(--color-primary)",
-          buttonText: "white",
+          buttonText: onFill,
         };
     }
   };
@@ -77,10 +81,15 @@ const ConfirmModal = ({
           />
           <div className="fixed inset-0 z-60 flex items-center justify-center p-4 pointer-events-none">
             <motion.div
+              ref={modalRef}
+              role="dialog"
+              aria-modal="true"
+              aria-labelledby="confirm-modal-title"
+              tabIndex={-1}
               initial={{ scale: 0.95, opacity: 0, y: 20 }}
               animate={{ scale: 1, opacity: 1, y: 0 }}
               exit={{ scale: 0.95, opacity: 0, y: 20 }}
-              className="w-full max-w-md bg-white dark:bg-gray-800 rounded-2xl shadow-xl overflow-hidden pointer-events-auto"
+              className="w-full max-w-md rounded-2xl shadow-xl overflow-hidden pointer-events-auto"
               style={{
                 backgroundColor: "var(--color-surface)",
                 borderColor: "var(--color-border)",
@@ -100,13 +109,14 @@ const ConfirmModal = ({
                   </div>
                   <button
                     onClick={onClose}
-                    className="text-gray-400 cursor-pointer hover:text-gray-500 transition-colors"
+                    className="text-(--color-muted) cursor-pointer hover:opacity-80 transition-opacity"
                   >
                     <X className="w-5 h-5" />
                   </button>
                 </div>
 
                 <h3
+                  id="confirm-modal-title"
                   className="text-xl font-bold mb-2 "
                   style={{ color: "var(--color-dark)" }}
                 >

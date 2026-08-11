@@ -8,13 +8,13 @@ export default function ExpensesPagination({ page, totalPages, onPrev, onNext })
         disabled={page === 1}
         className={`px-4 py-2 rounded-xl transition-all ${
           page === 1
-            ? "bg-gray-100 dark:bg-gray-800 text-gray-400 cursor-not-allowed"
-            : "bg-white dark:bg-[#1C1C1E] text-gray-700 dark:text-gray-200 hover:bg-gray-50 dark:hover:bg-gray-700 shadow-sm"
+            ? "bg-(--color-light) text-(--color-muted) cursor-not-allowed"
+            : "bg-(--color-surface) text-(--color-dark) hover:bg-(--color-hover) shadow-sm"
         }`}
       >
         السابق
       </button>
-      <span className="text-gray-600 dark:text-gray-300 font-bold">
+      <span className="text-(--color-secondary) font-bold">
         صفحة {page} من {totalPages}
       </span>
       <button
@@ -22,8 +22,8 @@ export default function ExpensesPagination({ page, totalPages, onPrev, onNext })
         disabled={page === totalPages}
         className={`px-4 py-2 rounded-xl transition-all ${
           page === totalPages
-            ? "bg-gray-100 dark:bg-gray-800 text-gray-400 cursor-not-allowed"
-            : "bg-white dark:bg-[#1C1C1E] text-gray-700 dark:text-gray-200 hover:bg-gray-50 dark:hover:bg-gray-700 shadow-sm"
+            ? "bg-(--color-light) text-(--color-muted) cursor-not-allowed"
+            : "bg-(--color-surface) text-(--color-dark) hover:bg-(--color-hover) shadow-sm"
         }`}
       >
         التالي

@@ -25,7 +25,7 @@ export default function MyInvoicesHeader({
         {activeTab === "invoices" && pendingInvoicesCount > 0 && (
           <button
             onClick={onBulkPay}
-            className="flex items-center gap-2 bg-green-600 text-white px-4 py-2 rounded-xl hover:bg-green-700 transition-all font-medium shadow-sm hover:shadow-md"
+            className="flex items-center gap-2 bg-(--color-success) text-white px-4 py-2 rounded-xl hover:brightness-90 transition-all font-medium shadow-sm hover:shadow-md"
           >
             <CheckCircle2 size={20} />
             <span className="hidden sm:inline">

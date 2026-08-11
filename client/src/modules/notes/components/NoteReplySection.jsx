@@ -64,7 +64,7 @@ export default function NoteReplySection({ note, onReply }) {
           <button
             onClick={handleSubmit}
             disabled={!replyContent.trim()}
-            className="p-2 bg-(--color-primary) text-white rounded-lg hover:bg-blue-700 disabled:opacity-50"
+            className="p-2 bg-(--color-primary) text-white rounded-lg hover:brightness-95 disabled:opacity-50"
           >
             <Send size={16} />
           </button>

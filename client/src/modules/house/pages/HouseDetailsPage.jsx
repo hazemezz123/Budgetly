@@ -162,14 +162,15 @@ const HouseDetails = () => {
               <h1 className="text-xl sm:text-2xl font-bold text-(--color-dark) break-words">
                 {house.name}
               </h1>
-              <div
-                className="flex items-start sm:items-center gap-2 text-xs sm:text-sm text-(--color-muted) cursor-pointer hover:text-(--color-primary) transition-colors break-all"
+              <button
+                type="button"
+                className="flex items-start sm:items-center gap-2 text-xs sm:text-sm text-(--color-muted) cursor-pointer hover:text-(--color-primary) transition-colors break-all text-start"
                 onClick={handleCopyId}
                 title="نسخ كود البيت"
               >
                 <span className="leading-relaxed">ID: {house._id}</span>
                 {copiedId ? <CheckCheck size={14} /> : <Copy size={14} />}
-              </div>
+              </button>
             </div>
           </div>
           {isAdmin && (
@@ -226,7 +227,7 @@ const HouseDetails = () => {
           </div>
           <div className="p-4 bg-(--color-bg) rounded-xl text-center">
             <p className="text-(--color-muted) text-sm mb-1">الأدمن</p>
-            <p className="font-bold text-(--color-primary)">
+            <p className="font-bold text-(--color-primary-text)">
               {house.admin.name}
             </p>
           </div>
@@ -300,12 +301,12 @@ const HouseDetails = () => {
                         className="w-12 h-12 rounded-full object-cover border-2 border-(--color-border)"
                       />
                     ) : (
-                      <div className="w-12 h-12 rounded-full bg-(--color-primary)/10 flex items-center justify-center text-(--color-primary) font-bold text-lg border-2 border-(--color-primary)/20">
+                      <div className="w-12 h-12 rounded-full bg-(--color-primary)/10 flex items-center justify-center text-(--color-primary-text) font-bold text-lg border-2 border-(--color-primary)/20">
                         {member.name.charAt(0).toUpperCase()}
                       </div>
                     )}
                     {house.admin._id === member._id && (
-                      <div className="absolute -bottom-1 -right-1 bg-yellow-400 text-white p-1 rounded-full shadow-sm">
+                      <div className="absolute -bottom-1 -right-1 bg-(--color-warning) text-white p-1 rounded-full shadow-sm">
                         <Shield size={10} fill="currentColor" />
                       </div>
                     )}

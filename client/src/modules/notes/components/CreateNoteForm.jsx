@@ -31,7 +31,7 @@ export default function CreateNoteForm({ onAddNote, submitting }) {
         <button
           type="submit"
           disabled={submitting || !newNote.trim()}
-          className="absolute bottom-4 left-4 p-2 bg-(--color-primary) text-white rounded-lg hover:bg-blue-700 disabled:opacity-50 disabled:cursor-not-allowed transition-all"
+          className="absolute bottom-4 left-4 p-2 bg-(--color-primary) text-white rounded-lg hover:brightness-95 disabled:opacity-50 disabled:cursor-not-allowed transition-all"
         >
           {submitting ? (
             <div className="w-5 h-5 border-2 border-white border-t-transparent rounded-full animate-spin" />

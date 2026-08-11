@@ -9,14 +9,14 @@ export default function ExpensesHeader({
 }) {
   return (
     <div className="flex flex-wrap justify-between items-center gap-4 mb-6">
-      <h1 className="text-2xl font-bold text-gray-900 dark:text-white">المصاريف</h1>
+      <h1 className="text-2xl font-bold text-(--color-dark)">المصاريف</h1>
       <div className="flex items-center gap-3">
         <button
           onClick={onToggleFilters}
           className={`flex items-center gap-2 px-4 py-2.5 rounded-2xl transition-all duration-200 font-medium shadow-sm hover:shadow-md ${
             showFilters || hasActiveFilters
               ? "bg-(--color-primary) text-white"
-              : "bg-white dark:bg-[#1C1C1E] text-gray-700 dark:text-gray-200 hover:bg-gray-50 dark:hover:bg-gray-700"
+              : "bg-(--color-surface) text-(--color-dark) hover:bg-(--color-hover)"
           }`}
           style={
             showFilters || hasActiveFilters

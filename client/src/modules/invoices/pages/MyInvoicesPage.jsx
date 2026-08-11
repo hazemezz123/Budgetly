@@ -103,7 +103,7 @@ export default function MyInvoices() {
 
       {loading ? (
         <div className="flex justify-center py-12">
-          <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-(--color-primary)"></div>
+          <div className="animate-spin rounded-full h-8 w-8 border-2 border-(--color-primary) border-t-transparent"></div>
         </div>
       ) : filteredData.length === 0 ? (
         <div className="text-center py-12 bg-(--color-bg) rounded-xl border-2 border-dashed border-(--color-border)">

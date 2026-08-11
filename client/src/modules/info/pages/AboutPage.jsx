@@ -176,7 +176,7 @@ const About = () => {
           </h2>
           <div className="space-y-3">
             <div className="flex gap-3">
-              <div className="shrink-0 w-8 h-8 rounded-full flex items-center justify-center font-bold text-(--color-primary) border border-(--color-primary)">
+              <div className="shrink-0 w-8 h-8 rounded-full flex items-center justify-center font-bold text-(--color-primary-text) border border-(--color-primary)">
                 1
               </div>
               <div>
@@ -196,7 +196,7 @@ const About = () => {
             </div>
 
             <div className="flex gap-3 items-center">
-              <div className="shrink-0 w-8 h-8 rounded-full flex items-center justify-center font-bold text-(--color-primary) border border-(--color-primary)">
+              <div className="shrink-0 w-8 h-8 rounded-full flex items-center justify-center font-bold text-(--color-primary-text) border border-(--color-primary)">
                 2
               </div>
               <div>
@@ -216,7 +216,7 @@ const About = () => {
             </div>
 
             <div className="flex gap-3 items-center">
-              <div className="shrink-0 w-8 h-8 rounded-full flex items-center justify-center font-bold text-(--color-primary) border border-(--color-primary)">
+              <div className="shrink-0 w-8 h-8 rounded-full flex items-center justify-center font-bold text-(--color-primary-text) border border-(--color-primary)">
                 3
               </div>
               <div>
@@ -236,7 +236,7 @@ const About = () => {
             </div>
 
             <div className="flex gap-3">
-              <div className="shrink-0 w-8 h-8 rounded-full flex items-center justify-center font-bold text-(--color-primary) border border-(--color-primary)">
+              <div className="shrink-0 w-8 h-8 rounded-full flex items-center justify-center font-bold text-(--color-primary-text) border border-(--color-primary)">
                 4
               </div>
               <div>
@@ -267,20 +267,20 @@ const About = () => {
           </h2>
           <ul className="space-y-2">
             <li className="flex items-start gap-2 text-(--color-secondary) ">
-              <span style={{ color: "var(--color-primary)" }}>•</span>
+              <span style={{ color: "var(--color-primary-text)" }}>•</span>
               <span>سجل المصاريف أول ما تحصل عشان ما تنساش</span>
             </li>
             <li className="flex items-start gap-2 text-(--color-secondary) ">
-              <span style={{ color: "var(--color-primary)" }}>•</span>
+              <span style={{ color: "var(--color-primary-text)" }}>•</span>
               <span>راجع التحليلات كل شهر عشان تعرف على إيه بتصرف</span>
             </li>
             <li className="flex items-start gap-2 text-(--color-secondary) ">
-              <span style={{ color: "var(--color-primary)" }}>•</span>
+              <span style={{ color: "var(--color-primary-text)" }}>•</span>
 
               <span>سدد فلوسك بانتظام عشان ما تتجمعش عليك</span>
             </li>
             <li className="flex items-start gap-2 text-(--color-secondary) ">
-              <span style={{ color: "var(--color-primary)" }}>•</span>
+              <span style={{ color: "var(--color-primary-text)" }}>•</span>
               <span>
                 استخدم الفلاتر في صفحة المصاريف لو بتدور على حاجة معينة
               </span>
@@ -317,7 +317,7 @@ const About = () => {
               className="flex-1 px-6 py-3 rounded-2xl text-center font-semibold transition-all"
               style={{
                 backgroundColor: "#25D366",
-                color: "white",
+                color: "#0b3d2e",
               }}
             >
               💬 واتساب

@@ -29,7 +29,7 @@ const QuoteCard = () => {
 
       <div className="relative z-10">
         <div className="flex items-center justify-between mb-3 sm:mb-4">
-          <h3 className="text-sm sm:text-lg font-bold text-(--color-primary) font-cairo flex items-center gap-1 sm:gap-2 animate-pulse">
+          <h3 className="text-sm sm:text-lg font-bold text-(--color-primary-text) font-cairo flex items-center gap-1 sm:gap-2 animate-pulse">
             <Quote size={16} className="sm:w-5 sm:h-5" />
             <span>حكمة اليوم</span>
           </h3>

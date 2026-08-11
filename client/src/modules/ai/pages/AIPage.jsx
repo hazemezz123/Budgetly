@@ -93,10 +93,18 @@ const AIPage = () => {
               {chats.map((chat) => (
                 <div
                   key={chat._id}
+                  role="button"
+                  tabIndex={0}
                   onClick={() => setCurrentChatId(chat._id)}
+                  onKeyDown={(e) => {
+                    if (e.key === "Enter" || e.key === " ") {
+                      e.preventDefault();
+                      setCurrentChatId(chat._id);
+                    }
+                  }}
                   className={`p-3 rounded-xl cursor-pointer transition-all flex items-center justify-between group ${
                     currentChatId === chat._id
-                      ? "bg-(--color-bg) border-r-4 border-(--color-primary) font-bold"
+                      ? "bg-(--color-primary-bg) font-bold"
                       : "hover:bg-(--color-bg) text-(--color-muted)"
                   }`}
                 >

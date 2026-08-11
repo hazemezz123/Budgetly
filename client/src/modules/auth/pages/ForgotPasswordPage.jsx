@@ -33,7 +33,7 @@ const ForgotPassword = () => {
             </p>
             <Link
               to="/login"
-              className="text-(--color-primary) hover:underline flex items-center justify-center gap-2"
+              className="text-(--color-primary-text) hover:underline flex items-center justify-center gap-2"
             >
               <ArrowRight size={16} />
               العودة لتسجيل الدخول
