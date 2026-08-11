@@ -1,5 +1,7 @@
 import express from "express";
 import { authenticate } from "../middleware/auth.js";
+import { validate } from "../middleware/validate.js";
+import { createHouseSchema, joinHouseSchema } from "../validators/houseValidators.js";
 import {
   getHouses,
   getHouse,
@@ -24,10 +26,10 @@ router.get("/", getHouses);
 router.get("/:id", authenticate, getHouse);
 
 // Create new house
-router.post("/", authenticate, createHouse);
+router.post("/", authenticate, validate({ body: createHouseSchema }), createHouse);
 
 // Join a house
-router.post("/:id/join", authenticate, joinHouse);
+router.post("/:id/join", authenticate, validate({ body: joinHouseSchema }), joinHouse);
 
 // Update house name (admin only)
 router.patch("/:id/name", authenticate, updateHouseName);

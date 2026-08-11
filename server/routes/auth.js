@@ -1,5 +1,7 @@
 import express from "express";
 import { authenticate } from "../middleware/auth.js";
+import { validate } from "../middleware/validate.js";
+import { registerSchema, loginSchema } from "../validators/authValidators.js";
 import {
   register,
   login,
@@ -12,10 +14,10 @@ import {
 const router = express.Router();
 
 // Register
-router.post("/register", register);
+router.post("/register", validate({ body: registerSchema }), register);
 
 // Login
-router.post("/login", login);
+router.post("/login", validate({ body: loginSchema }), login);
 
 // Google login
 router.post("/google", googleLogin);
