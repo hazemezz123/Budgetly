@@ -11,6 +11,9 @@
     "setup:env": "powershell -Command \"Copy-Item .env.development.example .env.development.local -Force; Copy-Item .env.production.example .env.production.local -Force; Write-Host 'Environment files created successfully!' -ForegroundColor Green\""
   },
   "dependencies": {
+    "@capacitor/android": "^8.5.0",
+    "@capacitor/cli": "^8.5.0",
+    "@capacitor/core": "^8.5.0",
     "@tailwindcss/vite": "^4.1.17",
     "@tanstack/react-query": "^5.90.16",
     "@tanstack/react-table": "^8.21.3",
