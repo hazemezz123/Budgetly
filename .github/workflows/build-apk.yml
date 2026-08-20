@@ -22,11 +22,11 @@ jobs:
           cache: npm
           cache-dependency-path: client/package-lock.json
 
-      - name: Set up Java JDK 17 (Zulu)
+      - name: Set up Java JDK 21 (Zulu)
         uses: actions/setup-java@v4
         with:
           distribution: zulu
-          java-version: '17'
+          java-version: '21'
 
       - name: Install dependencies
         working-directory: client
