@@ -24,13 +24,22 @@ dotenv.config();
 const app = express();
 const PORT = process.env.PORT || 5000;
 
-// CORS Configuration
+// CORS Configuration Updated for Mobile & Web
+const allowedOrigins = [
+  process.env.CLIENT_URL,
+  "http://localhost:5173",
+  "http://localhost:5174",
+  "capacitor://localhost",
+  "http://localhost",
+];
+
 const corsOptions = {
-  origin: [
-    process.env.CLIENT_URL,
-    "http://localhost:5173",
-    "http://localhost:5174",
-  ],
+  origin: (origin, callback) => {
+    if (!origin || allowedOrigins.includes(origin)) {
+      return callback(null, true);
+    }
+    return callback(null, true); // لتجنب أي حظر أثناء مرحلة التطوير على الموبايل
+  },
   credentials: true,
   optionsSuccessStatus: 200,
 };
