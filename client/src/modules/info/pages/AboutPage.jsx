@@ -1,4 +1,4 @@
-import { Users, DollarSign, TrendingUp, Facebook } from "lucide-react";
+import { Users, DollarSign, TrendingUp } from "lucide-react";
 import { Card, CardContent } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 

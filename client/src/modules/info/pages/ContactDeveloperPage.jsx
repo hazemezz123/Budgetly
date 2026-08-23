@@ -38,8 +38,7 @@ const ContactDeveloper = () => {
         subject: "",
         message: "",
       });
-    } catch (error) {
-      console.error(error);
+    } catch {
       toast.error("حصلت مشكلة");
     } finally {
       setIsSubmitting(false);

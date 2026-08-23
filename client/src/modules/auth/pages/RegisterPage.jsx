@@ -14,11 +14,11 @@ const Register = () => {
   const [showConfirmPw, setShowConfirmPw] = useState(false);
 
   const footerLink = (
-    <p className="text-ios-secondary">
+    <p className="text-(--color-secondary)">
       لديك حساب بالفعل؟{" "}
       <Link
         to="/login"
-        className="text-ios-primary-text hover:underline font-semibold transition-colors"
+        className="text-(--color-primary) hover:underline font-semibold transition-colors"
       >
         تسجيل الدخول
       </Link>
