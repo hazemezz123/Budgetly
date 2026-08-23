@@ -179,38 +179,42 @@ const HouseDetails = () => {
   return (
     <div className="pb-8 px-3 sm:px-4 max-w-4xl mx-auto font-primary">
       {/* Header */}
-      <div className="bg-(--color-surface) rounded-2xl p-4 sm:p-6 shadow-sm border border-(--color-border) mb-6">
-        <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4 mb-4">
-          <div className="flex items-start sm:items-center gap-3 min-w-0">
-            <div className="p-3 bg-(--color-primary)/10 rounded-xl">
-              <Home className="text-(--color-primary)" size={32} />
+      <div className="bg-(--color-surface) rounded-2xl p-3 sm:p-6 shadow-sm border border-(--color-border) mb-6 relative">
+        <div className="flex flex-row items-start justify-between gap-2 sm:gap-4 mb-4">
+          <div className="flex items-start gap-2 sm:gap-3 min-w-0 flex-1 pl-7 sm:pl-0">
+            <div className="p-2 sm:p-3 bg-(--color-primary)/10 rounded-lg sm:rounded-xl shrink-0">
+              <Home className="text-(--color-primary) size-5 sm:size-8" />
             </div>
             <div className="min-w-0 flex-1">
-              <h1 className="text-xl sm:text-2xl font-bold text-(--color-dark) break-words">
+              <h1 className="text-base sm:text-2xl font-bold text-(--color-dark) break-words leading-tight">
                 {house.name}
               </h1>
               <button
                 type="button"
-                className="flex items-start sm:items-center gap-2 text-xs sm:text-sm text-(--color-muted) cursor-pointer hover:text-(--color-primary) transition-colors break-all text-start"
+                className="flex items-center gap-1.5 sm:gap-2 text-[11px] sm:text-sm text-(--color-muted) cursor-pointer hover:text-(--color-primary) transition-colors break-all text-start"
                 onClick={handleCopyId}
                 title="نسخ كود البيت"
               >
                 <span className="leading-relaxed">ID: {house._id}</span>
-                {copiedId ? <CheckCheck size={14} /> : <Copy size={14} />}
+                {copiedId ? (
+                  <CheckCheck size={12} className="sm:size-[14px] shrink-0" />
+                ) : (
+                  <Copy size={12} className="sm:size-[14px] shrink-0" />
+                )}
               </button>
             </div>
           </div>
           {isAdmin && (
-            <div className="flex gap-2">
+            <div className="absolute top-2.5 left-2.5 sm:static flex gap-2 shrink-0 self-start">
               <button
                 onClick={() => {
                   setNewName(house.name);
                   setEditingName(true);
                 }}
-                className="p-2 hover:bg-(--color-bg) rounded-xl transition-colors text-(--color-primary)"
+                className="p-1.5 sm:p-2 hover:bg-(--color-bg) rounded-lg sm:rounded-xl transition-colors text-(--color-primary) shrink-0 bg-(--color-surface) sm:bg-transparent border border-(--color-border) sm:border-0 shadow-sm sm:shadow-none"
                 title="تعديل الاسم"
               >
-                <Settings size={20} />
+                <Settings size={16} className="sm:size-[20px]" />
               </button>
             </div>
           )}
