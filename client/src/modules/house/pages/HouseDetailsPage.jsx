@@ -23,6 +23,9 @@ import { Tabs, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { RoleRotationSettings } from "../components";
 import { useHouse } from "../hooks";
 
+const tabTriggerCls =
+  "min-h-[44px] rounded-lg font-bold text-xs sm:text-sm flex items-center justify-center gap-1.5 sm:gap-2 data-[state=active]:bg-(--color-primary) data-[state=active]:text-(--color-on-fill) dark:data-[state=active]:bg-(--color-primary) dark:data-[state=active]:text-(--color-on-fill) dark:data-[state=active]:border-transparent";
+
 const HouseDetails = () => {
   const { id } = useParams();
   const { user } = useAuth();
@@ -240,32 +243,23 @@ const HouseDetails = () => {
       {/* Tabs */}
       <Tabs value={activeTab} onValueChange={setActiveTab} className="mb-6">
         <TabsList
-          className={`w-full h-auto p-1 rounded-xl border border-(--color-border) bg-(--color-surface) grid ${
+          className={`w-full group-data-[orientation=horizontal]/tabs:h-auto p-1 rounded-xl border border-(--color-border) bg-(--color-surface) grid ${
             isAdmin ? "grid-cols-3" : "grid-cols-2"
           }`}
         >
-          <TabsTrigger
-            value="members"
-            className="min-h-[44px] rounded-lg font-bold text-xs sm:text-sm flex items-center justify-center gap-1.5 sm:gap-2 data-[state=active]:bg-(--color-primary) data-[state=active]:text-(--color-on-fill)"
-          >
-            <Users size={16} className="sm:w-[18px] sm:h-[18px]" />
+          <TabsTrigger value="members" className={tabTriggerCls}>
+            <Users size={16} className="sm:size-[18px]" />
             <span>الأعضاء</span>
           </TabsTrigger>
           {isAdmin && (
-            <TabsTrigger
-              value="settings"
-              className="min-h-[44px] rounded-lg font-bold text-xs sm:text-sm flex items-center justify-center gap-1.5 sm:gap-2 data-[state=active]:bg-(--color-primary) data-[state=active]:text-(--color-on-fill)"
-            >
-              <Settings size={16} className="sm:w-[18px] sm:h-[18px]" />
+            <TabsTrigger value="settings" className={tabTriggerCls}>
+              <Settings size={16} className="sm:size-[18px]" />
               <span>إعدادات</span>
             </TabsTrigger>
           )}
           {isAdmin && (
-            <TabsTrigger
-              value="rotation"
-              className="min-h-[44px] rounded-lg font-bold text-xs sm:text-sm flex items-center justify-center gap-1.5 sm:gap-2 data-[state=active]:bg-(--color-primary) data-[state=active]:text-(--color-on-fill)"
-            >
-              <RotateCcw size={16} className="sm:w-[18px] sm:h-[18px]" />
+            <TabsTrigger value="rotation" className={tabTriggerCls}>
+              <RotateCcw size={16} className="sm:size-[18px]" />
               <span>المهام</span>
             </TabsTrigger>
           )}
