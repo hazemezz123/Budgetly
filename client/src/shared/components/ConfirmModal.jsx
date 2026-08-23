@@ -79,24 +79,29 @@ const ConfirmModal = ({
             onClick={onClose}
             className="fixed inset-0 z-60 backdrop-blur-sm bg-black/30"
           />
-          <div className="fixed inset-0 z-60 flex items-center justify-center p-4 pointer-events-none">
+          <div className="fixed inset-0 z-60 flex items-end sm:items-center justify-center p-0 sm:p-4 pointer-events-none">
             <motion.div
               ref={modalRef}
               role="dialog"
               aria-modal="true"
               aria-labelledby="confirm-modal-title"
               tabIndex={-1}
-              initial={{ scale: 0.95, opacity: 0, y: 20 }}
+              initial={{ scale: 0.95, opacity: 0, y: 40 }}
               animate={{ scale: 1, opacity: 1, y: 0 }}
-              exit={{ scale: 0.95, opacity: 0, y: 20 }}
-              className="w-full max-w-md rounded-2xl shadow-xl overflow-hidden pointer-events-auto"
+              exit={{ scale: 0.95, opacity: 0, y: 40 }}
+              className="w-full max-w-md rounded-t-3xl sm:rounded-2xl shadow-xl overflow-hidden pointer-events-auto max-h-[85vh] flex flex-col"
               style={{
                 backgroundColor: "var(--color-surface)",
                 borderColor: "var(--color-border)",
                 borderWidth: "1px",
               }}
             >
-              <div className="p-6">
+              {/* Mobile handle indicator */}
+              <div className="sm:hidden pt-3 pb-1 flex justify-center shrink-0">
+                <div className="w-10 h-1.5 rounded-full bg-(--color-border)" />
+              </div>
+
+              <div className="p-5 sm:p-6 overflow-y-auto">
                 <div className="flex items-start justify-between mb-4">
                   <div
                     className="p-3 rounded-full bg-opacity-10"
@@ -109,7 +114,7 @@ const ConfirmModal = ({
                   </div>
                   <button
                     onClick={onClose}
-                    className="text-(--color-muted) cursor-pointer hover:opacity-80 transition-opacity"
+                    className="p-2 rounded-xl text-(--color-muted) cursor-pointer hover:bg-(--color-hover) transition-colors"
                   >
                     <X className="w-5 h-5" />
                   </button>
@@ -117,23 +122,23 @@ const ConfirmModal = ({
 
                 <h3
                   id="confirm-modal-title"
-                  className="text-xl font-bold mb-2 "
+                  className="text-lg sm:text-xl font-bold mb-2"
                   style={{ color: "var(--color-dark)" }}
                 >
                   {title}
                 </h3>
                 <p
-                  className="text-base leading-relaxed mb-6"
+                  className="text-sm sm:text-base leading-relaxed mb-6"
                   style={{ color: "var(--color-muted)" }}
                 >
                   {message}
                 </p>
 
-                <div className="flex gap-3">
+                <div className="flex gap-3 pt-2">
                   <button
                     onClick={onConfirm}
                     disabled={isLoading}
-                    className="flex-1 px-4 py-2.5 cursor-pointer rounded-xl font-semibold transition-transform active:scale-95"
+                    className="flex-1 min-h-[44px] px-4 py-2.5 cursor-pointer rounded-xl font-semibold transition-transform active:scale-95 flex items-center justify-center"
                     style={{
                       backgroundColor: styles.buttonBg,
                       color: styles.buttonText,
@@ -145,7 +150,7 @@ const ConfirmModal = ({
                   <button
                     onClick={onClose}
                     disabled={isLoading}
-                    className="flex-1 px-4 py-2.5 cursor-pointer rounded-xl font-semibold transition-colors"
+                    className="flex-1 min-h-[44px] px-4 py-2.5 cursor-pointer rounded-xl font-semibold transition-colors flex items-center justify-center"
                     style={{
                       backgroundColor: "var(--color-light)",
                       color: "var(--color-dark)",

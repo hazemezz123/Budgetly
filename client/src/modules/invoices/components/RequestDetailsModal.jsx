@@ -7,16 +7,19 @@ export default function RequestDetailsModal({ isOpen, onClose, request }) {
   if (!isOpen || !request) return null;
 
   return (
-    <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/50 backdrop-blur-sm animate-in fade-in duration-200">
+    <div className="fixed inset-0 z-50 flex items-end sm:items-center justify-center p-0 sm:p-4 bg-black/50 backdrop-blur-sm animate-in fade-in duration-200">
       <div
         ref={modalRef}
         role="dialog"
         aria-modal="true"
         aria-labelledby="request-details-title"
         tabIndex={-1}
-        className="bg-(--color-surface) rounded-2xl shadow-xl w-full max-w-lg overflow-hidden border border-(--color-border) transform transition-all scale-100 max-h-[90vh] flex flex-col"
+        className="bg-(--color-surface) rounded-t-3xl sm:rounded-2xl shadow-xl w-full max-w-lg overflow-hidden border border-(--color-border) transform transition-all scale-100 max-h-[85vh] sm:max-h-[90vh] flex flex-col animate-in slide-in-from-bottom sm:zoom-in duration-200"
         dir="rtl"
       >
+        <div className="sm:hidden pt-3 pb-1 flex justify-center shrink-0">
+          <div className="w-10 h-1.5 rounded-full bg-(--color-border)" />
+        </div>
         <div className="p-4 sm:p-6 border-b border-(--color-border) flex justify-between items-start shrink-0">
           <div>
             <h3
@@ -102,10 +105,10 @@ export default function RequestDetailsModal({ isOpen, onClose, request }) {
           </div>
         </div>
 
-        <div className="p-4 sm:p-6 border-t border-(--color-border) bg-(--color-bg) flex justify-end shrink-0">
+        <div className="p-4 sm:p-6 border-t border-(--color-border) bg-(--color-bg) flex justify-end shrink-0 pb-safe">
           <button
             onClick={onClose}
-            className="w-full sm:w-auto px-6 py-2 bg-(--color-surface) border border-(--color-border) text-(--color-dark) rounded-xl hover:bg-(--color-hover) font-medium transition-all"
+            className="w-full sm:w-auto min-h-[44px] px-6 py-2.5 bg-(--color-surface) border border-(--color-border) text-(--color-dark) rounded-xl hover:bg-(--color-hover) font-medium transition-all flex items-center justify-center"
           >
             إغلاق
           </button>

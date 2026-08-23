@@ -29,44 +29,47 @@ const WelcomeModal = () => {
   if (!isOpen) return null;
 
   return (
-    <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/50 backdrop-blur-sm transition-opacity duration-300">
+    <div className="fixed inset-0 z-50 flex items-end sm:items-center justify-center p-0 sm:p-4 bg-black/50 backdrop-blur-sm transition-opacity duration-300">
       <div
-        className="bg-ios-surface border border-ios-border rounded-3xl shadow-2xl max-w-md w-full p-6 relative animate-in fade-in zoom-in duration-300"
+        className="bg-ios-surface border border-ios-border rounded-t-3xl sm:rounded-3xl shadow-2xl max-w-md w-full p-5 sm:p-6 relative animate-in slide-in-from-bottom sm:zoom-in duration-300 max-h-[85vh] overflow-y-auto flex flex-col"
         role="dialog"
         aria-labelledby="welcome-title"
         aria-modal="true"
       >
+        <div className="sm:hidden pt-1 pb-2 flex justify-center shrink-0">
+          <div className="w-10 h-1.5 rounded-full bg-(--color-border)" />
+        </div>
         {/* Close Button */}
         <button
           onClick={handleClose}
-          className="absolute top-4 left-4 p-2 rounded-full hover:bg-black/5 transition-colors text-ios-secondary"
+          className="absolute top-6 sm:top-4 left-4 p-2.5 sm:p-2 rounded-full hover:bg-black/5 transition-colors text-ios-secondary min-w-[40px] min-h-[40px] flex items-center justify-center"
           aria-label="إغلاق الترحيب"
         >
           <X size={20} />
         </button>
 
         {/* Content */}
-        <div className="text-center pt-4">
+        <div className="text-center pt-2 sm:pt-4">
           <div className="mx-auto bg-ios-primary/10 w-20 h-20 rounded-full flex items-center justify-center mb-6">
             <Sparkles className="text-ios-primary w-10 h-10" />
           </div>
 
           <h2
             id="welcome-title"
-            className="text-2xl font-bold text-ios-dark mb-3"
+            className="text-xl sm:text-2xl font-bold text-ios-dark mb-3"
           >
             أهلاً بيك في Budgetly! 👋
           </h2>
 
-          <p className="text-ios-secondary mb-8 leading-relaxed">
+          <p className="text-sm sm:text-base text-ios-secondary mb-6 sm:mb-8 leading-relaxed">
             مبسوطين إنك انضميت لينا. عشان تستفيد أقصى استفادة من الموقع، عملنا
             دليل سريع يشرحلك كل المميزات وازاي تدير ميزانيتك بسهولة.
           </p>
 
-          <div className="space-y-3">
+          <div className="space-y-3 pb-safe">
             <button
               onClick={handleStartGuide}
-              className="w-full bg-ios-primary hover:bg-ios-primary/90 text-white font-bold py-3.5 px-6 rounded-2xl transition-all duration-200 flex items-center justify-center gap-2 shadow-lg hover:shadow-xl"
+              className="w-full bg-ios-primary hover:bg-ios-primary/90 text-white font-bold min-h-[48px] py-3.5 px-6 rounded-2xl transition-all duration-200 flex items-center justify-center gap-2 shadow-lg hover:shadow-xl"
             >
               <span>ابدأ الجولة التعريفية</span>
               <ExternalLink size={18} />
@@ -74,7 +77,7 @@ const WelcomeModal = () => {
 
             <button
               onClick={handleClose}
-              className="w-full bg-transparent hover:bg-black/5 text-ios-secondary font-medium py-3 px-6 rounded-2xl transition-colors"
+              className="w-full bg-transparent hover:bg-black/5 text-ios-secondary font-medium min-h-[44px] py-3 px-6 rounded-2xl transition-colors"
             >
               لا شكراً، هكتشف بنفسي
             </button>

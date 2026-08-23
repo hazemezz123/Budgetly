@@ -74,26 +74,30 @@ export default function ExpenseDetailsModal({ expense, isOpen, onClose }) {
   };
 
   return (
-    <div className="fixed inset-0 z-50 flex items-center justify-center p-4">
+    <div className="fixed inset-0 z-50 flex items-end sm:items-center justify-center p-0 sm:p-4">
       {/* Backdrop */}
       <div
         className="absolute inset-0 bg-black/50 backdrop-blur-sm"
         onClick={onClose}
       />
 
-      {/* Modal */}
+      {/* Modal - bottom sheet on mobile, centered on desktop */}
       <div
         ref={modalRef}
         role="dialog"
         aria-modal="true"
         aria-labelledby="expense-details-title"
         tabIndex={-1}
-        className="relative w-full max-w-lg rounded-3xl shadow-2xl overflow-hidden animate-in fade-in zoom-in duration-200"
+        className="relative w-full max-w-lg rounded-t-3xl sm:rounded-3xl shadow-2xl overflow-hidden flex flex-col max-h-[85vh] sm:max-h-[90vh] animate-in fade-in slide-in-from-bottom sm:zoom-in duration-200"
         style={{ backgroundColor: "var(--color-surface)" }}
       >
+        {/* Mobile handle */}
+        <div className="sm:hidden pt-3 pb-1 flex justify-center shrink-0">
+          <div className="w-10 h-1.5 rounded-full bg-(--color-border)" />
+        </div>
         {/* Header */}
         <div
-          className="p-6 border-b"
+          className="p-5 sm:p-6 border-b shrink-0"
           style={{ borderColor: "var(--color-border)" }}
         >
           <div className="flex items-start justify-between">
@@ -131,7 +135,7 @@ export default function ExpenseDetailsModal({ expense, isOpen, onClose }) {
         </div>
 
         {/* Content */}
-        <div className="p-6 space-y-5 max-h-[60vh] overflow-y-auto">
+        <div className="p-5 sm:p-6 space-y-5 overflow-y-auto flex-1 min-h-0">
           {/* Title */}
           <div className="flex items-start gap-3">
             <FileText size={20} style={{ color: "var(--color-primary)" }} />
@@ -310,12 +314,12 @@ export default function ExpenseDetailsModal({ expense, isOpen, onClose }) {
 
         {/* Footer */}
         <div
-          className="p-4 border-t"
+          className="p-4 border-t shrink-0 pb-safe"
           style={{ borderColor: "var(--color-border)" }}
         >
           <button
             onClick={onClose}
-            className="w-full py-3 rounded-xl font-medium transition-colors"
+            className="w-full min-h-[44px] py-3 rounded-xl font-medium transition-colors"
             style={{
               backgroundColor: "var(--color-light)",
               color: "var(--color-secondary)",
