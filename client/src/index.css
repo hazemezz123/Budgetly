@@ -2,6 +2,57 @@
    Tailwind CSS v4
 =============================== */
 @import "tailwindcss";
+@import "tw-animate-css";
+
+/* ============================
+   shadcn/ui semantic theme
+   (references Budgetly tokens — dark mode follows .dark automatically)
+============================== */
+@custom-variant dark (&:is(.dark *));
+
+@theme inline {
+  --color-background: var(--background);
+  --color-foreground: var(--foreground);
+  --color-card: var(--card);
+  --color-card-foreground: var(--card-foreground);
+  --color-popover: var(--popover);
+  --color-popover-foreground: var(--popover-foreground);
+  --color-primary: var(--primary);
+  --color-primary-foreground: var(--primary-foreground);
+  --color-secondary: var(--secondary);
+  --color-secondary-foreground: var(--secondary-foreground);
+  --color-muted: var(--muted);
+  --color-muted-foreground: var(--muted-foreground);
+  --color-accent: var(--accent);
+  --color-accent-foreground: var(--accent-foreground);
+  --color-destructive: var(--destructive);
+  --color-border: var(--border);
+  --color-input: var(--input);
+  --color-ring: var(--ring);
+}
+
+:root {
+  /* shadcn semantic aliases -> Budgetly tokens */
+  --background: var(--color-bg);
+  --foreground: var(--color-dark);
+  --card: var(--color-surface);
+  --card-foreground: var(--color-dark);
+  --popover: var(--color-surface);
+  --popover-foreground: var(--color-dark);
+  --primary: var(--color-primary);
+  --primary-foreground: var(--color-on-fill);
+  --secondary: var(--color-muted-bg);
+  --secondary-foreground: var(--color-dark);
+  --muted: var(--color-muted-bg);
+  --muted-foreground: var(--color-muted);
+  --accent: var(--color-hover);
+  --accent-foreground: var(--color-dark);
+  --destructive: var(--color-error);
+  --border: var(--color-border);
+  --input: var(--color-border);
+  --ring: var(--color-primary);
+  --radius: 1rem;
+}
 
 /* ============================
    Tailwind Variables & Font Families
