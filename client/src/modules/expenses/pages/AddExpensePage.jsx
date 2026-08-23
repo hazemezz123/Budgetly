@@ -64,7 +64,7 @@ const AddExpense = () => {
               onChange={(e) => handleInputChange("title", e.target.value)}
               placeholder="مثال: فاتورة الكهرباء"
               required
-              className="h-11 sm:h-10 pr-9 text-sm sm:text-base rounded-xl"
+              className="h-11 sm:h-10 pr-9 text-sm sm:text-base md:text-base rounded-xl"
             />
           </div>
         </div>
@@ -135,7 +135,7 @@ const AddExpense = () => {
                 onChange={(e) => handleInputChange("totalAmount", e.target.value)}
                 placeholder="0.00"
                 required
-                className="h-11 sm:h-10 pr-9 pl-3 text-sm sm:text-base rounded-xl font-numbers"
+                className="h-11 sm:h-10 pr-9 pl-3 text-sm sm:text-base md:text-base rounded-xl font-numbers"
               />
             </div>
           </div>
@@ -156,8 +156,14 @@ const AddExpense = () => {
 
         {formData.splitType === "specific" && (
           <div className="p-3 sm:p-5 rounded-2xl bg-(--color-bg) border border-(--color-border)">
-            <Label className="block mb-2.5 sm:mb-3">اختار مين هيدفع</Label>
-            <div className="grid grid-cols-2 sm:grid-cols-3 gap-2 sm:gap-4 max-h-72 sm:max-h-96 overflow-y-auto p-1 custom-scrollbar">
+            <Label id="expense-picker-label" className="block mb-2.5 sm:mb-3">
+              اختار مين هيدفع
+            </Label>
+            <div
+              role="group"
+              aria-labelledby="expense-picker-label"
+              className="grid grid-cols-2 sm:grid-cols-3 gap-2 sm:gap-4 max-h-72 sm:max-h-96 overflow-y-auto p-1 custom-scrollbar"
+            >
               {users.map((u) => {
                 const isSelected = selectedUsers.includes(u._id);
                 return (
