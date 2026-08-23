@@ -471,32 +471,4 @@ select {
   appearance: none;
 }
 
-/* ============================
-   New Dark Palettes
-   Must be combined with .dark class
-   Example: <html class="dark theme-yellow-black">
-=============================== */
 
-/* A) YellowBlack */
-
-/* E) DarkOrange */
-.dark.theme-dark-orange {
-  --color-bg: #0d0d0d;
-  --color-surface: #181818;
-  --color-primary: #fb923c;
-  --color-primary-border: #f97316;
-  --color-primary-bg: #202020;
-  --color-dark: #f3f4f6;
-  --color-secondary: #9ca3af;
-  --color-light: #2a2a2a;
-  --color-border: #333333;
-  --color-hover: #202020;
-  --color-muted-bg: #0d0d0d;
-  --color-muted: #9ca3af;
-  --color-success: #22c55e;
-  --color-error: #f87171;
-  --color-warning: #fbbf24;
-  --color-info: #60a5fa;
-  --gradient-bg: linear-gradient(135deg, #0d0d0d 0%, #181818 100%);
-  --zigzag-color: #181818;
-}
