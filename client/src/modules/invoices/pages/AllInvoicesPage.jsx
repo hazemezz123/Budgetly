@@ -145,7 +145,7 @@ export default function AllInvoices() {
         </div>
       )}
 
-      <div className="grid grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-3 sm:gap-4">
+      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-3 sm:gap-4">
         {userStats.map((u) => (
           <div
             key={u._id}
@@ -256,7 +256,7 @@ export default function AllInvoices() {
                   )
                 }
                 disabled={isApprovingAllUserInvoices}
-                className="self-start sm:self-auto px-4 py-2 rounded-xl bg-(--color-status-approved-bg) text-(--color-status-approved) font-bold hover:opacity-80 disabled:opacity-60 disabled:cursor-not-allowed transition-colors"
+                className="w-full sm:w-auto min-h-[44px] px-4 py-2.5 rounded-xl bg-(--color-status-approved-bg) text-(--color-status-approved) font-bold hover:opacity-80 disabled:opacity-60 disabled:cursor-not-allowed transition-colors flex items-center justify-center"
               >
                 {isApprovingAllUserInvoices
                   ? "جاري الموافقة..."

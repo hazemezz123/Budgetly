@@ -35,10 +35,10 @@ export default function MyInvoicesFilters({
 
   return (
     <>
-      <div className="flex bg-(--color-surface) p-1 rounded-xl border border-(--color-border) w-fit">
+      <div className="flex bg-(--color-surface) p-1 rounded-xl border border-(--color-border) w-full sm:w-fit">
         <button
           onClick={() => onTabChange("invoices")}
-          className={`px-6 py-2 rounded-lg text-sm font-bold transition-all ${
+          className={`flex-1 sm:flex-none min-h-[44px] px-6 py-2 rounded-lg text-sm font-bold transition-all ${
             activeTab === "invoices"
               ? "bg-(--color-primary) text-white shadow-sm"
               : "text-(--color-secondary) hover:bg-(--color-hover)"
@@ -48,7 +48,7 @@ export default function MyInvoicesFilters({
         </button>
         <button
           onClick={() => onTabChange("requests")}
-          className={`px-6 py-2 rounded-lg text-sm font-bold transition-all ${
+          className={`flex-1 sm:flex-none min-h-[44px] px-6 py-2 rounded-lg text-sm font-bold transition-all ${
             activeTab === "requests"
               ? "bg-(--color-primary) text-white shadow-sm"
               : "text-(--color-secondary) hover:bg-(--color-hover)"
@@ -58,14 +58,14 @@ export default function MyInvoicesFilters({
         </button>
       </div>
 
-      <div className="flex flex-col sm:flex-row gap-4 bg-(--color-surface) p-4 rounded-xl shadow-sm border border-(--color-border)">
+      <div className="flex flex-col sm:flex-row gap-3 sm:gap-4 bg-(--color-surface) p-3 sm:p-4 rounded-xl shadow-sm border border-(--color-border)">
         <div className="relative flex-1">
           <input
             type="text"
             placeholder={
               activeTab === "invoices" ? "ابحث في الفواتير..." : "ابحث في الطلبات..."
             }
-            className="w-full pr-10 pl-4 py-2 bg-(--color-bg) border border-(--color-border) rounded-lg focus:ring-2 focus:ring-(--color-primary) focus:border-transparent outline-none transition-all text-(--color-dark)"
+            className="w-full pr-10 pl-4 py-2.5 bg-(--color-bg) border border-(--color-border) rounded-xl focus:ring-2 focus:ring-(--color-primary) focus:border-transparent outline-none transition-all text-base sm:text-sm text-(--color-dark) min-h-[44px]"
             value={searchTerm}
             onChange={(e) => onSearchChange(e.target.value)}
           />
@@ -75,11 +75,11 @@ export default function MyInvoicesFilters({
           />
         </div>
 
-        <div className="relative">
+        <div className="relative w-full sm:w-auto">
           <select
             value={sortBy}
             onChange={(e) => onSortChange(e.target.value)}
-            className="appearance-none pl-8 pr-4 py-2 bg-(--color-bg) border border-(--color-border) rounded-lg focus:ring-2 focus:ring-(--color-primary) focus:border-transparent outline-none transition-all text-(--color-dark) cursor-pointer min-w-[160px]"
+            className="w-full appearance-none pl-8 pr-4 py-2.5 bg-(--color-bg) border border-(--color-border) rounded-xl focus:ring-2 focus:ring-(--color-primary) focus:border-transparent outline-none transition-all text-base sm:text-sm text-(--color-dark) cursor-pointer sm:min-w-[160px] min-h-[44px]"
           >
             <option value="date_desc">الأحدث أولاً</option>
             <option value="date_asc">الأقدم أولاً</option>
@@ -93,12 +93,12 @@ export default function MyInvoicesFilters({
           />
         </div>
 
-        <div className="flex items-center gap-2 overflow-x-auto pb-2 sm:pb-0">
+        <div className="flex items-center gap-2 overflow-x-auto pb-1 sm:pb-0 -mx-1 px-1">
           {filterOptions.map((status) => (
             <button
               key={status}
               onClick={() => onFilterChange(status)}
-              className={`px-4 py-2 rounded-lg text-sm font-medium whitespace-nowrap transition-colors ${
+              className={`min-h-[40px] px-4 py-2 rounded-xl text-sm font-medium whitespace-nowrap transition-colors shrink-0 ${
                 filterStatus === status
                   ? "bg-(--color-primary) text-white"
                   : "bg-(--color-bg) text-(--color-secondary) hover:bg-(--color-hover)"

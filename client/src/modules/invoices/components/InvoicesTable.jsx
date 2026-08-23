@@ -127,12 +127,12 @@ export default function InvoicesTable({
 
   return (
     <div className="space-y-4">
-      <div className="flex items-center gap-2 bg-(--color-bg) p-2 rounded-lg border border-(--color-border) w-full md:w-64">
-        <Search size={18} className="text-(--color-secondary)" />
+      <div className="flex items-center gap-2 bg-(--color-bg) p-2.5 rounded-xl border border-(--color-border) w-full md:w-64">
+        <Search size={18} className="text-(--color-secondary) shrink-0" />
         <input
           type="text"
           placeholder="بحث..."
-          className="bg-transparent border-none outline-none text-sm w-full text-(--color-dark)"
+          className="bg-transparent border-none outline-none text-base md:text-sm w-full text-(--color-dark) min-h-[24px]"
           value={globalFilter}
           onChange={(e) => setGlobalFilter(e.target.value)}
         />
@@ -198,17 +198,17 @@ export default function InvoicesTable({
         </>
       )}
 
-      <div className="flex items-center justify-between text-xs text-(--color-secondary) pt-4 border-t border-(--color-border)">
+      <div className="flex flex-col sm:flex-row gap-3 sm:items-center justify-between text-xs text-(--color-secondary) pt-4 border-t border-(--color-border)">
         <div className="flex gap-2">
           <button
-            className="px-3 py-1 border rounded hover:bg-(--color-hover) disabled:opacity-50 transition-colors"
+            className="flex-1 sm:flex-none min-h-[40px] px-4 py-2 border rounded-xl hover:bg-(--color-hover) disabled:opacity-50 transition-colors font-medium"
             onClick={() => table.previousPage()}
             disabled={!table.getCanPreviousPage()}
           >
             السابق
           </button>
           <button
-            className="px-3 py-1 border rounded hover:bg-(--color-hover) disabled:opacity-50 transition-colors"
+            className="flex-1 sm:flex-none min-h-[40px] px-4 py-2 border rounded-xl hover:bg-(--color-hover) disabled:opacity-50 transition-colors font-medium"
             onClick={() => table.nextPage()}
             disabled={!table.getCanNextPage()}
           >
