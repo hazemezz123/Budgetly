@@ -1,5 +1,4 @@
-import { PlusCircle, Check, FileText, Coins } from "lucide-react";
-import { Loader } from "../../../shared/components";
+import { PlusCircle, Check, FileText, Coins, Loader2 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
@@ -26,7 +25,18 @@ const AddExpense = () => {
     handleSubmit,
   } = useAddExpense();
 
-  if (loading) return <Loader text="بنحمّل البيانات..." />;
+  if (loading)
+    return (
+      <div className="flex flex-col items-center justify-center min-h-[50vh] w-full p-8">
+        <div className="relative">
+          <div className="absolute inset-0 bg-(--color-primary)/20 blur-xl rounded-full animate-pulse" />
+          <Loader2 className="w-12 h-12 text-(--color-primary) animate-spin relative z-10" />
+        </div>
+        <p className="mt-4 text-(--color-muted) font-medium animate-pulse">
+          بنحمّل البيانات...
+        </p>
+      </div>
+    );
 
   return (
     <div className="max-w-2xl mx-auto font-primary">

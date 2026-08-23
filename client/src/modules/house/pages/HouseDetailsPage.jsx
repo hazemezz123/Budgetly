@@ -17,9 +17,20 @@ import {
   AlertTriangle,
   RotateCcw,
 } from "lucide-react";
-import { ConfirmModal, Input, Loader } from "../../../shared/components";
+import { Loader2 } from "lucide-react";
+import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
 import { Tabs, TabsList, TabsTrigger } from "@/components/ui/tabs";
+import {
+  AlertDialog,
+  AlertDialogAction,
+  AlertDialogCancel,
+  AlertDialogContent,
+  AlertDialogDescription,
+  AlertDialogFooter,
+  AlertDialogHeader,
+  AlertDialogTitle,
+} from "@/components/ui/alert-dialog";
 import { RoleRotationSettings } from "../components";
 import { useHouse } from "../hooks";
 
@@ -144,7 +155,18 @@ const HouseDetails = () => {
     await exportData(type);
   };
 
-  if (loading) return <Loader text="بنحمّل تفاصيل البيت..." />;
+  if (loading)
+    return (
+      <div className="flex flex-col items-center justify-center min-h-[50vh] w-full p-8">
+        <div className="relative">
+          <div className="absolute inset-0 bg-(--color-primary)/20 blur-xl rounded-full animate-pulse" />
+          <Loader2 className="w-12 h-12 text-(--color-primary) animate-spin relative z-10" />
+        </div>
+        <p className="mt-4 text-(--color-muted) font-medium animate-pulse">
+          بنحمّل تفاصيل البيت...
+        </p>
+      </div>
+    );
 
   if (error || !house) {
     return (
@@ -203,7 +225,7 @@ const HouseDetails = () => {
                 value={newName}
                 onChange={(e) => setNewName(e.target.value)}
                 placeholder="اسم البيت الجديد"
-                className="flex-1"
+                className="flex-1 h-11 rounded-xl bg-(--color-bg) border-(--color-border) text-sm sm:text-base"
               />
               <Button
                 onClick={handleUpdateName}
@@ -351,6 +373,7 @@ const HouseDetails = () => {
                     value={newPassword}
                     onChange={(e) => setNewPassword(e.target.value)}
                     placeholder="الباسوورد الجديد"
+                    className="h-11 rounded-xl bg-(--color-bg) border-(--color-border) text-sm sm:text-base"
                   />
                   <div className="flex flex-col-reverse sm:flex-row gap-2 sm:justify-end">
                     <Button
@@ -489,49 +512,76 @@ const HouseDetails = () => {
       </div>
 
       {/* Modals */}
-      <ConfirmModal
-        isOpen={!!memberToRemove}
-        onClose={() => setMemberToRemove(null)}
-        onConfirm={handleRemoveMember}
-        title="حذف عضو"
-        message={`متأكد إنك عايز تحذف ${memberToRemove?.name} من البيت؟`}
-        confirmText="حذف"
-        cancelText="إلغاء"
-        type="danger"
-      />
+      <AlertDialog
+        open={!!memberToRemove}
+        onOpenChange={(open) => !open && setMemberToRemove(null)}
+      >
+        <AlertDialogContent dir="rtl">
+          <AlertDialogHeader>
+            <AlertDialogTitle>حذف عضو</AlertDialogTitle>
+            <AlertDialogDescription>
+              {`متأكد إنك عايز تحذف ${memberToRemove?.name} من البيت؟`}
+            </AlertDialogDescription>
+          </AlertDialogHeader>
+          <AlertDialogFooter>
+            <AlertDialogCancel onClick={() => setMemberToRemove(null)}>
+              إلغاء
+            </AlertDialogCancel>
+            <AlertDialogAction onClick={handleRemoveMember}>حذف</AlertDialogAction>
+          </AlertDialogFooter>
+        </AlertDialogContent>
+      </AlertDialog>
 
-      <ConfirmModal
-        isOpen={showLeaveModal}
-        onClose={() => setShowLeaveModal(false)}
-        onConfirm={handleLeaveHouse}
-        title="مغادرة البيت"
-        message="متأكد إنك عايز تخرج من البيت ده؟ مش هتقدر تشوف المصاريف تاني."
-        confirmText="مغادرة"
-        cancelText="إلغاء"
-        type="danger"
-      />
+      <AlertDialog open={showLeaveModal} onOpenChange={setShowLeaveModal}>
+        <AlertDialogContent dir="rtl">
+          <AlertDialogHeader>
+            <AlertDialogTitle>مغادرة البيت</AlertDialogTitle>
+            <AlertDialogDescription>
+              متأكد إنك عايز تخرج من البيت ده؟ مش هتقدر تشوف المصاريف تاني.
+            </AlertDialogDescription>
+          </AlertDialogHeader>
+          <AlertDialogFooter>
+            <AlertDialogCancel>إلغاء</AlertDialogCancel>
+            <AlertDialogAction onClick={handleLeaveHouse}>مغادرة</AlertDialogAction>
+          </AlertDialogFooter>
+        </AlertDialogContent>
+      </AlertDialog>
 
-      <ConfirmModal
-        isOpen={showDeleteModal}
-        onClose={() => setShowDeleteModal(false)}
-        onConfirm={handleDeleteHouse}
-        title="حذف البيت"
-        message="تحذير: الإجراء ده نهائي! كل البيانات والمصاريف هتتحذف تماماً ومحدش هيقدر يرجعها. متأكد؟"
-        confirmText="حذف نهائي"
-        cancelText="إلغاء"
-        type="danger"
-      />
+      <AlertDialog open={showDeleteModal} onOpenChange={setShowDeleteModal}>
+        <AlertDialogContent dir="rtl">
+          <AlertDialogHeader>
+            <AlertDialogTitle>حذف البيت</AlertDialogTitle>
+            <AlertDialogDescription>
+              تحذير: الإجراء ده نهائي! كل البيانات والمصاريف هتتحذف تماماً ومحدش
+              هيقدر يرجعها. متأكد؟
+            </AlertDialogDescription>
+          </AlertDialogHeader>
+          <AlertDialogFooter>
+            <AlertDialogCancel>إلغاء</AlertDialogCancel>
+            <AlertDialogAction onClick={handleDeleteHouse}>
+              حذف نهائي
+            </AlertDialogAction>
+          </AlertDialogFooter>
+        </AlertDialogContent>
+      </AlertDialog>
 
-      <ConfirmModal
-        isOpen={showClearDataModal}
-        onClose={() => setShowClearDataModal(false)}
-        onConfirm={handleClearAllData}
-        title="مسح كل البيانات"
-        message="هيتم حذف كل المصاريف والفواتير والمدفوعات. البيت والأعضاء هيفضلوا زي ما هم. متأكد؟"
-        confirmText="مسح البيانات"
-        cancelText="إلغاء"
-        type="danger"
-      />
+      <AlertDialog open={showClearDataModal} onOpenChange={setShowClearDataModal}>
+        <AlertDialogContent dir="rtl">
+          <AlertDialogHeader>
+            <AlertDialogTitle>مسح كل البيانات</AlertDialogTitle>
+            <AlertDialogDescription>
+              هيتم حذف كل المصاريف والفواتير والمدفوعات. البيت والأعضاء هيفضلوا زي
+              ما هم. متأكد؟
+            </AlertDialogDescription>
+          </AlertDialogHeader>
+          <AlertDialogFooter>
+            <AlertDialogCancel>إلغاء</AlertDialogCancel>
+            <AlertDialogAction onClick={handleClearAllData}>
+              مسح البيانات
+            </AlertDialogAction>
+          </AlertDialogFooter>
+        </AlertDialogContent>
+      </AlertDialog>
     </div>
   );
 };

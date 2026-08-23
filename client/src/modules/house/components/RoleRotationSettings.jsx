@@ -12,6 +12,18 @@ import {
 import useRoleRotation from "../hooks/useRoleRotation";
 import { getId, getParticipantLabel, groupAssignmentsByRole } from "../utils/rotationUtils";
 import { Button } from "@/components/ui/button";
+import { Input } from "@/components/ui/input";
+import {
+  AlertDialog,
+  AlertDialogAction,
+  AlertDialogCancel,
+  AlertDialogContent,
+  AlertDialogDescription,
+  AlertDialogFooter,
+  AlertDialogHeader,
+  AlertDialogTitle,
+  AlertDialogTrigger,
+} from "@/components/ui/alert-dialog";
 
 const RoleRotationSettings = ({ houseId, members = [], isAdmin }) => {
   const {
@@ -111,7 +123,6 @@ const RoleRotationSettings = ({ houseId, members = [], isAdmin }) => {
   };
 
   const handleReset = async () => {
-    if (!window.confirm("متأكد من إعادة ضبط التدوير؟")) return;
     await resetRotation();
     setParticipants([]);
     setRoles([{ name: "Cooking", count: 1 }]);
@@ -199,7 +210,7 @@ const RoleRotationSettings = ({ houseId, members = [], isAdmin }) => {
             {availableMembers.length > 0 && (
               <div className="flex gap-2">
                 <select
-                  className="flex-1 min-h-[44px] rounded-xl px-3 py-2.5 text-sm sm:text-base outline-none bg-(--color-light) border border-(--color-border) text-(--color-dark) cursor-pointer"
+                  className="flex-1 h-11 rounded-xl border border-(--color-border) bg-(--color-bg) px-3 text-sm sm:text-base text-(--color-dark) [color-scheme:light] dark:[color-scheme:dark] cursor-pointer focus:border-(--color-primary) focus:ring-2 focus:ring-(--color-primary)/20 outline-none"
                   defaultValue=""
                   onChange={(e) => {
                     handleAddMember(e.target.value);
@@ -231,18 +242,18 @@ const RoleRotationSettings = ({ houseId, members = [], isAdmin }) => {
                   key={index}
                   className="grid gap-2 rounded-xl border border-(--color-border) p-3 sm:grid-cols-[1fr_120px_auto]"
                 >
-                  <input
+                  <Input
                     value={role.name}
                     onChange={(e) => handleUpdateRole(index, { name: e.target.value })}
                     placeholder="اسم الدور"
-                    className="min-h-[44px] rounded-lg border border-(--color-border) px-3 py-2 text-sm sm:text-base outline-none bg-transparent text-(--color-dark)"
+                    className="h-11 rounded-xl bg-(--color-bg) border-(--color-border) text-sm sm:text-base"
                   />
-                  <input
+                  <Input
                     type="number"
                     min="1"
                     value={role.count}
                     onChange={(e) => handleUpdateRole(index, { count: Number(e.target.value) })}
-                    className="min-h-[44px] rounded-lg border border-(--color-border) px-3 py-2 text-sm sm:text-base outline-none bg-transparent text-(--color-dark) font-numbers"
+                    className="h-11 rounded-xl bg-(--color-bg) border-(--color-border) text-sm sm:text-base font-numbers"
                   />
                   <div className="flex items-center justify-end gap-1">
                     <button
@@ -310,16 +321,31 @@ const RoleRotationSettings = ({ houseId, members = [], isAdmin }) => {
               <RotateCcw size={18} />
               {isStartingCycle ? "جاري بدء الدورة..." : "بدء دورة جديدة"}
             </Button>
-            <Button
-              type="button"
-              onClick={handleReset}
-              disabled={isResettingRotation}
-              variant="outline"
-              className="flex flex-1 min-h-[44px] items-center justify-center gap-2 rounded-xl border-(--color-error) px-4 py-3 font-bold text-(--color-error) hover:text-(--color-error)"
-            >
-              <Trash2 size={18} />
-              {isResettingRotation ? "جاري الإعادة..." : "إعادة ضبط"}
-            </Button>
+            <AlertDialog>
+              <AlertDialogTrigger asChild>
+                <Button
+                  type="button"
+                  disabled={isResettingRotation}
+                  variant="outline"
+                  className="flex flex-1 min-h-[44px] items-center justify-center gap-2 rounded-xl border-(--color-error) px-4 py-3 font-bold text-(--color-error) hover:text-(--color-error)"
+                >
+                  <Trash2 size={18} />
+                  {isResettingRotation ? "جاري الإعادة..." : "إعادة ضبط"}
+                </Button>
+              </AlertDialogTrigger>
+              <AlertDialogContent dir="rtl">
+                <AlertDialogHeader>
+                  <AlertDialogTitle>إعادة ضبط التدوير؟</AlertDialogTitle>
+                  <AlertDialogDescription>
+                    متأكد من إعادة ضبط التدوير؟ سيتم مسح الإعدادات الحالية.
+                  </AlertDialogDescription>
+                </AlertDialogHeader>
+                <AlertDialogFooter>
+                  <AlertDialogCancel>إلغاء</AlertDialogCancel>
+                  <AlertDialogAction onClick={handleReset}>إعادة ضبط</AlertDialogAction>
+                </AlertDialogFooter>
+              </AlertDialogContent>
+            </AlertDialog>
           </div>
         </div>
       </section>

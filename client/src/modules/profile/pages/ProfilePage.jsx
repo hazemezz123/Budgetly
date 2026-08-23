@@ -11,8 +11,8 @@ import {
   CheckCircle,
   Clock,
   Edit,
+  Loader2,
 } from "lucide-react";
-import { Loader } from "../../../shared/components";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Badge } from "@/components/ui/badge";
@@ -168,7 +168,18 @@ const Profile = () => {
     setEditingEmail(false);
   };
 
-  if (loadingStats) return <Loader text="بنحمّل بياناتك..." />;
+  if (loadingStats)
+    return (
+      <div className="flex flex-col items-center justify-center min-h-[50vh] w-full p-8">
+        <div className="relative">
+          <div className="absolute inset-0 bg-(--color-primary)/20 blur-xl rounded-full animate-pulse" />
+          <Loader2 className="w-12 h-12 text-(--color-primary) animate-spin relative z-10" />
+        </div>
+        <p className="mt-4 text-(--color-muted) font-medium animate-pulse">
+          بنحمّل بياناتك...
+        </p>
+      </div>
+    );
 
   // Safely handle missing stats
   if (!stats) return null;

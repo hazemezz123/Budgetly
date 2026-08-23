@@ -1,6 +1,8 @@
 import { useState } from "react";
-import { Plus, Users, ArrowRight, Home } from "lucide-react";
-import { Input, Loader } from "../../../shared/components";
+import { Plus, Users, ArrowRight, Home, Loader2 } from "lucide-react";
+import { Input } from "@/components/ui/input";
+import { Label } from "@/components/ui/label";
+import { Button } from "@/components/ui/button";
 import { useHouseSelection } from "../hooks";
 
 const HouseSelection = () => {
@@ -50,7 +52,18 @@ const HouseSelection = () => {
     }
   };
 
-  if (loading) return <Loader text="بنحمّل البيوت المتاحة..." />;
+  if (loading)
+    return (
+      <div className="flex flex-col items-center justify-center min-h-[50vh] w-full p-8">
+        <div className="relative">
+          <div className="absolute inset-0 bg-(--color-primary)/20 blur-xl rounded-full animate-pulse" />
+          <Loader2 className="w-12 h-12 text-(--color-primary) animate-spin relative z-10" />
+        </div>
+        <p className="mt-4 text-(--color-muted) font-medium animate-pulse">
+          بنحمّل البيوت المتاحة...
+        </p>
+      </div>
+    );
 
   // Initial error or data check
   if (error) {
@@ -174,29 +187,36 @@ const HouseSelection = () => {
               </h2>
 
               <form onSubmit={handleCreate} className="space-y-4">
-                <Input
-                  label="اسم البيت"
-                  value={newHouseName}
-                  onChange={(e) => setNewHouseName(e.target.value)}
-                  placeholder="مثلاً: بيت العز"
-                  required
-                />
-                <Input
-                  label="باسوورد الانضمام"
-                  type="password"
-                  value={newHousePassword}
-                  onChange={(e) => setNewHousePassword(e.target.value)}
-                  placeholder="اللي هيدخل بيه صحابك"
-                  required
-                />
-                <button
+                <div className="space-y-1.5">
+                  <Label htmlFor="new-house-name">اسم البيت</Label>
+                  <Input
+                    id="new-house-name"
+                    value={newHouseName}
+                    onChange={(e) => setNewHouseName(e.target.value)}
+                    placeholder="مثلاً: بيت العز"
+                    required
+                    className="h-11 rounded-xl bg-(--color-bg) border-(--color-border) text-sm sm:text-base"
+                  />
+                </div>
+                <div className="space-y-1.5">
+                  <Label htmlFor="new-house-password">باسوورد الانضمام</Label>
+                  <Input
+                    id="new-house-password"
+                    type="password"
+                    value={newHousePassword}
+                    onChange={(e) => setNewHousePassword(e.target.value)}
+                    placeholder="اللي هيدخل بيه صحابك"
+                    required
+                    className="h-11 rounded-xl bg-(--color-bg) border-(--color-border) text-sm sm:text-base"
+                  />
+                </div>
+                <Button
                   type="submit"
                   disabled={isCreating}
-                  className="w-full py-3 rounded-2xl bg-(--color-primary) text-white font-bold hover:shadow-lg hover:bg-(--color-primary-dark) transition-all disabled:opacity-50"
-                  style={{ backgroundColor: "var(--color-primary)" }}
+                  className="w-full py-3 rounded-2xl font-bold"
                 >
                   {isCreating ? "جاري الإنشاء..." : "إنشاء البيت"}
-                </button>
+                </Button>
               </form>
             </div>
           )}
@@ -233,18 +253,17 @@ const HouseSelection = () => {
                   value={joinPassword}
                   onChange={(e) => setJoinPassword(e.target.value)}
                   placeholder="باسوورد البيت"
-                  className="text-center"
+                  className="h-11 rounded-xl bg-(--color-bg) border-(--color-border) text-sm sm:text-base text-center"
                   autoFocus
                   required
                 />
-                <button
+                <Button
                   type="submit"
                   disabled={isJoining}
-                  className="w-full py-3 rounded-2xl bg-(--color-primary) text-white font-bold hover:shadow-lg hover:bg-(--color-primary-dark) transition-all disabled:opacity-50"
-                  style={{ backgroundColor: "var(--color-primary)" }}
+                  className="w-full py-3 rounded-2xl font-bold"
                 >
                   {isJoining ? "جاري الانضمام..." : "انضمام الآن"}
-                </button>
+                </Button>
               </form>
             </div>
           )}

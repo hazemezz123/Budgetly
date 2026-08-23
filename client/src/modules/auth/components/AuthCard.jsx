@@ -1,5 +1,4 @@
-import { AlertCircle } from "lucide-react";
-import { Loader } from "../../../shared/components";
+import { AlertCircle, Loader2 } from "lucide-react";
 import { Card, CardContent } from "@/components/ui/card";
 
 export default function AuthCard({
@@ -32,7 +31,12 @@ export default function AuthCard({
           </div>
 
           {loading ? (
-            <Loader text={loadingText || "لحظة واحدة..."} />
+            <div className="flex flex-col items-center justify-center py-8">
+              <Loader2 className="w-8 h-8 animate-spin text-(--color-primary)" />
+              <p className="mt-3 text-sm text-(--color-muted)">
+                {loadingText || "لحظة واحدة..."}
+              </p>
+            </div>
           ) : (
             <>
               {error && (

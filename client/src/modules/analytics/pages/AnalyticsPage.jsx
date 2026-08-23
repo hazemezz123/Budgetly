@@ -5,8 +5,8 @@ import {
   Calendar,
   BarChart3,
   PieChart,
+  Loader2,
 } from "lucide-react";
-import { Loader } from "../../../shared/components";
 import useAnalytics from "../hooks/useAnalytics";
 import { Progress } from "@/components/ui/progress";
 import { Card, CardContent, CardHeader } from "@/components/ui/card";
@@ -14,7 +14,18 @@ import { Card, CardContent, CardHeader } from "@/components/ui/card";
 const Analytics = () => {
   const { analytics, loading, error } = useAnalytics();
 
-  if (loading) return <Loader text="بنحمّل التحليلات..." />;
+  if (loading)
+    return (
+      <div className="flex flex-col items-center justify-center min-h-[50vh] w-full p-8">
+        <div className="relative">
+          <div className="absolute inset-0 bg-(--color-primary)/20 blur-xl rounded-full animate-pulse" />
+          <Loader2 className="w-12 h-12 text-(--color-primary) animate-spin relative z-10" />
+        </div>
+        <p className="mt-4 text-(--color-muted) font-medium animate-pulse">
+          بنحمّل التحليلات...
+        </p>
+      </div>
+    );
 
   if (error) {
     return (

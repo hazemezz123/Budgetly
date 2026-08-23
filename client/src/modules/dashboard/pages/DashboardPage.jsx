@@ -1,6 +1,5 @@
-import { Wallet } from "lucide-react";
+import { Wallet, Loader2 } from "lucide-react";
 import { useAuth } from "../../../shared/context/AuthContext";
-import { Loader } from "../../../shared/components";
 import { RoleRotationWidget } from "../../house/components";
 import { useDashboardStats } from "../hooks";
 import {
@@ -17,7 +16,18 @@ const Dashboard = () => {
   const houseId =
     typeof user?.house === "object" ? user?.house?._id : user?.house;
 
-  if (loading) return <Loader text="بنحمّل لوحة التحكم..." />;
+  if (loading)
+    return (
+      <div className="flex flex-col items-center justify-center min-h-[50vh] w-full p-8">
+        <div className="relative">
+          <div className="absolute inset-0 bg-(--color-primary)/20 blur-xl rounded-full animate-pulse" />
+          <Loader2 className="w-12 h-12 text-(--color-primary) animate-spin relative z-10" />
+        </div>
+        <p className="mt-4 text-(--color-muted) font-medium animate-pulse">
+          بنحمّل لوحة التحكم...
+        </p>
+      </div>
+    );
 
   if (!stats)
     return (
