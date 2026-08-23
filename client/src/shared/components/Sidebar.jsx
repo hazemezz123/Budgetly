@@ -2,7 +2,6 @@ import React, { useState } from "react";
 import { Link, useLocation } from "react-router-dom";
 import { useAuth } from "../context/AuthContext";
 import { useTheme } from "../context/ThemeContext";
-import ConfirmModal from "./ConfirmModal";
 import {
   LayoutDashboard,
   Receipt,
@@ -19,6 +18,19 @@ import {
   Sun,
   Moon,
 } from "lucide-react";
+import { Button } from "@/components/ui/button";
+import { Card, CardContent } from "@/components/ui/card";
+import { Badge } from "@/components/ui/badge";
+import {
+  AlertDialog,
+  AlertDialogAction,
+  AlertDialogCancel,
+  AlertDialogContent,
+  AlertDialogDescription,
+  AlertDialogFooter,
+  AlertDialogHeader,
+  AlertDialogTitle,
+} from "@/components/ui/alert-dialog";
 
 const Sidebar = () => {
   const { user, logout } = useAuth();
@@ -121,20 +133,15 @@ const Sidebar = () => {
 
   return (
     <aside
-      className={`hidden md:flex flex-col h-screen sticky top-0 border-l z-40 select-none transition-all duration-300 ease-in-out ${
+      className={`hidden md:flex flex-col h-screen sticky top-0 border-l z-40 select-none transition-all duration-300 ease-in-out bg-(--color-surface) border-(--color-border) ${
         collapsed ? "w-20 overflow-visible" : "w-64 overflow-hidden"
       }`}
-      style={{
-        backgroundColor: "var(--color-surface)",
-        borderColor: "var(--color-border)",
-      }}
     >
       {/* Header / Logo */}
       <div
-        className={`p-4 flex items-center border-b transition-all duration-300 ease-in-out ${
+        className={`p-4 flex items-center border-b border-(--color-border) transition-all duration-300 ease-in-out ${
           collapsed ? "justify-center" : "justify-between"
         }`}
-        style={{ borderColor: "var(--color-border)" }}
       >
         <div
           className={`flex items-center gap-2 overflow-hidden transition-all duration-300 ease-in-out ${
@@ -149,9 +156,12 @@ const Sidebar = () => {
             className="h-14 dark:invert transition-all shrink-0"
           />
         </div>
-        <button
+        <Button
+          variant="ghost"
+          size="icon"
           onClick={() => setCollapsed(!collapsed)}
-          className="p-2.5 rounded-xl hover:bg-(--color-hover) transition-colors hover:text-(--color-primary) text-(--color-secondary) cursor-pointer shrink-0"
+          className="h-10 w-10 rounded-xl text-(--color-secondary) hover:bg-(--color-hover) hover:text-(--color-primary) shrink-0"
+          aria-label={collapsed ? "توسيع القائمة" : "طي القائمة"}
           title={collapsed ? "توسيع القائمة" : "طي القائمة"}
         >
           <ChevronRight
@@ -160,7 +170,7 @@ const Sidebar = () => {
               collapsed ? "rotate-180" : "rotate-0"
             }`}
           />
-        </button>
+        </Button>
       </div>
 
       <div
@@ -171,43 +181,43 @@ const Sidebar = () => {
         }`}
       >
         {isLocked && (
-          <div
-            className={`px-3 py-2 rounded-lg flex items-center gap-2 text-xs overflow-hidden transition-all duration-300 ease-in-out ${
+          <Card
+            className={`rounded-lg border border-(--color-status-pending-border) bg-(--color-status-pending-bg) shadow-none py-0 gap-0 overflow-hidden transition-all duration-300 ease-in-out ${
               collapsed
                 ? "max-h-0 opacity-0 mb-0 py-0 border-0"
-                : "max-h-20 opacity-100 mb-4 py-2"
+                : "max-h-20 opacity-100 mb-4"
             }`}
-            style={{
-              backgroundColor: "var(--color-status-pending-bg)",
-              color: "var(--color-status-pending)",
-              borderColor: "var(--color-status-pending-border)",
-            }}
           >
-            <Lock size={14} className="shrink-0" />
-            <span className="whitespace-nowrap">انضم لبيت أولاً</span>
-          </div>
+            <CardContent className="flex items-center gap-2 px-3 py-2 text-xs text-(--color-status-pending) p-3">
+              <Badge
+                variant="outline"
+                className="border-(--color-status-pending-border) bg-(--color-status-pending-bg) text-(--color-status-pending) p-1 rounded-md h-auto"
+              >
+                <Lock size={14} className="shrink-0" />
+              </Badge>
+              <span className="whitespace-nowrap">انضم لبيت أولاً</span>
+            </CardContent>
+          </Card>
         )}
 
         {navGroups.map((group, groupIndex) => (
           <div key={groupIndex}>
             <h3
-              className={`px-3 text-xs font-semibold uppercase tracking-wider whitespace-nowrap overflow-hidden transition-all duration-300 ease-in-out ${
+              className={`px-3 text-xs font-semibold uppercase tracking-wider whitespace-nowrap overflow-hidden transition-all duration-300 ease-in-out text-(--color-muted) ${
                 collapsed
                   ? "opacity-0 max-h-0 mb-0 py-0"
                   : "opacity-100 max-h-8 mb-2"
               }`}
-              style={{ color: "var(--color-muted)" }}
             >
               {group.title}
             </h3>
             {groupIndex > 0 && (
               <div
-                className={`mx-auto border-t transition-all duration-300 ease-in-out ${
+                className={`mx-auto border-t border-(--color-border) transition-all duration-300 ease-in-out ${
                   collapsed
                     ? "opacity-100 w-8 my-3"
                     : "opacity-0 w-0 my-0 border-transparent"
                 }`}
-                style={{ borderColor: "var(--color-border)" }}
               />
             )}
             <div className="space-y-1">
@@ -224,19 +234,16 @@ const Sidebar = () => {
                   <Link
                     key={item.path}
                     to={item.path}
+                    aria-current={active ? "page" : undefined}
                     className={`flex items-center rounded-xl transition-all duration-300 ease-in-out group relative ${
                       collapsed
                         ? "justify-center h-11 w-11 mx-auto px-0 py-0"
                         : "gap-3 px-3 py-2.5 w-full"
-                    } ${itemLocked ? "opacity-50 cursor-not-allowed" : ""}`}
-                    style={{
-                      backgroundColor: active
-                        ? "var(--color-primary)"
-                        : "transparent",
-                      color: active
-                        ? "var(--color-on-fill)"
-                        : "var(--color-secondary)",
-                    }}
+                    } ${itemLocked ? "opacity-50 cursor-not-allowed" : ""} ${
+                      active
+                        ? "bg-(--color-primary) text-(--color-on-fill)"
+                        : "text-(--color-secondary) hover:bg-(--color-hover) hover:text-(--color-primary)"
+                    }`}
                     onClick={(e) => {
                       if (itemLocked) {
                         e.preventDefault();
@@ -267,15 +274,21 @@ const Sidebar = () => {
                     </span>
 
                     {collapsed && (
-                      <div className="absolute right-full top-1/2 -translate-y-1/2 px-3 py-1.5 bg-gray-900 dark:bg-gray-800 text-white text-xs font-medium rounded-lg opacity-0 group-hover:opacity-100 transition-all duration-200 whitespace-nowrap z-50 pointer-events-none mr-2.5 shadow-xl border border-gray-700/50 flex items-center gap-1.5">
-                        {itemLocked && <Lock size={12} className="text-amber-400" />}
-                        <span>{item.label}</span>
-                        {itemLocked && (
-                          <span className="text-[10px] text-amber-300 font-normal">
-                            (مقفل)
-                          </span>
-                        )}
-                        <div className="absolute top-1/2 -translate-y-1/2 -right-1 border-y-4 border-y-transparent border-l-4 border-l-gray-900 dark:border-l-gray-800" />
+                      <div className="absolute right-full mr-2 top-1/2 -translate-y-1/2 hidden group-hover:block whitespace-nowrap rounded-lg bg-(--color-surface) border border-(--color-border) px-3 py-1.5 text-xs shadow-lg z-50 pointer-events-none">
+                        <div className="flex items-center gap-1.5">
+                          {itemLocked && (
+                            <Lock
+                              size={12}
+                              className="text-(--color-status-pending) shrink-0"
+                            />
+                          )}
+                          <span>{item.label}</span>
+                          {itemLocked && (
+                            <span className="text-[10px] text-(--color-muted) font-normal">
+                              (مقفل)
+                            </span>
+                          )}
+                        </div>
                       </div>
                     )}
                   </Link>
@@ -288,10 +301,9 @@ const Sidebar = () => {
 
       {/* Footer / User Tools */}
       <div
-        className={`border-t relative transition-all duration-300 ease-in-out ${
+        className={`border-t border-(--color-border) relative transition-all duration-300 ease-in-out ${
           collapsed ? "p-3" : "p-4"
         }`}
-        style={{ borderColor: "var(--color-border)" }}
       >
         <div
           className={`flex transition-all duration-300 ease-in-out ${
@@ -302,17 +314,27 @@ const Sidebar = () => {
         >
           {/* Theme Toggle */}
           <div className="relative group flex items-center justify-center">
-            <button
+            <Button
+              variant="ghost"
+              size="icon"
               onClick={toggleTheme}
-              className="p-2.5 rounded-xl hover:bg-(--color-hover) transition-colors text-(--color-secondary) cursor-pointer flex items-center justify-center"
-              title={!collapsed ? (themeMode === "dark" ? "الوضع النهاري" : "الوضع الليلي") : undefined}
+              className="h-10 w-10 rounded-xl text-(--color-secondary) hover:bg-(--color-hover) hover:text-(--color-primary)"
+              aria-label={
+                themeMode === "dark" ? "الوضع النهاري" : "الوضع الليلي"
+              }
+              title={
+                !collapsed
+                  ? themeMode === "dark"
+                    ? "الوضع النهاري"
+                    : "الوضع الليلي"
+                  : undefined
+              }
             >
               {themeMode === "dark" ? <Sun size={20} /> : <Moon size={20} />}
-            </button>
+            </Button>
             {collapsed && (
-              <div className="absolute right-full top-1/2 -translate-y-1/2 px-3 py-1.5 bg-gray-900 dark:bg-gray-800 text-white text-xs font-medium rounded-lg opacity-0 group-hover:opacity-100 transition-all duration-200 whitespace-nowrap z-50 pointer-events-none mr-2.5 shadow-xl border border-gray-700/50">
+              <div className="absolute right-full mr-2 top-1/2 -translate-y-1/2 hidden group-hover:block whitespace-nowrap rounded-lg bg-(--color-surface) border border-(--color-border) px-3 py-1.5 text-xs shadow-lg z-50 pointer-events-none">
                 {themeMode === "dark" ? "الوضع النهاري" : "الوضع الليلي"}
-                <div className="absolute top-1/2 -translate-y-1/2 -right-1 border-y-4 border-y-transparent border-l-4 border-l-gray-900 dark:border-l-gray-800" />
               </div>
             )}
           </div>
@@ -331,31 +353,46 @@ const Sidebar = () => {
 
           {/* Logout */}
           <div className="relative group flex items-center justify-center">
-            <button
+            <Button
+              variant="ghost"
+              size="icon"
               onClick={() => setShowLogoutModal(true)}
-              className="p-2.5 rounded-xl hover:bg-(--color-error)/10 cursor-pointer text-(--color-error) transition-colors flex items-center justify-center"
+              className="h-10 w-10 rounded-xl text-(--color-error) hover:bg-(--color-error)/10 hover:text-(--color-error)"
+              aria-label="تسجيل الخروج"
               title={!collapsed ? "تسجيل الخروج" : undefined}
             >
               <LogOut size={20} />
-            </button>
+            </Button>
             {collapsed && (
-              <div className="absolute right-full top-1/2 -translate-y-1/2 px-3 py-1.5 bg-gray-900 dark:bg-gray-800 text-white text-xs font-medium rounded-lg opacity-0 group-hover:opacity-100 transition-all duration-200 whitespace-nowrap z-50 pointer-events-none mr-2.5 shadow-xl border border-gray-700/50">
+              <div className="absolute right-full mr-2 top-1/2 -translate-y-1/2 hidden group-hover:block whitespace-nowrap rounded-lg bg-(--color-surface) border border-(--color-border) px-3 py-1.5 text-xs shadow-lg z-50 pointer-events-none">
                 تسجيل الخروج
-                <div className="absolute top-1/2 -translate-y-1/2 -right-1 border-y-4 border-y-transparent border-l-4 border-l-gray-900 dark:border-l-gray-800" />
               </div>
             )}
           </div>
         </div>
       </div>
 
-      <ConfirmModal
-        isOpen={showLogoutModal}
-        onClose={() => setShowLogoutModal(false)}
-        onConfirm={handleLogoutConfirmation}
-        title="تسجيل الخروج"
-        message="هل أنت متأكد أنك تريد تسجيل الخروج؟"
-        type="danger"
-      />
+      <AlertDialog open={showLogoutModal} onOpenChange={setShowLogoutModal}>
+        <AlertDialogContent dir="rtl">
+          <AlertDialogHeader>
+            <AlertDialogTitle>تسجيل الخروج</AlertDialogTitle>
+            <AlertDialogDescription>
+              هل أنت متأكد أنك تريد تسجيل الخروج؟
+            </AlertDialogDescription>
+          </AlertDialogHeader>
+          <AlertDialogFooter>
+            <AlertDialogCancel onClick={() => setShowLogoutModal(false)}>
+              إلغاء
+            </AlertDialogCancel>
+            <AlertDialogAction
+              onClick={handleLogoutConfirmation}
+              className="bg-(--color-error) text-white hover:bg-(--color-error)/90"
+            >
+              تسجيل الخروج
+            </AlertDialogAction>
+          </AlertDialogFooter>
+        </AlertDialogContent>
+      </AlertDialog>
     </aside>
   );
 };
