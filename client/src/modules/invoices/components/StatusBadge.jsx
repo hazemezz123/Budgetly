@@ -14,7 +14,7 @@ export default function StatusBadge({ status }) {
       case "pending":
         return "bg-(--color-status-pending-bg) text-(--color-status-pending) border-(--color-status-pending-border)";
       case "awaiting_approval":
-        return "bg-(--color-info-bg) text-(--color-info) border-(--color-info-border) border";
+        return "bg-(--color-info-bg) text-(--color-info) border-(--color-info-border)";
       case "paid":
       case "approved":
         return "bg-(--color-status-approved-bg) text-(--color-status-approved) border-(--color-status-approved-border)";

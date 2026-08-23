@@ -113,6 +113,8 @@
   --color-error: #dc2626;
   --color-warning: #ca8a04;
   --color-info: #0284c7;
+  --color-info-bg: #e0f2fe;
+  --color-info-border: #7dd3fc;
 
   /* 700-shades: colored text on light surfaces */
   --color-success-text: #15803d;
@@ -178,6 +180,8 @@
   --color-error: #ff4d4d;
   --color-warning: #f59e0b;
   --color-info: #60a5fa;
+  --color-info-bg: #0c4a6e;
+  --color-info-border: #075985;
 
   --color-success-text: #22c55e;
   --color-warning-text: #f59e0b;

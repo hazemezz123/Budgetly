@@ -11,6 +11,7 @@ import {
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
+import { Label } from "@/components/ui/label";
 import {
   AlertDialog,
   AlertDialogAction,
@@ -172,7 +173,12 @@ export default function InvoicesTable({
 
   return (
     <div className="space-y-4">
+      <Label htmlFor="invoices-search" className="sr-only">
+        بحث في الفواتير
+      </Label>
       <Input
+        id="invoices-search"
+        aria-label="بحث في الفواتير"
         placeholder="بحث..."
         value={globalFilter}
         onChange={(e) => setGlobalFilter(e.target.value)}

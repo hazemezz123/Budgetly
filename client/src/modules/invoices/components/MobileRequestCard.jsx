@@ -1,6 +1,17 @@
 import { Card, CardContent } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
+import {
+  AlertDialog,
+  AlertDialogAction,
+  AlertDialogCancel,
+  AlertDialogContent,
+  AlertDialogDescription,
+  AlertDialogFooter,
+  AlertDialogHeader,
+  AlertDialogTitle,
+  AlertDialogTrigger,
+} from "@/components/ui/alert-dialog";
 
 export default function MobileRequestCard({
   request,
@@ -54,18 +65,45 @@ export default function MobileRequestCard({
           >
             عرض التفاصيل
           </Button>
-          <Button
-            onClick={() => onApprove(request._id)}
-            className="min-h-[44px] py-2.5 bg-(--color-status-approved-bg) text-(--color-status-approved) hover:bg-(--color-status-approved-bg)/80 rounded-xl text-sm font-bold"
-          >
-            موافقة
-          </Button>
-          <Button
-            onClick={() => onReject(request._id)}
-            className="min-h-[44px] py-2.5 bg-(--color-status-rejected-bg) text-(--color-status-rejected) hover:bg-(--color-status-rejected-bg)/80 rounded-xl text-sm font-bold"
-          >
-            رفض
-          </Button>
+          <AlertDialog>
+            <AlertDialogTrigger asChild>
+              <Button className="min-h-[44px] py-2.5 bg-(--color-status-approved-bg) text-(--color-status-approved) hover:bg-(--color-status-approved-bg)/80 rounded-xl text-sm font-bold">
+                موافقة
+              </Button>
+            </AlertDialogTrigger>
+            <AlertDialogContent dir="rtl">
+              <AlertDialogHeader>
+                <AlertDialogTitle>تأكيد الموافقة</AlertDialogTitle>
+                <AlertDialogDescription>هل أنت متأكد من الموافقة على هذا الطلب؟</AlertDialogDescription>
+              </AlertDialogHeader>
+              <AlertDialogFooter>
+                <AlertDialogCancel>إلغاء</AlertDialogCancel>
+                <AlertDialogAction onClick={() => onApprove(request._id)}>تأكيد</AlertDialogAction>
+              </AlertDialogFooter>
+            </AlertDialogContent>
+          </AlertDialog>
+          <AlertDialog>
+            <AlertDialogTrigger asChild>
+              <Button className="min-h-[44px] py-2.5 bg-(--color-status-rejected-bg) text-(--color-status-rejected) hover:bg-(--color-status-rejected-bg)/80 rounded-xl text-sm font-bold">
+                رفض
+              </Button>
+            </AlertDialogTrigger>
+            <AlertDialogContent dir="rtl">
+              <AlertDialogHeader>
+                <AlertDialogTitle>تأكيد الرفض</AlertDialogTitle>
+                <AlertDialogDescription>هل أنت متأكد من رفض هذا الطلب؟</AlertDialogDescription>
+              </AlertDialogHeader>
+              <AlertDialogFooter>
+                <AlertDialogCancel>إلغاء</AlertDialogCancel>
+                <AlertDialogAction
+                  onClick={() => onReject(request._id)}
+                  className="bg-(--color-error) text-white hover:bg-(--color-error)/90"
+                >
+                  تأكيد
+                </AlertDialogAction>
+              </AlertDialogFooter>
+            </AlertDialogContent>
+          </AlertDialog>
         </div>
       </CardContent>
     </Card>

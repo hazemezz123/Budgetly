@@ -1,6 +1,17 @@
 import { Check, X } from "lucide-react";
 import { Card, CardContent } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
+import {
+  AlertDialog,
+  AlertDialogAction,
+  AlertDialogCancel,
+  AlertDialogContent,
+  AlertDialogDescription,
+  AlertDialogFooter,
+  AlertDialogHeader,
+  AlertDialogTitle,
+  AlertDialogTrigger,
+} from "@/components/ui/alert-dialog";
 import StatusBadge from "./StatusBadge";
 
 export default function MobileInvoiceCard({
@@ -50,18 +61,45 @@ export default function MobileInvoiceCard({
 
         {invoice.status === "awaiting_approval" && (
           <div className="flex gap-2 pt-2.5 border-t border-(--color-border)">
-            <Button
-              onClick={() => onApprove(invoice._id)}
-              className="flex-1 min-h-[44px] py-2.5 bg-(--color-status-approved-bg) text-(--color-status-approved) hover:bg-(--color-status-approved-bg)/80 rounded-xl text-sm font-bold flex items-center justify-center gap-2"
-            >
-              <Check size={16} /> موافقة
-            </Button>
-            <Button
-              onClick={() => onReject(invoice._id)}
-              className="flex-1 min-h-[44px] py-2.5 bg-(--color-status-rejected-bg) text-(--color-status-rejected) hover:bg-(--color-status-rejected-bg)/80 rounded-xl text-sm font-bold flex items-center justify-center gap-2"
-            >
-              <X size={16} /> رفض
-            </Button>
+            <AlertDialog>
+              <AlertDialogTrigger asChild>
+                <Button className="flex-1 min-h-[44px] py-2.5 bg-(--color-status-approved-bg) text-(--color-status-approved) hover:bg-(--color-status-approved-bg)/80 rounded-xl text-sm font-bold flex items-center justify-center gap-2">
+                  <Check size={16} /> موافقة
+                </Button>
+              </AlertDialogTrigger>
+              <AlertDialogContent dir="rtl">
+                <AlertDialogHeader>
+                  <AlertDialogTitle>تأكيد الموافقة</AlertDialogTitle>
+                  <AlertDialogDescription>هل أنت متأكد من الموافقة على الدفع؟</AlertDialogDescription>
+                </AlertDialogHeader>
+                <AlertDialogFooter>
+                  <AlertDialogCancel>إلغاء</AlertDialogCancel>
+                  <AlertDialogAction onClick={() => onApprove(invoice._id)}>تأكيد</AlertDialogAction>
+                </AlertDialogFooter>
+              </AlertDialogContent>
+            </AlertDialog>
+            <AlertDialog>
+              <AlertDialogTrigger asChild>
+                <Button className="flex-1 min-h-[44px] py-2.5 bg-(--color-status-rejected-bg) text-(--color-status-rejected) hover:bg-(--color-status-rejected-bg)/80 rounded-xl text-sm font-bold flex items-center justify-center gap-2">
+                  <X size={16} /> رفض
+                </Button>
+              </AlertDialogTrigger>
+              <AlertDialogContent dir="rtl">
+                <AlertDialogHeader>
+                  <AlertDialogTitle>تأكيد الرفض</AlertDialogTitle>
+                  <AlertDialogDescription>هل أنت متأكد من رفض الدفع؟</AlertDialogDescription>
+                </AlertDialogHeader>
+                <AlertDialogFooter>
+                  <AlertDialogCancel>إلغاء</AlertDialogCancel>
+                  <AlertDialogAction
+                    onClick={() => onReject(invoice._id)}
+                    className="bg-(--color-error) text-white hover:bg-(--color-error)/90"
+                  >
+                    تأكيد
+                  </AlertDialogAction>
+                </AlertDialogFooter>
+              </AlertDialogContent>
+            </AlertDialog>
           </div>
         )}
       </CardContent>
