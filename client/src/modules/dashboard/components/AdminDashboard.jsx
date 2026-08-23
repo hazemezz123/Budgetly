@@ -6,12 +6,12 @@ export default function AdminDashboard({ stats }) {
   const isPositive = adminBalance > 0;
 
   return (
-    <div className="space-y-8">
+    <div className="space-y-6 sm:space-y-8">
       <section aria-labelledby="overview-heading">
         <h2 id="overview-heading" className="sr-only">
           نظرة عامة
         </h2>
-        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
+        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-3 sm:gap-6">
           <StatCard
             title="إجمالي المصاريف"
             value={`${stats.overview.totalExpenseAmount.toFixed(2)} جنيه`}
@@ -37,10 +37,10 @@ export default function AdminDashboard({ stats }) {
 
       <section
         aria-labelledby="debtors-heading"
-        className="bg-ios-surface backdrop-blur-xl rounded-3xl border border-ios-border overflow-hidden shadow-md"
+        className="bg-ios-surface backdrop-blur-xl rounded-2xl sm:rounded-3xl border border-ios-border overflow-hidden shadow-sm sm:shadow-md"
       >
-        <div className="p-6 border-b border-ios-border">
-          <h2 id="debtors-heading" className="text-xl font-bold text-ios-dark">
+        <div className="p-4 sm:p-6 border-b border-ios-border">
+          <h2 id="debtors-heading" className="text-lg sm:text-xl font-bold text-ios-dark">
             الناس اللي عليها فلوس
           </h2>
         </div>
@@ -50,22 +50,22 @@ export default function AdminDashboard({ stats }) {
               {stats.usersOwing.map((u) => (
                 <li
                   key={u.userId}
-                  className="p-5 flex justify-between items-center hover:bg-ios-hover transition-colors"
+                  className="p-4 sm:p-5 flex justify-between items-center gap-3 hover:bg-ios-hover transition-colors min-w-0"
                 >
-                  <span className="font-semibold text-ios-dark">
+                  <span className="font-semibold text-ios-dark text-sm sm:text-base truncate flex-1 min-w-0">
                     {u.name}{" "}
-                    <span className="text-ios-secondary text-sm">
+                    <span className="text-ios-secondary text-xs sm:text-sm">
                       (@{u.username})
                     </span>
                   </span>
-                  <span className="text-ios-error font-bold">
+                  <span className="text-ios-error font-bold text-sm sm:text-base shrink-0">
                     عليه {u.owes.toFixed(2)} جنيه
                   </span>
                 </li>
               ))}
             </ul>
           ) : (
-            <p className="p-6 text-ios-secondary text-center">
+            <p className="p-6 text-ios-secondary text-center text-sm">
               مفيش حد عليه فلوس!
             </p>
           )}

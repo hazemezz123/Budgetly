@@ -203,13 +203,13 @@ const HouseDetails = () => {
               <button
                 onClick={handleUpdateName}
                 disabled={isUpdatingName}
-                className="px-4 py-2 bg-(--color-primary) text-white rounded-xl font-bold disabled:opacity-50"
+                className="min-h-[44px] px-4 py-2.5 bg-(--color-primary) text-white rounded-xl font-bold disabled:opacity-50 flex items-center justify-center"
               >
                 {isUpdatingName ? "حفظ..." : "حفظ"}
               </button>
               <button
                 onClick={() => setEditingName(false)}
-                className="px-4 py-2 bg-(--color-surface) border border-(--color-border) rounded-xl font-bold"
+                className="min-h-[44px] px-4 py-2.5 bg-(--color-surface) border border-(--color-border) rounded-xl font-bold flex items-center justify-center"
               >
                 إلغاء
               </button>

@@ -26,9 +26,9 @@ const Select = forwardRef(
     },
     ref
   ) => {
-    // Size variants
+    // Size variants - sm keeps 16px on mobile to prevent iOS zoom
     const sizeClasses = {
-      sm: "px-3 py-2 text-sm rounded-xl",
+      sm: "px-3 py-2.5 text-base sm:text-sm rounded-xl",
       md: "px-4 py-3 text-base rounded-2xl",
       lg: "px-5 py-4 text-lg rounded-2xl",
     };

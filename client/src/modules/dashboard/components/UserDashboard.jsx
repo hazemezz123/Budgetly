@@ -3,12 +3,12 @@ import StatCard from "./StatCard";
 
 export default function UserDashboard({ stats }) {
   return (
-    <div className="space-y-8">
+    <div className="space-y-6 sm:space-y-8">
       <section aria-labelledby="balance-heading">
         <h2 id="balance-heading" className="sr-only">
           رصيدي
         </h2>
-        <div className="grid grid-cols-1 sm:grid-cols-3 gap-6">
+        <div className="grid grid-cols-1 sm:grid-cols-3 gap-3 sm:gap-6">
           <StatCard
             title="رصيدي"
             value={`${Math.abs(stats.balance).toFixed(2)} جنيه`}
@@ -31,10 +31,10 @@ export default function UserDashboard({ stats }) {
 
       <section
         aria-labelledby="activity-heading"
-        className="bg-ios-surface backdrop-blur-xl rounded-3xl border border-ios-border overflow-hidden shadow-md"
+        className="bg-ios-surface backdrop-blur-xl rounded-2xl sm:rounded-3xl border border-ios-border overflow-hidden shadow-sm sm:shadow-md"
       >
-        <div className="p-6 border-b border-ios-border">
-          <h2 id="activity-heading" className="text-xl font-bold text-ios-dark">
+        <div className="p-4 sm:p-6 border-b border-ios-border">
+          <h2 id="activity-heading" className="text-lg sm:text-xl font-bold text-ios-dark">
             آخر المصاريف
           </h2>
         </div>
@@ -44,17 +44,17 @@ export default function UserDashboard({ stats }) {
               {stats.recentExpenses.map((expense) => (
                 <li
                   key={expense._id}
-                  className="p-5 flex justify-between items-center hover:bg-ios-hover transition-colors"
+                  className="p-4 sm:p-5 flex justify-between items-center gap-3 hover:bg-ios-hover transition-colors min-w-0"
                 >
-                  <span className="text-ios-dark font-medium">
+                  <span className="text-ios-dark font-medium text-sm sm:text-base truncate flex-1 min-w-0">
                     {expense.title}
                   </span>
-                  <div className="flex flex-col items-end gap-1">
-                    <span className="font-bold text-ios-primary">
+                  <div className="flex flex-col items-end gap-1 shrink-0">
+                    <span className="font-bold text-ios-primary text-sm sm:text-base">
                       {expense.totalAmount.toFixed(2)} جنيه
                     </span>
                     {expense.userShare && (
-                      <span className="text-sm text-ios-error">
+                      <span className="text-xs sm:text-sm text-ios-error">
                         حصتك: {expense.userShare.toFixed(2)} جنيه
                       </span>
                     )}
@@ -63,7 +63,7 @@ export default function UserDashboard({ stats }) {
               ))}
             </ul>
           ) : (
-            <p className="p-6 text-ios-secondary text-center">
+            <p className="p-6 text-ios-secondary text-center text-sm">
               مفيش مصاريف لسه
             </p>
           )}

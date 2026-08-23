@@ -28,12 +28,12 @@ const Dashboard = () => {
     );
 
   return (
-    <div className="pb-8 font-primary" id="main-content">
-      <div className="flex items-center gap-3 mb-8">
-        <div className="p-3 bg-ios-primary/10 rounded-2xl">
-          <Wallet className="text-ios-primary" size={32} aria-hidden="true" />
+    <div className="pb-8 font-primary px-1 sm:px-0" id="main-content">
+      <div className="flex items-center gap-2 sm:gap-3 mb-6 sm:mb-8">
+        <div className="p-2.5 sm:p-3 bg-ios-primary/10 rounded-2xl shrink-0">
+          <Wallet className="text-ios-primary" size={28} aria-hidden="true" />
         </div>
-        <h1 className="text-3xl font-bold text-ios-dark">الصفحة الرئيسية</h1>
+        <h1 className="text-2xl sm:text-3xl font-bold text-ios-dark">الصفحة الرئيسية</h1>
       </div>
 
       <WelcomeModal />
