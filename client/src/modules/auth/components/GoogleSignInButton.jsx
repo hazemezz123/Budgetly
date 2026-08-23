@@ -8,13 +8,13 @@ export default function GoogleSignInButton() {
   return (
     <>
       <div className="flex items-center gap-3 my-4" aria-hidden="true">
-        <div className="flex-1 h-px bg-ios-border" />
-        <span className="text-sm text-ios-secondary">أو</span>
-        <div className="flex-1 h-px bg-ios-border" />
+        <div className="flex-1 h-px bg-(--color-border)" />
+        <span className="text-sm text-(--color-secondary)">أو</span>
+        <div className="flex-1 h-px bg-(--color-border)" />
       </div>
 
       {error && (
-        <p className="text-sm text-ios-error text-center mb-3" role="alert">
+        <p className="text-sm text-(--color-error) text-center mb-3" role="alert">
           {error}
         </p>
       )}

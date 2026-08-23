@@ -1,6 +1,9 @@
+import { useState } from "react";
 import { Link } from "react-router-dom";
-import { User, Lock } from "lucide-react";
-import { Input } from "../../../shared/components";
+import { User, Lock, Eye, EyeOff } from "lucide-react";
+import { Button } from "@/components/ui/button";
+import { Input } from "@/components/ui/input";
+import { Label } from "@/components/ui/label";
 import { AuthCard, GoogleSignInButton } from "../components";
 import { useLogin } from "../hooks";
 
@@ -15,6 +18,7 @@ const Login = () => {
     loading,
     handleLogin,
   } = useLogin();
+  const [showPw, setShowPw] = useState(false);
 
   const footerLink = (
     <p className="text-ios-secondary">
@@ -37,29 +41,54 @@ const Login = () => {
       footer={footerLink}
     >
       <form onSubmit={handleLogin} className="space-y-5">
-        <Input
-          id="username"
-          label="اسم المستخدم"
-          type="text"
-          value={username}
-          onChange={(e) => setUsername(e.target.value)}
-          icon={User}
-          required
-          autoComplete="username"
-          error={error ? " " : ""}
-        />
+        <div className="space-y-1.5">
+          <Label htmlFor="username">اسم المستخدم</Label>
+          <div className="relative">
+            <User
+              size={16}
+              className="absolute top-1/2 -translate-y-1/2 right-3 text-(--color-muted) pointer-events-none"
+            />
+            <Input
+              id="username"
+              type="text"
+              value={username}
+              onChange={(e) => setUsername(e.target.value)}
+              required
+              autoComplete="username"
+              className="h-11 pr-9 text-sm sm:text-base md:text-base rounded-xl bg-(--color-bg) border-(--color-border)"
+              aria-invalid={error ? "true" : "false"}
+            />
+          </div>
+        </div>
 
-        <Input
-          id="password"
-          label="الباسورد"
-          type="password"
-          value={password}
-          onChange={(e) => setPassword(e.target.value)}
-          icon={Lock}
-          required
-          autoComplete="current-password"
-          error={error ? " " : ""}
-        />
+        <div className="space-y-1.5">
+          <Label htmlFor="password">الباسورد</Label>
+          <div className="relative">
+            <Lock
+              size={16}
+              className="absolute top-1/2 -translate-y-1/2 right-3 text-(--color-muted) pointer-events-none"
+            />
+            <Input
+              id="password"
+              type={showPw ? "text" : "password"}
+              value={password}
+              onChange={(e) => setPassword(e.target.value)}
+              required
+              autoComplete="current-password"
+              className="h-11 pr-9 pl-10 text-sm sm:text-base md:text-base rounded-xl bg-(--color-bg) border-(--color-border)"
+              aria-invalid={error ? "true" : "false"}
+            />
+            <button
+              type="button"
+              onClick={() => setShowPw(!showPw)}
+              className="absolute top-1/2 -translate-y-1/2 left-3 text-(--color-muted) hover:text-(--color-primary)"
+              tabIndex={-1}
+              aria-label={showPw ? "إخفاء" : "إظهار"}
+            >
+              {showPw ? <EyeOff size={16} /> : <Eye size={16} />}
+            </button>
+          </div>
+        </div>
 
         <div className="flex justify-end">
           <Link
@@ -70,13 +99,13 @@ const Login = () => {
           </Link>
         </div>
 
-        <button
+        <Button
           type="submit"
-          className="w-full py-4 px-4 bg-ios-primary hover:bg-ios-primary/90 text-white font-bold rounded-2xl transition-all duration-200 shadow-lg hover:shadow-xl focus:ring-4 focus:ring-ios-primary/20"
+          className="w-full min-h-[44px] py-4 rounded-2xl font-bold"
           aria-label="دخول التطبيق"
         >
           ادخل
-        </button>
+        </Button>
       </form>
       <GoogleSignInButton />
     </AuthCard>

@@ -9,6 +9,8 @@ import {
   Home,
   Users,
 } from "lucide-react";
+import { Card, CardContent } from "@/components/ui/card";
+import { Button } from "@/components/ui/button";
 
 const GuidePage = () => {
   const sections = [
@@ -63,10 +65,10 @@ const GuidePage = () => {
     <div className="pb-12 font-primary animate-in fade-in duration-500">
       {/* Header */}
       <div className="mb-8 text-center max-w-2xl mx-auto">
-        <h1 className="text-3xl font-bold text-ios-dark mb-4">
+        <h1 className="text-3xl font-bold text-(--color-dark) mb-4">
           دليل استخدام Budgetly 📚
         </h1>
-        <p className="text-lg text-ios-secondary">
+        <p className="text-lg text-(--color-secondary)">
           دليلك الشامل عشان تفهم كل فتفوتة في الموقع وتدير ميزانية بيتك
           باحترافية.
         </p>
@@ -75,45 +77,46 @@ const GuidePage = () => {
       {/* Steps Grid */}
       <div className="grid gap-6 md:grid-cols-2 lg:grid-cols-3 mb-10">
         {sections.map((section) => (
-          <div
+          <Card
             key={section.id}
-            className="bg-ios-surface border border-ios-border rounded-3xl p-6 shadow-sm hover:shadow-md transition-shadow"
+            className="rounded-3xl border-(--color-border) bg-(--color-surface) shadow-sm hover:shadow-md transition-shadow"
           >
-            <div
-              className={`w-12 h-12 rounded-2xl ${section.bgColor} flex items-center justify-center mb-4`}
-            >
-              <section.icon className={`w-6 h-6 ${section.color}`} />
-            </div>
-            <h3 className="text-xl font-bold text-ios-dark mb-2">
-              {section.title}
-            </h3>
-            <p className="text-ios-secondary leading-relaxed">
-              {section.content}
-            </p>
-          </div>
+            <CardContent className="p-6">
+              <div
+                className={`w-12 h-12 rounded-2xl ${section.bgColor} flex items-center justify-center mb-4`}
+              >
+                <section.icon className={`w-6 h-6 ${section.color}`} />
+              </div>
+              <h3 className="text-xl font-bold text-(--color-dark) mb-2">
+                {section.title}
+              </h3>
+              <p className="text-(--color-secondary) leading-relaxed">
+                {section.content}
+              </p>
+            </CardContent>
+          </Card>
         ))}
       </div>
 
       {/* CTA Section */}
-      <div className="bg-ios-surface border border-ios-border rounded-3xl p-8 text-center max-w-3xl mx-auto shadow-lg relative overflow-hidden">
-        <div className="relative z-10">
-          <h2 className="text-2xl font-bold text-ios-dark mb-4">جاهز تبدأ؟</h2>
-          <p className="text-ios-secondary mb-6">
+      <Card className="rounded-3xl border-(--color-border) bg-(--color-surface) p-8 text-center max-w-3xl mx-auto shadow-lg relative overflow-hidden">
+        <CardContent className="p-0 relative z-10">
+          <h2 className="text-2xl font-bold text-(--color-dark) mb-4">جاهز تبدأ؟</h2>
+          <p className="text-(--color-secondary) mb-6">
             دلوقتي انت بقيت جاهز تستخدم Budgetly وتظبط ميزانيتك. ابدأ دلوقتي!
           </p>
-          <Link
-            to="/"
-            className="inline-flex items-center gap-2 bg-ios-primary hover:bg-ios-primary/90 text-white font-bold py-3 px-8 rounded-2xl transition-all hover:scale-105 shadow-md"
-          >
-            <span>روح للوحة التحكم</span>
-            <ChevronRight className="rotate-180" size={20} />
-          </Link>
-        </div>
+          <Button asChild className="rounded-2xl font-bold py-3 px-8">
+            <Link to="/" className="inline-flex items-center gap-2">
+              <span>روح للوحة التحكم</span>
+              <ChevronRight className="rotate-180" size={20} />
+            </Link>
+          </Button>
+        </CardContent>
 
         {/* Decorative Background Elements */}
-        <div className="absolute top-0 right-0 w-64 h-64 bg-ios-primary/5 rounded-full blur-3xl -translate-y-1/2 translate-x-1/2" />
+        <div className="absolute top-0 right-0 w-64 h-64 bg-(--color-primary)/5 rounded-full blur-3xl -translate-y-1/2 translate-x-1/2" />
         <div className="absolute bottom-0 left-0 w-64 h-64 bg-purple-500/5 rounded-full blur-3xl translate-y-1/2 -translate-x-1/2" />
-      </div>
+      </Card>
     </div>
   );
 };
