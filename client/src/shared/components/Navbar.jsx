@@ -5,17 +5,13 @@ import { useToast } from "../context/ToastContext";
 import {
   LayoutDashboard,
   Receipt,
-  Users,
   LogOut,
   PlusCircle,
   Palette,
   Banknote,
-  BarChart3,
   User,
-  Info,
   Home,
   Lock,
-  Bot,
   Sun,
   Moon,
   StickyNote,
@@ -25,7 +21,7 @@ import { useState } from "react";
 
 import ConfirmModal from "./ConfirmModal";
 
-// مكون شريط التنقل - محسّن للإتاحة
+// Navbar Component - Optimized for Mobile & Accessibility
 const Navbar = () => {
   const { user, logout } = useAuth();
   const {
@@ -47,7 +43,7 @@ const Navbar = () => {
   if (!user) return null;
 
   const isActive = (path) => location.pathname === path;
-  const isLocked = !user.house; // Check if user has no house
+  const isLocked = !user.house;
 
   const handleLockedLinkClick = (e) => {
     if (isLocked) {
@@ -56,21 +52,10 @@ const Navbar = () => {
     }
   };
 
-  const navLinkStyle = (path) => ({
-    backgroundColor: isActive(path) ? "var(--color-primary)" : "transparent",
-    color: isActive(path) ? "var(--color-on-fill)" : "var(--color-dark)",
-  });
-
-  const navLinkClass = () => {
-    const baseClass = `flex items-center gap-2 px-4 py-2.5 rounded-2xl transition-all duration-200 font-medium`;
-    const lockedClass = isLocked ? "opacity-50 cursor-not-allowed" : "";
-    return `${baseClass} ${lockedClass}`;
-  };
-
   return (
     <>
       <nav
-        className="md:hidden backdrop-blur-xl border-b px-4 sm:px-6 py-3 pt-safe sticky top-0 z-50 shadow-sm font-primary"
+        className="md:hidden backdrop-blur-xl border-b px-3 sm:px-6 py-2.5 pt-safe sticky top-0 z-40 shadow-xs font-primary"
         style={{
           backgroundColor: "var(--color-surface)",
           borderColor: "var(--color-border)",
@@ -86,7 +71,7 @@ const Navbar = () => {
         {/* Locked Notification */}
         {isLocked && (
           <div
-            className="mb-3 px-3 py-2 rounded-lg flex items-center gap-2 text-sm"
+            className="mb-2 px-3 py-1.5 rounded-lg flex items-center gap-2 text-xs"
             style={{
               backgroundColor: "var(--color-status-pending-bg)",
               borderColor: "var(--color-status-pending-border)",
@@ -95,228 +80,139 @@ const Navbar = () => {
               color: "var(--color-status-pending)",
             }}
           >
-            <Lock size={16} />
-            <span>يرجى اختيار بيت للوصول إلى المزيد من الخيارات</span>
+            <Lock size={14} />
+            <span>يرجى اختيار بيت للوصول إلى كافة الميزات</span>
           </div>
         )}
 
-        <div className="max-w-7xl mx-auto flex justify-between items-center">
+        <div className="flex justify-between items-center h-11">
           <div className="flex items-center">
             <img
               src="/assets/logo.png"
               alt="بدجتلي - Budgetly"
-              className="w-20 h-auto dark:invert"
+              className="w-16 sm:w-20 h-auto dark:invert"
             />
           </div>
 
-          {/* القائمة الرئيسية - سطح المكتب */}
-          <div className="hidden md:flex items-center gap-2" role="menubar">
-            <Link
-              to="/"
-              className={navLinkClass("/")}
-              style={navLinkStyle("/")}
-              role="menuitem"
-              aria-current={isActive("/") ? "page" : undefined}
-              onClick={handleLockedLinkClick}
-            >
-              <LayoutDashboard size={18} aria-hidden="true" />
-              <span>الصفحة الرئيسية</span>
-            </Link>
-            <Link
-              to="/expenses"
-              className={navLinkClass("/expenses")}
-              style={navLinkStyle("/expenses")}
-              role="menuitem"
-              aria-current={
-                isActive("/expenses") || isActive("/add-expense")
-                  ? "page"
-                  : undefined
-              }
-              onClick={handleLockedLinkClick}
-            >
-              <Receipt size={18} aria-hidden="true" />
-              <span>المصاريف</span>
-            </Link>
-            {user.role === "admin" && (
-              <Link
-                to="/analytics"
-                className={navLinkClass("/analytics")}
-                style={navLinkStyle("/analytics")}
-                role="menuitem"
-                aria-current={isActive("/analytics") ? "page" : undefined}
-                onClick={handleLockedLinkClick}
-              >
-                <BarChart3 size={18} aria-hidden="true" />
-                <span>التحليلات</span>
-              </Link>
-            )}
-            <Link
-              to={user.role === "admin" ? "/all-invoices" : "/my-invoices"}
-              className={navLinkClass(
-                user.role === "admin" ? "/all-invoices" : "/my-invoices"
-              )}
-              style={navLinkStyle(
-                user.role === "admin" ? "/all-invoices" : "/my-invoices"
-              )}
-              role="menuitem"
-              aria-current={
-                isActive("/all-invoices") || isActive("/my-invoices")
-                  ? "page"
-                  : undefined
-              }
-              onClick={handleLockedLinkClick}
-            >
-              <Banknote size={18} aria-hidden="true" />
-              <span>الفواتير</span>
-            </Link>
-            <Link
-              to="/profile"
-              className={navLinkClass("/profile")}
-              style={navLinkStyle("/profile")}
-              role="menuitem"
-              aria-current={isActive("/profile") ? "page" : undefined}
-              onClick={handleLockedLinkClick}
-            >
-              <User size={18} aria-hidden="true" />
-              <span>الملف الشخصي</span>
-            </Link>
-            <Link
-              to="/about"
-              className={navLinkClass("/about")}
-              style={navLinkStyle("/about")}
-              role="menuitem"
-              aria-current={isActive("/about") ? "page" : undefined}
-              onClick={handleLockedLinkClick}
-            >
-              <Info size={18} aria-hidden="true" />
-              <span>عن التطبيق</span>
-            </Link>
-            <Link
-              to="/house-details"
-              className={navLinkClass("/house-details")}
-              style={navLinkStyle("/house-details")}
-              role="menuitem"
-              aria-current={isActive("/house-details") ? "page" : undefined}
-              onClick={handleLockedLinkClick}
-            >
-              <Home size={18} aria-hidden="true" />
-              <span>البيت</span>
-            </Link>
+          {/* Header Quick Tools */}
+          <div className="flex items-center gap-1.5 sm:gap-2">
+            {/* Notes Shortcut */}
             <Link
               to="/notes"
-              className={navLinkClass("/notes")}
-              style={navLinkStyle("/notes")}
-              role="menuitem"
-              aria-current={isActive("/notes") ? "page" : undefined}
               onClick={handleLockedLinkClick}
+              className={`p-2.5 rounded-xl min-w-[40px] min-h-[40px] flex items-center justify-center transition-all ${
+                isLocked ? "opacity-50 cursor-not-allowed" : ""
+              }`}
+              style={{
+                color: isActive("/notes")
+                  ? "var(--color-primary)"
+                  : "var(--color-secondary)",
+                backgroundColor: isActive("/notes")
+                  ? "var(--color-hover)"
+                  : "transparent",
+              }}
+              aria-label="الملاحظات"
             >
-              <StickyNote size={18} aria-hidden="true" />
-              <span>الملاحظات</span>
+              <StickyNote size={19} aria-hidden="true" />
             </Link>
-          </div>
 
-          {/* الأدوات */}
-          <div className="flex items-center gap-3">
             {/* Theme & Palette */}
-            <div className="relative flex items-center gap-2">
-              <button
-                onClick={toggleTheme}
-                className="p-2.5 rounded-full transition-all"
-                style={{ color: "var(--color-secondary)" }}
-                aria-label={
-                  themeMode === "dark" ? "الوضع النهاري" : "الوضع الليلي"
-                }
-              >
-                {themeMode === "dark" ? <Sun size={20} /> : <Moon size={20} />}
-              </button>
+            <button
+              onClick={toggleTheme}
+              className="p-2.5 rounded-xl min-w-[40px] min-h-[40px] flex items-center justify-center transition-all hover:bg-(--color-hover)"
+              style={{ color: "var(--color-secondary)" }}
+              aria-label={
+                themeMode === "dark" ? "الوضع النهاري" : "الوضع الليلي"
+              }
+            >
+              {themeMode === "dark" ? <Sun size={19} /> : <Moon size={19} />}
+            </button>
 
-              {themeMode === "dark" && (
-                <div className="relative">
-                  <button
-                    onClick={() => setShowPaletteMenu(!showPaletteMenu)}
-                    className="p-2.5 rounded-full transition-all"
+            {themeMode === "dark" && (
+              <div className="relative">
+                <button
+                  onClick={() => setShowPaletteMenu(!showPaletteMenu)}
+                  className="p-2.5 rounded-xl min-w-[40px] min-h-[40px] flex items-center justify-center transition-all hover:bg-(--color-hover)"
+                  style={{
+                    color: showPaletteMenu
+                      ? "var(--color-primary)"
+                      : "var(--color-secondary)",
+                  }}
+                  aria-label="تغيير ألوان الثيم"
+                >
+                  <Palette size={19} aria-hidden="true" />
+                </button>
+
+                {showPaletteMenu && (
+                  <div
+                    className="absolute left-0 mt-2 rounded-2xl shadow-lg py-2 min-w-[160px] z-50 overflow-hidden"
                     style={{
-                      color: showPaletteMenu
-                        ? "var(--color-primary)"
-                        : "var(--color-secondary)",
+                      backgroundColor: "var(--color-surface)",
+                      borderColor: "var(--color-border)",
+                      borderWidth: "1px",
+                      borderStyle: "solid",
                     }}
-                    aria-label="تغيير ألوان الثيم"
+                    role="menu"
                   >
-                    <Palette size={20} aria-hidden="true" />
-                  </button>
-
-                  {showPaletteMenu && (
-                    <div
-                      className="absolute left-0 mt-2 rounded-2xl shadow-lg py-2 min-w-[160px] z-50 overflow-hidden"
-                      style={{
-                        backgroundColor: "var(--color-surface)",
-                        borderColor: "var(--color-border)",
-                        borderWidth: "1px",
-                        borderStyle: "solid",
-                      }}
-                      role="menu"
-                    >
-                      <div className="px-4 py-2 text-xs font-bold text-(--color-muted) border-b border-(--color-border) mb-1">
-                        اختر الثيم
-                      </div>
-
-                      {/* Default Option */}
-                      <button
-                        onClick={() => {
-                          changePalette("default");
-                          setShowPaletteMenu(false);
-                        }}
-                        className="w-full px-4 py-2.5 text-right text-sm font-medium transition-colors flex items-center justify-between hover:bg-(--color-hover)"
-                        style={{
-                          color:
-                            currentPalette === "default"
-                              ? "var(--color-primary)"
-                              : "var(--color-dark)",
-                          fontWeight:
-                            currentPalette === "default" ? "bold" : "normal",
-                        }}
-                      >
-                        الافتراضي
-                        {currentPalette === "default" && (
-                          <div className="w-2 h-2 rounded-full bg-(--color-primary)"></div>
-                        )}
-                      </button>
-
-                      {palettes
-                        .filter((p) => p.id !== "default")
-                        .map((p) => (
-                          <button
-                            key={p.id}
-                            onClick={() => {
-                              changePalette(p.id);
-                              setShowPaletteMenu(false);
-                            }}
-                            className="w-full px-4 py-2.5 text-right text-sm font-medium transition-colors flex items-center justify-between hover:bg-(--color-hover)"
-                            style={{
-                              color:
-                                currentPalette === p.id
-                                  ? "var(--color-primary)"
-                                  : "var(--color-dark)",
-                              fontWeight:
-                                currentPalette === p.id ? "bold" : "normal",
-                            }}
-                          >
-                            {p.name}
-                            {currentPalette === p.id && (
-                              <div className="w-2 h-2 rounded-full bg-(--color-primary)"></div>
-                            )}
-                          </button>
-                        ))}
+                    <div className="px-4 py-2 text-xs font-bold text-(--color-muted) border-b border-(--color-border) mb-1">
+                      اختر الثيم
                     </div>
-                  )}
-                </div>
-              )}
-            </div>
+
+                    <button
+                      onClick={() => {
+                        changePalette("default");
+                        setShowPaletteMenu(false);
+                      }}
+                      className="w-full px-4 py-2.5 text-right text-sm font-medium transition-colors flex items-center justify-between hover:bg-(--color-hover)"
+                      style={{
+                        color:
+                          currentPalette === "default"
+                            ? "var(--color-primary)"
+                            : "var(--color-dark)",
+                        fontWeight:
+                          currentPalette === "default" ? "bold" : "normal",
+                      }}
+                    >
+                      الافتراضي
+                      {currentPalette === "default" && (
+                        <div className="w-2 h-2 rounded-full bg-(--color-primary)"></div>
+                      )}
+                    </button>
+
+                    {palettes
+                      .filter((p) => p.id !== "default")
+                      .map((p) => (
+                        <button
+                          key={p.id}
+                          onClick={() => {
+                            changePalette(p.id);
+                            setShowPaletteMenu(false);
+                          }}
+                          className="w-full px-4 py-2.5 text-right text-sm font-medium transition-colors flex items-center justify-between hover:bg-(--color-hover)"
+                          style={{
+                            color:
+                              currentPalette === p.id
+                                ? "var(--color-primary)"
+                                : "var(--color-dark)",
+                            fontWeight:
+                              currentPalette === p.id ? "bold" : "normal",
+                          }}
+                        >
+                          {p.name}
+                          {currentPalette === p.id && (
+                            <div className="w-2 h-2 rounded-full bg-(--color-primary)"></div>
+                          )}
+                        </button>
+                      ))}
+                  </div>
+                )}
+              </div>
+            )}
 
             <Link
               to="/profile"
               onClick={handleLockedLinkClick}
-              className={`p-2.5 rounded-full transition-all ${
+              className={`p-2.5 rounded-xl min-w-[40px] min-h-[40px] flex items-center justify-center transition-all ${
                 isLocked ? "opacity-50 cursor-not-allowed" : ""
               }`}
               style={{
@@ -330,64 +226,33 @@ const Navbar = () => {
               aria-label="الملف الشخصي"
               aria-current={isActive("/profile") ? "page" : undefined}
             >
-              <User size={20} aria-hidden="true" />
+              <User size={19} aria-hidden="true" />
             </Link>
 
             <button
               onClick={() => setShowLogoutModal(true)}
-              className="p-2.5 rounded-full transition-all"
+              className="p-2.5 rounded-xl min-w-[40px] min-h-[40px] flex items-center justify-center transition-all hover:bg-(--color-error)/10"
               style={{ color: "var(--color-error)" }}
-              aria-label="اطلع"
+              aria-label="تسجيل الخروج"
             >
-              <LogOut size={20} aria-hidden="true" />
+              <LogOut size={19} aria-hidden="true" />
             </button>
           </div>
         </div>
 
-        <div className="mt-3 flex items-center gap-2 md:hidden" role="group" aria-label="أدوات إضافية">
-          {[
-            { path: "/notes", label: "الملاحظات", icon: StickyNote },
-          ].map((item) => {
-            const active = isActive(item.path);
-
-            return (
-              <Link
-                key={item.path}
-                to={item.path}
-                onClick={handleLockedLinkClick}
-                className={`inline-flex items-center gap-2 rounded-full border px-3 py-2 text-sm font-semibold transition-all ${
-                  isLocked ? "opacity-50 cursor-not-allowed" : ""
-                }`}
-                style={{
-                  color: active ? "var(--color-primary)" : "var(--color-secondary)",
-                  backgroundColor: active ? "var(--color-hover)" : "transparent",
-                  borderColor: active
-                    ? "var(--color-primary)"
-                    : "var(--color-border)",
-                }}
-                aria-label={item.label}
-                aria-current={active ? "page" : undefined}
-              >
-                <item.icon size={18} aria-hidden="true" />
-                <span>{item.label}</span>
-              </Link>
-            );
-          })}
-        </div>
-
-        {/* القائمة السفلية للجوال - Bottom Navigation */}
+        {/* Mobile Bottom Navigation Bar */}
         <div
-          className="md:hidden fixed bottom-0 left-0 right-0 backdrop-blur-xl border-t pt-2 pb-safe z-50 shadow-lg"
+          className="md:hidden fixed bottom-0 left-0 right-0 backdrop-blur-xl border-t pt-1.5 pb-safe z-50 shadow-lg"
           style={{
             backgroundColor: "var(--color-surface)",
             borderColor: "var(--color-border)",
           }}
         >
-          <div className="grid grid-cols-5 items-center gap-1 px-2 mb-2">
+          <div className="grid grid-cols-5 items-center gap-1 px-2 mb-1.5">
             <Link
               to="/"
               onClick={handleLockedLinkClick}
-              className={`w-full flex flex-col items-center gap-1 p-2 rounded-xl transition-all ${
+              className={`w-full min-h-[48px] flex flex-col items-center justify-center gap-1 py-1 px-2 rounded-xl transition-all ${
                 isLocked ? "opacity-50 cursor-not-allowed" : ""
               }`}
               style={{
@@ -400,13 +265,14 @@ const Navbar = () => {
               aria-current={isActive("/") ? "page" : undefined}
               role="menuitem"
             >
-              <LayoutDashboard size={22} aria-hidden="true" />
-              <span className="text-xs font-medium">الرئيسية</span>
+              <LayoutDashboard size={20} aria-hidden="true" />
+              <span className="text-[11px] font-semibold">الرئيسية</span>
             </Link>
+
             <Link
               to="/expenses"
               onClick={handleLockedLinkClick}
-              className={`w-full flex flex-col items-center gap-1 p-2 rounded-xl transition-all ${
+              className={`w-full min-h-[48px] flex flex-col items-center justify-center gap-1 py-1 px-2 rounded-xl transition-all ${
                 isLocked ? "opacity-50 cursor-not-allowed" : ""
               }`}
               style={{
@@ -419,38 +285,38 @@ const Navbar = () => {
               aria-current={isActive("/expenses") ? "page" : undefined}
               role="menuitem"
             >
-              <Receipt size={22} aria-hidden="true" />
-              <span className="text-xs font-medium">المصاريف</span>
+              <Receipt size={20} aria-hidden="true" />
+              <span className="text-[11px] font-semibold">المصاريف</span>
             </Link>
 
             <Link
               to="/add-expense"
               onClick={handleLockedLinkClick}
-              className={`w-full flex flex-col items-center gap-1 px-3 py-2 rounded-2xl transition-all ${
+              className={`w-full min-h-[48px] flex flex-col items-center justify-center gap-0.5 py-1 px-2 rounded-2xl transition-all ${
                 isLocked ? "opacity-50 cursor-not-allowed" : ""
               }`}
               style={{
                 color: "var(--color-on-fill)",
                 backgroundColor: "var(--color-primary)",
                 boxShadow: isActive("/add-expense")
-                  ? "0 8px 20px rgba(0, 0, 0, 0.2)"
-                  : "0 4px 12px rgba(0, 0, 0, 0.16)",
+                  ? "0 6px 16px rgba(0, 0, 0, 0.2)"
+                  : "0 2px 8px rgba(0, 0, 0, 0.14)",
                 transform: isActive("/add-expense")
-                  ? "translateY(-1px)"
-                  : "none",
+                  ? "translateY(-2px)"
+                  : "translateY(-1px)",
               }}
               aria-label="إضافة مصروف"
               aria-current={isActive("/add-expense") ? "page" : undefined}
               role="menuitem"
             >
               <PlusCircle size={20} aria-hidden="true" />
-              <span className="text-xs font-medium">إضافة</span>
+              <span className="text-[11px] font-bold">إضافة</span>
             </Link>
 
             <Link
               to={user.role === "admin" ? "/all-invoices" : "/my-invoices"}
               onClick={handleLockedLinkClick}
-              className={`w-full flex flex-col items-center gap-1 p-2 rounded-xl transition-all ${
+              className={`w-full min-h-[48px] flex flex-col items-center justify-center gap-1 py-1 px-2 rounded-xl transition-all ${
                 isLocked ? "opacity-50 cursor-not-allowed" : ""
               }`}
               style={{
@@ -468,13 +334,14 @@ const Navbar = () => {
               }
               role="menuitem"
             >
-              <Banknote size={22} aria-hidden="true" />
-              <span className="text-xs font-medium">الفواتير</span>
+              <Banknote size={20} aria-hidden="true" />
+              <span className="text-[11px] font-semibold">الفواتير</span>
             </Link>
+
             <Link
               to="/house-details"
               onClick={handleLockedLinkClick}
-              className={`w-full flex flex-col items-center gap-1 p-2 rounded-xl transition-all ${
+              className={`w-full min-h-[48px] flex flex-col items-center justify-center gap-1 py-1 px-2 rounded-xl transition-all ${
                 isLocked ? "opacity-50 cursor-not-allowed" : ""
               }`}
               style={{
@@ -487,8 +354,8 @@ const Navbar = () => {
               aria-current={isActive("/house-details") ? "page" : undefined}
               role="menuitem"
             >
-              <Home size={22} aria-hidden="true" />
-              <span className="text-xs font-medium">البيت</span>
+              <Home size={20} aria-hidden="true" />
+              <span className="text-[11px] font-semibold">البيت</span>
             </Link>
           </div>
         </div>
