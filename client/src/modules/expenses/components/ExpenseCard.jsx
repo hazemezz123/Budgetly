@@ -13,13 +13,13 @@ export default function ExpenseCard({
 }) {
   return (
     <div
-      className="group rounded-2xl p-5 shadow-sm hover:shadow-md transition-all duration-200 relative overflow-hidden h-full flex flex-col"
+      className="group rounded-2xl p-4 sm:p-5 shadow-sm hover:shadow-md transition-all duration-200 relative overflow-hidden h-full flex flex-col min-w-0"
       style={{
         backgroundColor: "var(--color-surface)",
         border: "1px solid var(--color-border)",
       }}
     >
-      <div className="flex justify-between items-start mb-3">
+      <div className="flex justify-between items-start gap-2 mb-3">
         {/* Icon */}
         <div
           className="p-2.5 rounded-xl"
@@ -104,11 +104,11 @@ export default function ExpenseCard({
         </div>
 
         {/* Action Buttons */}
-        <div className="flex items-center gap-1">
+        <div className="flex items-center gap-1.5">
           {/* View Details Button */}
           <button
             onClick={() => onViewDetails && onViewDetails(expense)}
-            className="p-2 rounded-lg transition-colors cursor-pointer"
+            className="min-w-[40px] min-h-[40px] p-2 rounded-xl transition-colors cursor-pointer flex items-center justify-center"
             style={{ color: "var(--color-muted)" }}
             onMouseEnter={(e) => {
               e.currentTarget.style.color = "var(--color-primary)";
@@ -119,6 +119,7 @@ export default function ExpenseCard({
               e.currentTarget.style.backgroundColor = "transparent";
             }}
             title="عرض التفاصيل"
+            aria-label="عرض التفاصيل"
           >
             <Eye size={18} />
           </button>
@@ -127,7 +128,7 @@ export default function ExpenseCard({
           {isAdmin && (
             <button
               onClick={() => onDelete(expense._id)}
-              className="p-2 rounded-lg transition-colors cursor-pointer"
+              className="min-w-[40px] min-h-[40px] p-2 rounded-xl transition-colors cursor-pointer flex items-center justify-center"
               style={{ color: "var(--color-muted)" }}
               onMouseEnter={(e) => {
                 e.currentTarget.style.color = "var(--color-error)";
@@ -139,6 +140,7 @@ export default function ExpenseCard({
                 e.currentTarget.style.backgroundColor = "transparent";
               }}
               title="امسح"
+              aria-label="حذف المصروف"
             >
               <Trash2 size={18} />
             </button>

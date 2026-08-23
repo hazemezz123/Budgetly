@@ -42,7 +42,7 @@ export default function ExpensesFiltersPanel({
         )}
       </div>
 
-      <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+      <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-3 sm:gap-4">
         <div>
           <label
             className="block text-sm font-medium mb-2 flex items-center gap-1.5"
@@ -54,7 +54,7 @@ export default function ExpensesFiltersPanel({
           <select
             value={selectedUserId}
             onChange={(e) => onUserChange(e.target.value)}
-            className="w-full px-4 py-2.5 rounded-xl outline-none transition-all duration-200"
+            className="w-full px-4 py-3 rounded-xl outline-none transition-all duration-200 text-base sm:text-sm min-h-[44px]"
             style={{
               backgroundColor: "var(--color-light)",
               border: "1px solid var(--color-border)",
@@ -84,7 +84,7 @@ export default function ExpensesFiltersPanel({
             onChange={(e) => onMinAmountChange(e.target.value)}
             placeholder="0"
             min="0"
-            className="w-full px-4 py-2.5 rounded-xl outline-none transition-all duration-200"
+            className="w-full px-4 py-3 rounded-xl outline-none transition-all duration-200 text-base sm:text-sm min-h-[44px]"
             style={{
               backgroundColor: "var(--color-light)",
               border: "1px solid var(--color-border)",
@@ -93,7 +93,7 @@ export default function ExpensesFiltersPanel({
           />
         </div>
 
-        <div>
+        <div className="sm:col-span-2 md:col-span-1">
           <label
             className="block text-sm font-medium mb-2 flex items-center gap-1.5"
             style={{ color: "var(--color-secondary)" }}
@@ -107,7 +107,7 @@ export default function ExpensesFiltersPanel({
             onChange={(e) => onMaxAmountChange(e.target.value)}
             placeholder="∞"
             min="0"
-            className="w-full px-4 py-2.5 rounded-xl outline-none transition-all duration-200"
+            className="w-full px-4 py-3 rounded-xl outline-none transition-all duration-200 text-base sm:text-sm min-h-[44px]"
             style={{
               backgroundColor: "var(--color-light)",
               border: "1px solid var(--color-border)",
