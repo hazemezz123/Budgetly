@@ -70,7 +70,7 @@ const Navbar = () => {
   return (
     <>
       <nav
-        className="md:hidden backdrop-blur-xl border-b px-4 sm:px-6 py-3 sticky top-0 z-50 shadow-sm font-primary"
+        className="md:hidden backdrop-blur-xl border-b px-4 sm:px-6 py-3 pt-safe sticky top-0 z-50 shadow-sm font-primary"
         style={{
           backgroundColor: "var(--color-surface)",
           borderColor: "var(--color-border)",

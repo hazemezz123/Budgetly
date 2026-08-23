@@ -211,15 +211,18 @@ input[type="number"],
   font-family: var(--font-decorative);
 }
 /* ============================
-   Mobile padding
+   Mobile padding & Safe Area
 =============================== */
 @media (max-width: 768px) {
   main {
-    padding-bottom: 80px !important;
+    padding-bottom: calc(80px + env(safe-area-inset-bottom, 0px)) !important;
   }
 }
 
-/* iPhone Safe Area */
+.pt-safe {
+  padding-top: env(safe-area-inset-top, 0px);
+}
+
 .pb-safe {
   padding-bottom: env(safe-area-inset-bottom, 0.5rem);
 }
