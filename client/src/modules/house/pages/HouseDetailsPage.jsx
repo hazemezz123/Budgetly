@@ -18,6 +18,8 @@ import {
   RotateCcw,
 } from "lucide-react";
 import { ConfirmModal, Input, Loader } from "../../../shared/components";
+import { Button } from "@/components/ui/button";
+import { Tabs, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { RoleRotationSettings } from "../components";
 import { useHouse } from "../hooks";
 
@@ -200,19 +202,20 @@ const HouseDetails = () => {
                 placeholder="اسم البيت الجديد"
                 className="flex-1"
               />
-              <button
+              <Button
                 onClick={handleUpdateName}
                 disabled={isUpdatingName}
-                className="min-h-[44px] px-4 py-2.5 bg-(--color-primary) text-white rounded-xl font-bold disabled:opacity-50 flex items-center justify-center"
+                className="min-h-[44px] px-4 py-2.5 rounded-xl font-bold flex-1 sm:flex-none"
               >
                 {isUpdatingName ? "حفظ..." : "حفظ"}
-              </button>
-              <button
+              </Button>
+              <Button
                 onClick={() => setEditingName(false)}
-                className="min-h-[44px] px-4 py-2.5 bg-(--color-surface) border border-(--color-border) rounded-xl font-bold flex items-center justify-center"
+                variant="outline"
+                className="min-h-[44px] px-4 py-2.5 rounded-xl font-bold flex-1 sm:flex-none bg-(--color-surface)"
               >
                 إلغاء
-              </button>
+              </Button>
             </div>
           </div>
         )}
@@ -235,53 +238,39 @@ const HouseDetails = () => {
       </div>
 
       {/* Tabs */}
-      <div className="mb-6 p-1 bg-(--color-surface) rounded-xl border border-(--color-border) overflow-x-auto">
-        <div className="flex gap-2 min-w-full">
-        <button
-          onClick={() => setActiveTab("members")}
-          className={`min-w-[120px] sm:min-w-0 sm:flex-1 py-2 px-4 rounded-lg font-bold whitespace-nowrap transition-all ${
-            activeTab === "members"
-              ? "bg-(--color-primary) text-white shadow-md"
-              : "text-(--color-muted) hover:bg-(--color-bg)"
+      <Tabs value={activeTab} onValueChange={setActiveTab} className="mb-6">
+        <TabsList
+          className={`w-full h-auto p-1 rounded-xl border border-(--color-border) bg-(--color-surface) grid ${
+            isAdmin ? "grid-cols-3" : "grid-cols-2"
           }`}
         >
-          <div className="flex items-center justify-center gap-2">
-            <Users size={18} />
-            <span>الأعضاء</span>
-          </div>
-        </button>
-        {isAdmin && (
-          <button
-            onClick={() => setActiveTab("settings")}
-            className={`min-w-[120px] sm:min-w-0 sm:flex-1 py-2 px-4 rounded-lg font-bold whitespace-nowrap transition-all ${
-              activeTab === "settings"
-                ? "bg-(--color-primary) text-white shadow-md"
-                : "text-(--color-muted) hover:bg-(--color-bg)"
-            }`}
+          <TabsTrigger
+            value="members"
+            className="min-h-[44px] rounded-lg font-bold text-xs sm:text-sm flex items-center justify-center gap-1.5 sm:gap-2 data-[state=active]:bg-(--color-primary) data-[state=active]:text-(--color-on-fill)"
           >
-            <div className="flex items-center justify-center gap-2">
-              <Settings size={18} />
-              <span>إعدادات</span>
-            </div>
-          </button>
-        )}
+            <Users size={16} className="sm:w-[18px] sm:h-[18px]" />
+            <span>الأعضاء</span>
+          </TabsTrigger>
           {isAdmin && (
-            <button
-              onClick={() => setActiveTab("rotation")}
-              className={`min-w-[120px] sm:min-w-0 sm:flex-1 py-2 px-4 rounded-lg font-bold whitespace-nowrap transition-all ${
-                activeTab === "rotation"
-                  ? "bg-(--color-primary) text-white shadow-md"
-                  : "text-(--color-muted) hover:bg-(--color-bg)"
-              }`}
+            <TabsTrigger
+              value="settings"
+              className="min-h-[44px] rounded-lg font-bold text-xs sm:text-sm flex items-center justify-center gap-1.5 sm:gap-2 data-[state=active]:bg-(--color-primary) data-[state=active]:text-(--color-on-fill)"
             >
-              <div className="flex items-center justify-center gap-2">
-                <RotateCcw size={18} />
-                <span>المهام</span>
-              </div>
-            </button>
+              <Settings size={16} className="sm:w-[18px] sm:h-[18px]" />
+              <span>إعدادات</span>
+            </TabsTrigger>
           )}
-        </div>
-      </div>
+          {isAdmin && (
+            <TabsTrigger
+              value="rotation"
+              className="min-h-[44px] rounded-lg font-bold text-xs sm:text-sm flex items-center justify-center gap-1.5 sm:gap-2 data-[state=active]:bg-(--color-primary) data-[state=active]:text-(--color-on-fill)"
+            >
+              <RotateCcw size={16} className="sm:w-[18px] sm:h-[18px]" />
+              <span>المهام</span>
+            </TabsTrigger>
+          )}
+        </TabsList>
+      </Tabs>
 
       {/* Tab Content */}
       <div className="space-y-4">
@@ -327,13 +316,16 @@ const HouseDetails = () => {
                 </div>
 
                 {isAdmin && member._id !== userId && (
-                  <button
+                  <Button
                     onClick={() => setMemberToRemove(member)}
-                    className="self-end sm:self-auto p-2 text-(--color-error) hover:bg-(--color-error)/10 cursor-pointer rounded-lg transition-colors"
+                    variant="ghost"
+                    size="icon"
+                    className="self-end sm:self-auto p-2 text-(--color-error) hover:text-(--color-error) hover:bg-(--color-error)/10 rounded-lg"
                     title="حذف العضو"
+                    aria-label="حذف العضو"
                   >
                     <UserX size={20} />
-                  </button>
+                  </Button>
                 )}
               </div>
             ))}
@@ -367,21 +359,22 @@ const HouseDetails = () => {
                     placeholder="الباسوورد الجديد"
                   />
                   <div className="flex flex-col-reverse sm:flex-row gap-2 sm:justify-end">
-                    <button
+                    <Button
                       onClick={() => setEditingPassword(false)}
-                      className="px-4 py-2 text-sm font-bold  cursor-pointer text-(--color-muted) hover:bg-(--color-bg) rounded-xl"
+                      variant="ghost"
+                      className="min-h-[44px] px-4 py-2 text-sm font-bold rounded-xl"
                     >
                       إلغاء
-                    </button>
-                    <button
+                    </Button>
+                    <Button
                       onClick={handleUpdatePassword}
                       disabled={isUpdatingPassword}
-                      className="px-4 py-2 text-sm font-bold cursor-pointer bg-(--color-primary) text-white rounded-xl shadow-md hover:shadow-lg transition-all disabled:opacity-50"
+                      className="min-h-[44px] px-4 py-2 text-sm font-bold rounded-xl shadow-md hover:shadow-lg"
                     >
                       {isUpdatingPassword
                         ? "جاري التغيير..."
                         : "تغيير الباسوورد"}
-                    </button>
+                    </Button>
                   </div>
                 </div>
               ) : (
@@ -410,20 +403,22 @@ const HouseDetails = () => {
                 </div>
               </div>
               <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
-                <button
+                <Button
                   onClick={() => handleExport("expenses")}
-                  className="flex items-center justify-center gap-2 py-3 border-2 border-dashed border-(--color-border) rounded-xl text-(--color-secondary) font-bold hover:border-(--color-success) hover:text-(--color-success) transition-all"
+                  variant="outline"
+                  className="flex items-center justify-center gap-2 min-h-[44px] py-3 border-2 border-dashed rounded-xl text-(--color-secondary) font-bold hover:border-(--color-success) hover:text-(--color-success)"
                 >
                   <FileSpreadsheet size={18} />
                   تصدير المصاريف
-                </button>
-                <button
+                </Button>
+                <Button
                   onClick={() => handleExport("invoices")}
-                  className="flex items-center justify-center gap-2 py-3 border-2 border-dashed border-(--color-border) rounded-xl text-(--color-secondary) font-bold hover:border-(--color-success) hover:text-(--color-success) transition-all"
+                  variant="outline"
+                  className="flex items-center justify-center gap-2 min-h-[44px] py-3 border-2 border-dashed rounded-xl text-(--color-secondary) font-bold hover:border-(--color-success) hover:text-(--color-success)"
                 >
                   <FileSpreadsheet size={18} />
                   تصدير الفواتير
-                </button>
+                </Button>
               </div>
             </div>
 
@@ -438,10 +433,11 @@ const HouseDetails = () => {
 
               <div className="flex flex-col gap-3">
                 {/* Clear All Data */}
-                <button
+                <Button
                   onClick={() => setShowClearDataModal(true)}
                   disabled={isClearingData}
-                  className="flex items-center justify-between p-4 hover:bg-(--color-warning)/10 rounded-xl border border-(--color-warning) text-(--color-warning) cursor-pointer transition-all shadow-sm group disabled:opacity-50"
+                  variant="outline"
+                  className="flex items-center justify-between p-4 h-auto min-h-[44px] rounded-xl border-(--color-warning) text-(--color-warning) shadow-sm group"
                 >
                   <div className="text-right">
                     <span className="font-bold block">مسح كل البيانات</span>
@@ -453,12 +449,13 @@ const HouseDetails = () => {
                     size={20}
                     className="group-hover:scale-110 transition-transform"
                   />
-                </button>
+                </Button>
 
                 {/* Delete House */}
-                <button
+                <Button
                   onClick={() => setShowDeleteModal(true)}
-                  className="flex items-center justify-between p-4 hover:bg-(--color-error)/20 rounded-xl border border-(--color-error) text-(--color-error) cursor-pointer transition-all shadow-sm group"
+                  variant="outline"
+                  className="flex items-center justify-between p-4 h-auto min-h-[44px] rounded-xl border-(--color-error) text-(--color-error) shadow-sm group"
                 >
                   <div className="text-right">
                     <span className="font-bold block">حذف البيت بالكامل</span>
@@ -470,7 +467,7 @@ const HouseDetails = () => {
                     size={20}
                     className="group-hover:scale-110 transition-transform"
                   />
-                </button>
+                </Button>
               </div>
             </div>
           </div>
@@ -487,13 +484,14 @@ const HouseDetails = () => {
 
       {/* Leave House Button (Visible to everyone) */}
       <div className="mt-8 pt-6 border-t border-(--color-border)">
-        <button
+        <Button
           onClick={() => setShowLeaveModal(true)}
-          className="w-full border cursor-pointer flex items-center justify-center gap-2 py-3 text-(--color-error) font-bold hover:bg-(--color-error)/10 rounded-xl transition-all"
+          variant="outline"
+          className="w-full min-h-[44px] flex items-center justify-center gap-2 py-3 text-(--color-error) hover:text-(--color-error) hover:bg-(--color-error)/10 font-bold rounded-xl"
         >
           <LogOut size={20} />
           مغادرة البيت
-        </button>
+        </Button>
       </div>
 
       {/* Modals */}
