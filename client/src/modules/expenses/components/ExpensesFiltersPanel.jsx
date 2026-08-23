@@ -1,4 +1,7 @@
 import { Filter, X, User, DollarSign } from "lucide-react";
+import { Label } from "@/components/ui/label";
+import { Input } from "@/components/ui/input";
+import { Button } from "@/components/ui/button";
 
 export default function ExpensesFiltersPanel({
   users,
@@ -28,38 +31,32 @@ export default function ExpensesFiltersPanel({
           خيارات الفلترة
         </h3>
         {hasActiveFilters && (
-          <button
+          <Button
             onClick={onClearFilters}
-            className="flex items-center gap-1 px-3 py-1.5 rounded-xl text-sm font-medium transition-colors"
-            style={{
-              color: "var(--color-error)",
-              backgroundColor: "var(--color-status-rejected-bg)",
-            }}
+            variant="ghost"
+            size="sm"
+            className="gap-1 rounded-xl text-sm font-medium bg-(--color-status-rejected-bg) text-(--color-error) hover:bg-(--color-status-rejected-bg)/80 hover:text-(--color-error)"
           >
             <X size={14} />
             مسح الكل
-          </button>
+          </Button>
         )}
       </div>
 
       <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-3 sm:gap-4">
-        <div>
-          <label
-            className="block text-sm font-medium mb-2 flex items-center gap-1.5"
-            style={{ color: "var(--color-secondary)" }}
+        <div className="space-y-1.5">
+          <Label
+            htmlFor="filter-user"
+            className="flex items-center gap-1.5 text-sm font-medium text-(--color-secondary)"
           >
             <User size={14} />
             المستخدم
-          </label>
+          </Label>
           <select
+            id="filter-user"
             value={selectedUserId}
             onChange={(e) => onUserChange(e.target.value)}
-            className="w-full px-4 py-3 rounded-xl outline-none transition-all duration-200 text-base sm:text-sm min-h-[44px]"
-            style={{
-              backgroundColor: "var(--color-light)",
-              border: "1px solid var(--color-border)",
-              color: "var(--color-dark)",
-            }}
+            className="h-11 w-full rounded-xl border border-(--color-border) bg-(--color-bg) px-3 text-sm sm:text-base text-(--color-dark) [color-scheme:light] dark:[color-scheme:dark] outline-none focus-visible:ring-2 focus-visible:ring-(--color-primary)"
           >
             <option value="">كل المستخدمين</option>
             {users.map((u) => (
@@ -70,49 +67,41 @@ export default function ExpensesFiltersPanel({
           </select>
         </div>
 
-        <div>
-          <label
-            className="block text-sm font-medium mb-2 flex items-center gap-1.5"
-            style={{ color: "var(--color-secondary)" }}
+        <div className="space-y-1.5">
+          <Label
+            htmlFor="filter-min"
+            className="flex items-center gap-1.5 text-sm font-medium text-(--color-secondary)"
           >
             <DollarSign size={14} />
             الحد الأدنى (جنيه)
-          </label>
-          <input
+          </Label>
+          <Input
+            id="filter-min"
             type="number"
             value={minAmount}
             onChange={(e) => onMinAmountChange(e.target.value)}
             placeholder="0"
             min="0"
-            className="w-full px-4 py-3 rounded-xl outline-none transition-all duration-200 text-base sm:text-sm min-h-[44px]"
-            style={{
-              backgroundColor: "var(--color-light)",
-              border: "1px solid var(--color-border)",
-              color: "var(--color-dark)",
-            }}
+            className="h-11 rounded-xl bg-(--color-bg) border-(--color-border) text-sm sm:text-base"
           />
         </div>
 
-        <div className="sm:col-span-2 md:col-span-1">
-          <label
-            className="block text-sm font-medium mb-2 flex items-center gap-1.5"
-            style={{ color: "var(--color-secondary)" }}
+        <div className="space-y-1.5 sm:col-span-2 md:col-span-1">
+          <Label
+            htmlFor="filter-max"
+            className="flex items-center gap-1.5 text-sm font-medium text-(--color-secondary)"
           >
             <DollarSign size={14} />
             الحد الأقصى (جنيه)
-          </label>
-          <input
+          </Label>
+          <Input
+            id="filter-max"
             type="number"
             value={maxAmount}
             onChange={(e) => onMaxAmountChange(e.target.value)}
             placeholder="∞"
             min="0"
-            className="w-full px-4 py-3 rounded-xl outline-none transition-all duration-200 text-base sm:text-sm min-h-[44px]"
-            style={{
-              backgroundColor: "var(--color-light)",
-              border: "1px solid var(--color-border)",
-              color: "var(--color-dark)",
-            }}
+            className="h-11 rounded-xl bg-(--color-bg) border-(--color-border) text-sm sm:text-base"
           />
         </div>
       </div>

@@ -1,6 +1,5 @@
 import { Receipt } from "lucide-react";
 import ExpenseCard from "./ExpenseCard";
-import { Loader } from "../../../shared/components";
 
 export default function ExpensesList({
   expenses,
@@ -10,7 +9,12 @@ export default function ExpensesList({
   isAdmin,
 }) {
   if (loading) {
-    return <Loader text="بنحمّل المصاريف..." />;
+    return (
+      <div className="text-center py-10">
+        <div className="w-8 h-8 border-4 border-(--color-primary) border-t-transparent rounded-full animate-spin mx-auto mb-4" />
+        <p className="text-(--color-muted)">بنحمّل المصاريف...</p>
+      </div>
+    );
   }
 
   if (expenses.length === 0) {

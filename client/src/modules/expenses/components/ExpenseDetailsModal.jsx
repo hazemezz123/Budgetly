@@ -1,5 +1,4 @@
 import {
-  X,
   Calendar,
   User,
   Users,
@@ -12,13 +11,22 @@ import {
   getCategoryIcon,
   getCategoryStyles,
 } from "../../../utils/expenseUtils.jsx";
-import useModalA11y from "../../../shared/hooks/useModalA11y";
+import {
+  Dialog,
+  DialogContent,
+  DialogTitle,
+  DialogDescription,
+} from "@/components/ui/dialog";
+import { Button } from "@/components/ui/button";
+import { ScrollArea } from "@/components/ui/scroll-area";
+
+const dialogClasses =
+  "top-auto bottom-0 left-0 right-0 translate-x-0 translate-y-0 " +
+  "max-w-none w-full rounded-t-3xl rounded-b-none border-b-0 sm:border-b p-0 gap-0 " +
+  "sm:top-1/2 sm:bottom-auto sm:left-1/2 sm:right-auto sm:-translate-x-1/2 sm:-translate-y-1/2 " +
+  "sm:max-w-lg sm:w-full sm:rounded-3xl bg-(--color-surface) max-h-[85vh] sm:max-h-[90vh] flex flex-col overflow-hidden";
 
 export default function ExpenseDetailsModal({ expense, isOpen, onClose }) {
-  const modalRef = useModalA11y(isOpen, onClose);
-
-  if (!isOpen || !expense) return null;
-
   const formatDate = (dateString) => {
     return new Date(dateString).toLocaleDateString("ar-EG", {
       year: "numeric",
@@ -74,43 +82,35 @@ export default function ExpenseDetailsModal({ expense, isOpen, onClose }) {
   };
 
   return (
-    <div className="fixed inset-0 z-50 flex items-end sm:items-center justify-center p-0 sm:p-4">
-      {/* Backdrop */}
-      <div
-        className="absolute inset-0 bg-black/50 backdrop-blur-sm"
-        onClick={onClose}
-      />
-
-      {/* Modal - bottom sheet on mobile, centered on desktop */}
-      <div
-        ref={modalRef}
-        role="dialog"
-        aria-modal="true"
-        aria-labelledby="expense-details-title"
-        tabIndex={-1}
-        className="relative w-full max-w-lg rounded-t-3xl sm:rounded-3xl shadow-2xl overflow-hidden flex flex-col max-h-[85vh] sm:max-h-[90vh] animate-in fade-in slide-in-from-bottom sm:zoom-in duration-200"
-        style={{ backgroundColor: "var(--color-surface)" }}
-      >
+    <Dialog open={isOpen} onOpenChange={(open) => !open && onClose()}>
+      <DialogContent className={dialogClasses} dir="rtl" aria-describedby={undefined}>
         {/* Mobile handle */}
-        <div className="sm:hidden pt-3 pb-1 flex justify-center shrink-0">
-          <div className="w-10 h-1.5 rounded-full bg-(--color-border)" />
-        </div>
+        <div className="sm:hidden absolute top-2 left-1/2 -translate-x-1/2 w-10 h-1.5 rounded-full bg-(--color-border)" />
+
+        {/* a11y titles */}
+        <DialogTitle id="expense-details-title" className="sr-only">
+          تفاصيل المصروف
+        </DialogTitle>
+        <DialogDescription className="sr-only">
+          تفاصيل المصروف {expense?.title}
+        </DialogDescription>
+
         {/* Header */}
         <div
-          className="p-5 sm:p-6 border-b shrink-0"
+          className="p-5 sm:p-6 border-b shrink-0 pt-6 sm:pt-6"
           style={{ borderColor: "var(--color-border)" }}
         >
           <div className="flex items-start justify-between">
             <div className="flex items-center gap-3">
               <div
                 className="p-3 rounded-xl"
-                style={getCategoryStyles(expense.category)}
+                style={expense ? getCategoryStyles(expense.category) : undefined}
               >
-                {getCategoryIcon(expense.category)}
+                {expense && getCategoryIcon(expense.category)}
               </div>
               <div>
                 <h2
-                  id="expense-details-title"
+                  id="expense-details-title-visible"
                   className="text-xl font-bold"
                   style={{ color: "var(--color-dark)" }}
                 >
@@ -120,221 +120,211 @@ export default function ExpenseDetailsModal({ expense, isOpen, onClose }) {
                   className="text-sm"
                   style={{ color: "var(--color-muted)" }}
                 >
-                  {translateCategory(expense.category)}
+                  {expense && translateCategory(expense.category)}
                 </span>
               </div>
             </div>
-            <button
-              onClick={onClose}
-              className="p-2 rounded-xl transition-colors hover:bg-(--color-hover)"
-              style={{ color: "var(--color-muted)" }}
-            >
-              <X size={20} />
-            </button>
           </div>
         </div>
 
         {/* Content */}
-        <div className="p-5 sm:p-6 space-y-5 overflow-y-auto flex-1 min-h-0">
-          {/* Title */}
-          <div className="flex items-start gap-3">
-            <FileText size={20} style={{ color: "var(--color-primary)" }} />
-            <div>
-              <p
-                className="text-sm mb-1"
-                style={{ color: "var(--color-muted)" }}
-              >
-                العنوان
-              </p>
-              <p className="font-medium" style={{ color: "var(--color-dark)" }}>
-                {expense.title}
-              </p>
-            </div>
-          </div>
-
-          {/* Description */}
-          {expense.description && (
-            <div className="flex items-start gap-3">
-              <FileText size={20} style={{ color: "var(--color-secondary)" }} />
-              <div>
-                <p
-                  className="text-sm mb-1"
-                  style={{ color: "var(--color-muted)" }}
-                >
-                  الوصف
-                </p>
-                <p className="font-medium" style={{ color: "var(--color-dark)" }}>
-                  {expense.description}
-                </p>
-              </div>
-            </div>
-          )}
-
-          {/* Amount */}
-          <div className="flex items-start gap-3">
-            <DollarSign size={20} style={{ color: "var(--color-success)" }} />
-            <div>
-              <p
-                className="text-sm mb-1"
-                style={{ color: "var(--color-muted)" }}
-              >
-                المبلغ الإجمالي
-              </p>
-              <p
-                className="font-bold text-xl"
-                style={{ color: "var(--color-dark)" }}
-              >
-                {expense.totalAmount.toFixed(2)}{" "}
-                <span className="text-sm font-normal">جنيه</span>
-              </p>
-            </div>
-          </div>
-
-          {/* Date */}
-          <div className="flex items-start gap-3">
-            <Calendar size={20} style={{ color: "var(--color-info)" }} />
-            <div>
-              <p
-                className="text-sm mb-1"
-                style={{ color: "var(--color-muted)" }}
-              >
-                التاريخ
-              </p>
-              <p className="font-medium" style={{ color: "var(--color-dark)" }}>
-                {formatDate(expense.date)}
-              </p>
-            </div>
-          </div>
-
-          {/* Created By */}
-          <div className="flex items-start gap-3">
-            <User size={20} style={{ color: "var(--color-warning)" }} />
-            <div>
-              <p
-                className="text-sm mb-1"
-                style={{ color: "var(--color-muted)" }}
-              >
-                أُنشئ بواسطة
-              </p>
-              <p className="font-medium" style={{ color: "var(--color-dark)" }}>
-                {expense.createdBy?.name || "مستخدم محذوف"}
-              </p>
-            </div>
-          </div>
-
-          {/* Paid By */}
-          <div className="flex items-start gap-3">
-            <DollarSign size={20} style={{ color: "var(--color-success)" }} />
-            <div>
-              <p
-                className="text-sm mb-1"
-                style={{ color: "var(--color-muted)" }}
-              >
-                دفع بواسطة
-              </p>
-              <p className="font-medium" style={{ color: "var(--color-dark)" }}>
-                {expense.paidBy?.name || "مستخدم محذوف"}
-              </p>
-            </div>
-          </div>
-
-          {/* Split Type */}
-          <div className="flex items-start gap-3">
-            <Tag size={20} style={{ color: "var(--color-secondary)" }} />
-            <div>
-              <p
-                className="text-sm mb-1"
-                style={{ color: "var(--color-muted)" }}
-              >
-                نوع التقسيم
-              </p>
-              <p className="font-medium" style={{ color: "var(--color-dark)" }}>
-                {getSplitTypeLabel(expense.splitType)}
-              </p>
-            </div>
-          </div>
-
-          {/* Status */}
-          <div className="flex items-start gap-3">
-            <div
-              className="w-5 h-5 rounded-full"
-              style={{ backgroundColor: "var(--color-light)" }}
-            />
-            <div>
-              <p
-                className="text-sm mb-1"
-                style={{ color: "var(--color-muted)" }}
-              >
-                الحالة
-              </p>
-              {getStatusBadge(expense.status)}
-            </div>
-          </div>
-
-          {/* Splits Section */}
-          {expense.splits && expense.splits.length > 0 && (
-            <div
-              className="p-4 rounded-2xl"
-              style={{ backgroundColor: "var(--color-light)" }}
-            >
-              <div className="flex items-center gap-2 mb-3">
-                <Users size={18} style={{ color: "var(--color-primary)" }} />
-                <h3
-                  className="font-semibold"
-                  style={{ color: "var(--color-dark)" }}
-                >
-                  تفاصيل التقسيم ({expense.splits.length} أشخاص)
-                </h3>
-              </div>
-              <div className="space-y-2">
-                {expense.splits.map((split, index) => (
-                  <div
-                    key={split.user?._id || index}
-                    className="flex items-center justify-between p-3 rounded-xl"
-                    style={{ backgroundColor: "var(--color-surface)" }}
-                  >
-                    <span
-                      className="font-medium"
-                      style={{ color: "var(--color-secondary)" }}
+        <ScrollArea className="flex-1 min-h-0">
+          <div className="p-5 sm:p-6 space-y-5">
+            {expense && (
+              <>
+                {/* Title */}
+                <div className="flex items-start gap-3">
+                  <FileText size={20} style={{ color: "var(--color-primary)" }} />
+                  <div>
+                    <p
+                      className="text-sm mb-1"
+                      style={{ color: "var(--color-muted)" }}
                     >
-                      {split.user?.name || "مستخدم محذوف"}
-                    </span>
-                    <span
-                      className="font-bold"
-                      style={{ color: "var(--color-primary)" }}
-                    >
-                      {split.amount.toFixed(2)} جنيه
-                    </span>
+                      العنوان
+                    </p>
+                    <p className="font-medium" style={{ color: "var(--color-dark)" }}>
+                      {expense.title}
+                    </p>
                   </div>
-                ))}
-              </div>
-            </div>
-          )}
-        </div>
+                </div>
+
+                {/* Description */}
+                {expense.description && (
+                  <div className="flex items-start gap-3">
+                    <FileText size={20} style={{ color: "var(--color-secondary)" }} />
+                    <div>
+                      <p
+                        className="text-sm mb-1"
+                        style={{ color: "var(--color-muted)" }}
+                      >
+                        الوصف
+                      </p>
+                      <p className="font-medium" style={{ color: "var(--color-dark)" }}>
+                        {expense.description}
+                      </p>
+                    </div>
+                  </div>
+                )}
+
+                {/* Amount */}
+                <div className="flex items-start gap-3">
+                  <DollarSign size={20} style={{ color: "var(--color-success)" }} />
+                  <div>
+                    <p
+                      className="text-sm mb-1"
+                      style={{ color: "var(--color-muted)" }}
+                    >
+                      المبلغ الإجمالي
+                    </p>
+                    <p
+                      className="font-bold text-xl"
+                      style={{ color: "var(--color-dark)" }}
+                    >
+                      {expense.totalAmount.toFixed(2)}{" "}
+                      <span className="text-sm font-normal">جنيه</span>
+                    </p>
+                  </div>
+                </div>
+
+                {/* Date */}
+                <div className="flex items-start gap-3">
+                  <Calendar size={20} style={{ color: "var(--color-info)" }} />
+                  <div>
+                    <p
+                      className="text-sm mb-1"
+                      style={{ color: "var(--color-muted)" }}
+                    >
+                      التاريخ
+                    </p>
+                    <p className="font-medium" style={{ color: "var(--color-dark)" }}>
+                      {formatDate(expense.date)}
+                    </p>
+                  </div>
+                </div>
+
+                {/* Created By */}
+                <div className="flex items-start gap-3">
+                  <User size={20} style={{ color: "var(--color-warning)" }} />
+                  <div>
+                    <p
+                      className="text-sm mb-1"
+                      style={{ color: "var(--color-muted)" }}
+                    >
+                      أُنشئ بواسطة
+                    </p>
+                    <p className="font-medium" style={{ color: "var(--color-dark)" }}>
+                      {expense.createdBy?.name || "مستخدم محذوف"}
+                    </p>
+                  </div>
+                </div>
+
+                {/* Paid By */}
+                <div className="flex items-start gap-3">
+                  <DollarSign size={20} style={{ color: "var(--color-success)" }} />
+                  <div>
+                    <p
+                      className="text-sm mb-1"
+                      style={{ color: "var(--color-muted)" }}
+                    >
+                      دفع بواسطة
+                    </p>
+                    <p className="font-medium" style={{ color: "var(--color-dark)" }}>
+                      {expense.paidBy?.name || "مستخدم محذوف"}
+                    </p>
+                  </div>
+                </div>
+
+                {/* Split Type */}
+                <div className="flex items-start gap-3">
+                  <Tag size={20} style={{ color: "var(--color-secondary)" }} />
+                  <div>
+                    <p
+                      className="text-sm mb-1"
+                      style={{ color: "var(--color-muted)" }}
+                    >
+                      نوع التقسيم
+                    </p>
+                    <p className="font-medium" style={{ color: "var(--color-dark)" }}>
+                      {getSplitTypeLabel(expense.splitType)}
+                    </p>
+                  </div>
+                </div>
+
+                {/* Status */}
+                <div className="flex items-start gap-3">
+                  <div
+                    className="w-5 h-5 rounded-full"
+                    style={{ backgroundColor: "var(--color-light)" }}
+                  />
+                  <div>
+                    <p
+                      className="text-sm mb-1"
+                      style={{ color: "var(--color-muted)" }}
+                    >
+                      الحالة
+                    </p>
+                    {getStatusBadge(expense.status)}
+                  </div>
+                </div>
+
+                {/* Splits Section */}
+                {expense.splits && expense.splits.length > 0 && (
+                  <div
+                    className="p-4 rounded-2xl"
+                    style={{ backgroundColor: "var(--color-light)" }}
+                  >
+                    <div className="flex items-center gap-2 mb-3">
+                      <Users size={18} style={{ color: "var(--color-primary)" }} />
+                      <h3
+                        className="font-semibold"
+                        style={{ color: "var(--color-dark)" }}
+                      >
+                        تفاصيل التقسيم ({expense.splits.length} أشخاص)
+                      </h3>
+                    </div>
+                    <div className="space-y-2">
+                      {expense.splits.map((split, index) => (
+                        <div
+                          key={split.user?._id || index}
+                          className="flex items-center justify-between p-3 rounded-xl"
+                          style={{ backgroundColor: "var(--color-surface)" }}
+                        >
+                          <span
+                            className="font-medium"
+                            style={{ color: "var(--color-secondary)" }}
+                          >
+                            {split.user?.name || "مستخدم محذوف"}
+                          </span>
+                          <span
+                            className="font-bold"
+                            style={{ color: "var(--color-primary)" }}
+                          >
+                            {split.amount.toFixed(2)} جنيه
+                          </span>
+                        </div>
+                      ))}
+                    </div>
+                  </div>
+                )}
+              </>
+            )}
+          </div>
+        </ScrollArea>
 
         {/* Footer */}
         <div
           className="p-4 border-t shrink-0 pb-safe"
           style={{ borderColor: "var(--color-border)" }}
         >
-          <button
+          <Button
             onClick={onClose}
-            className="w-full min-h-[44px] py-3 rounded-xl font-medium transition-colors"
-            style={{
-              backgroundColor: "var(--color-light)",
-              color: "var(--color-secondary)",
-            }}
-            onMouseEnter={(e) => {
-              e.currentTarget.style.backgroundColor = "var(--color-border)";
-            }}
-            onMouseLeave={(e) => {
-              e.currentTarget.style.backgroundColor = "var(--color-light)";
-            }}
+            variant="outline"
+            className="w-full min-h-[44px] py-3 rounded-xl font-medium bg-(--color-light) text-(--color-secondary) border-(--color-border) hover:bg-(--color-border)"
           >
             إغلاق
-          </button>
+          </Button>
         </div>
-      </div>
-    </div>
+      </DialogContent>
+    </Dialog>
   );
 }

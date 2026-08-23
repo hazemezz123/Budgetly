@@ -1,33 +1,29 @@
+import { Button } from "@/components/ui/button";
+
 export default function ExpensesPagination({ page, totalPages, onPrev, onNext }) {
   if (totalPages <= 1) return null;
 
   return (
     <div className="flex flex-col sm:flex-row justify-center items-center gap-3 sm:gap-4 mt-8">
-      <button
+      <Button
         onClick={onPrev}
         disabled={page === 1}
-        className={`w-full sm:w-auto min-h-[44px] px-6 py-2.5 rounded-xl transition-all font-medium ${
-          page === 1
-            ? "bg-(--color-light) text-(--color-muted) cursor-not-allowed"
-            : "bg-(--color-surface) text-(--color-dark) hover:bg-(--color-hover) shadow-sm"
-        }`}
+        variant="outline"
+        className="w-full sm:w-auto min-h-[44px] px-6 py-2.5 rounded-xl font-medium bg-(--color-surface) text-(--color-dark) border-(--color-border) hover:bg-(--color-hover) shadow-sm disabled:bg-(--color-light) disabled:text-(--color-muted)"
       >
         السابق
-      </button>
+      </Button>
       <span className="text-(--color-secondary) font-bold text-sm">
         صفحة {page} من {totalPages}
       </span>
-      <button
+      <Button
         onClick={onNext}
         disabled={page === totalPages}
-        className={`w-full sm:w-auto min-h-[44px] px-6 py-2.5 rounded-xl transition-all font-medium ${
-          page === totalPages
-            ? "bg-(--color-light) text-(--color-muted) cursor-not-allowed"
-            : "bg-(--color-surface) text-(--color-dark) hover:bg-(--color-hover) shadow-sm"
-        }`}
+        variant="outline"
+        className="w-full sm:w-auto min-h-[44px] px-6 py-2.5 rounded-xl font-medium bg-(--color-surface) text-(--color-dark) border-(--color-border) hover:bg-(--color-hover) shadow-sm disabled:bg-(--color-light) disabled:text-(--color-muted)"
       >
         التالي
-      </button>
+      </Button>
     </div>
   );
 }

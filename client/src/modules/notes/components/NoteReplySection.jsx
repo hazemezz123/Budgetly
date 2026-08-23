@@ -1,5 +1,7 @@
 import { useState } from "react";
-import { Send, MessageCircle } from "lucide-react";
+import { Send, MessageCircle, X } from "lucide-react";
+import { Input } from "@/components/ui/input";
+import { Button } from "@/components/ui/button";
 
 export default function NoteReplySection({ note, onReply }) {
   const [replyingTo, setReplyingTo] = useState(false);
@@ -47,13 +49,13 @@ export default function NoteReplySection({ note, onReply }) {
       {/* Reply Input */}
       {replyingTo ? (
         <div className="flex gap-2">
-          <input
+          <Input
             type="text"
             value={replyContent}
             onChange={(e) => setReplyContent(e.target.value)}
             placeholder="اكتب ردك هنا..."
             autoFocus
-            className="flex-1 bg-(--color-bg) border border-(--color-border) rounded-lg px-3 py-2 text-sm focus:outline-none focus:ring-1 focus:ring-(--color-primary)"
+            className="flex-1 h-10 bg-(--color-bg) border-(--color-border) rounded-xl text-sm focus-visible:ring-1 focus-visible:ring-(--color-primary)"
             onKeyDown={(e) => {
               if (e.key === "Enter" && !e.shiftKey) {
                 e.preventDefault();
@@ -61,31 +63,36 @@ export default function NoteReplySection({ note, onReply }) {
               }
             }}
           />
-          <button
+          <Button
             onClick={handleSubmit}
             disabled={!replyContent.trim()}
-            className="p-2 bg-(--color-primary) text-white rounded-lg hover:brightness-95 disabled:opacity-50"
+            size="icon"
+            className="shrink-0 rounded-xl bg-(--color-primary) text-white hover:bg-(--color-primary)/90 disabled:opacity-50"
           >
             <Send size={16} />
-          </button>
-          <button
+          </Button>
+          <Button
+            variant="ghost"
+            size="icon"
             onClick={() => {
               setReplyingTo(false);
               setReplyContent("");
             }}
-            className="p-2 text-(--color-muted) hover:bg-(--color-bg) rounded-lg"
+            className="shrink-0 rounded-xl text-(--color-muted) hover:bg-(--color-bg)"
+            aria-label="إلغاء"
           >
-            ×
-          </button>
+            <X size={16} />
+          </Button>
         </div>
       ) : (
-        <button
+        <Button
+          variant="ghost"
           onClick={() => setReplyingTo(true)}
-          className="flex items-center gap-2 text-sm text-(--color-muted) hover:text-(--color-primary) transition-colors"
+          className="gap-2 text-sm text-(--color-muted) hover:text-(--color-primary) h-auto p-1"
         >
           <MessageCircle size={16} />
           <span>رد على الملاحظة</span>
-        </button>
+        </Button>
       )}
     </div>
   );

@@ -1,5 +1,6 @@
 import { Link } from "react-router-dom";
 import { PlusCircle, Filter } from "lucide-react";
+import { Button } from "@/components/ui/button";
 
 export default function ExpensesHeader({
   showFilters,
@@ -11,18 +12,14 @@ export default function ExpensesHeader({
     <div className="flex flex-wrap justify-between items-center gap-4 mb-6">
       <h1 className="text-2xl font-bold text-(--color-dark)">المصاريف</h1>
       <div className="flex items-center gap-3">
-        <button
+        <Button
           onClick={onToggleFilters}
-          className={`flex items-center gap-2 px-4 py-2.5 rounded-2xl transition-all duration-200 font-medium shadow-sm hover:shadow-md ${
+          variant={showFilters || hasActiveFilters ? "default" : "outline"}
+          className={`gap-2 rounded-2xl font-medium shadow-sm hover:shadow-md min-h-[44px] px-4 py-2.5 ${
             showFilters || hasActiveFilters
-              ? "bg-(--color-primary) text-white"
-              : "bg-(--color-surface) text-(--color-dark) hover:bg-(--color-hover)"
+              ? "bg-(--color-primary) text-white hover:bg-(--color-primary)/90 border-transparent"
+              : "bg-(--color-surface) text-(--color-dark) border-(--color-border) hover:bg-(--color-hover)"
           }`}
-          style={
-            showFilters || hasActiveFilters
-              ? { backgroundColor: "var(--color-primary)" }
-              : {}
-          }
         >
           <Filter size={18} />
           <span>فلترة</span>
@@ -31,16 +28,18 @@ export default function ExpensesHeader({
               !
             </span>
           )}
-        </button>
+        </Button>
 
         {isAdmin && (
-          <Link
-            to="/add-expense"
-            className="flex items-center gap-2 px-4 py-2.5 bg-(--color-primary) text-white rounded-2xl hover:bg-(--color-primary)/80 transition-all duration-200 font-medium shadow-sm hover:shadow-md"
+          <Button
+            asChild
+            className="gap-2 rounded-2xl bg-(--color-primary) text-white hover:bg-(--color-primary)/80 font-medium shadow-sm hover:shadow-md min-h-[44px] px-4 py-2.5"
           >
-            <PlusCircle size={20} />
-            <span>سجّل مصروف جديد</span>
-          </Link>
+            <Link to="/add-expense">
+              <PlusCircle size={20} />
+              <span>سجّل مصروف جديد</span>
+            </Link>
+          </Button>
         )}
       </div>
     </div>
