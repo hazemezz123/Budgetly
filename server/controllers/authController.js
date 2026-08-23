@@ -2,6 +2,7 @@ import bcrypt from "bcryptjs";
 import jwt from "jsonwebtoken";
 import crypto from "crypto";
 import User from "../models/User.js";
+import House from "../models/House.js";
 import sendEmail from "../utils/sendEmail.js";
 import { OAuth2Client } from "google-auth-library";
 import { resolveGoogleUser } from "../services/googleAuthService.js";
@@ -86,11 +87,8 @@ export const login = async (req, res) => {
   try {
     const { username, password } = req.body;
 
-    // Find user and populate house
-    const user = await User.findOne({ username }).populate(
-      "house",
-      "name admin members",
-    );
+    // Find user
+    const user = await User.findOne({ username });
     if (!user) {
       return res.status(401).json({ message: "Invalid credentials" });
     }
@@ -105,8 +103,15 @@ export const login = async (req, res) => {
       return res.status(401).json({ message: "Invalid credentials" });
     }
 
-    // Check password
-    const isMatch = await bcrypt.compare(password, user.password);
+    // Password check and house fetch are independent - run them concurrently
+    // (same data the previous populate("house", ...) returned)
+    const [isMatch, house] = await Promise.all([
+      bcrypt.compare(password, user.password),
+      user.house
+        ? House.findById(user.house).select("name admin members").lean()
+        : Promise.resolve(null),
+    ]);
+
     if (!isMatch) {
       return res.status(401).json({ message: "Invalid credentials" });
     }
@@ -128,7 +133,7 @@ export const login = async (req, res) => {
         name: user.name,
         email: user.email,
         role: user.role,
-        house: user.house,
+        house,
         profilePicture: user.profilePicture,
         createdAt: user.createdAt,
       },

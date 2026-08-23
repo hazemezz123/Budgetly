@@ -10,13 +10,11 @@ export const getExpenses = async (req, res) => {
     const limit = parseInt(req.query.limit) || 10;
     const skip = (page - 1) * limit;
 
-    // Get user's house for filtering
-    const currentUser = await User.findById(req.user.id).select("house").lean();
-    if (!currentUser || !currentUser.house) {
+    if (!req.user.house) {
       return res.status(400).json({ message: "User not in a house" });
     }
 
-    const query = { house: currentUser.house, status: "approved" };
+    const query = { house: req.user.house, status: "approved" };
     if (req.query.status) {
       query.status = req.query.status;
     }
@@ -24,22 +22,48 @@ export const getExpenses = async (req, res) => {
       query.createdBy = req.query.createdBy;
     }
 
-    const totalExpenses = await Expense.countDocuments(query);
-    const totalPages = Math.ceil(totalExpenses / limit);
+    // Count and page fetch are independent - run them concurrently
+    const [totalExpenses, expenses] = await Promise.all([
+      Expense.countDocuments(query),
+      Expense.find(query)
+        .sort({ date: -1 })
+        .skip(skip)
+        .limit(limit)
+        .lean(),
+    ]);
 
-    const expenses = await Expense.find(query)
-      .populate("createdBy", "name username")
-      .populate("paidBy", "name username")
-      .populate("splits.user", "name username")
-      .sort({ date: -1 })
-      .skip(skip)
-      .limit(limit)
-      .lean();
+    // Batch-fetch all referenced users in a single query
+    // (replaces sequential populate of createdBy, paidBy and splits.user)
+    const userIds = new Set();
+    for (const expense of expenses) {
+      if (expense.createdBy) userIds.add(expense.createdBy.toString());
+      if (expense.paidBy) userIds.add(expense.paidBy.toString());
+      for (const split of expense.splits || []) {
+        if (split.user) userIds.add(split.user.toString());
+      }
+    }
+
+    const users = userIds.size
+      ? await User.find({ _id: { $in: [...userIds] } })
+          .select("name username")
+          .lean()
+      : [];
+    const userById = new Map(users.map((u) => [u._id.toString(), u]));
+
+    const populatedExpenses = expenses.map((expense) => ({
+      ...expense,
+      createdBy: userById.get(expense.createdBy?.toString()) || null,
+      paidBy: expense.paidBy ? userById.get(expense.paidBy?.toString()) || null : expense.paidBy,
+      splits: (expense.splits || []).map((split) => ({
+        ...split,
+        user: userById.get(split.user?.toString()) || null,
+      })),
+    }));
 
     res.json({
-      expenses,
+      expenses: populatedExpenses,
       currentPage: page,
-      totalPages,
+      totalPages: Math.ceil(totalExpenses / limit),
       totalExpenses,
     });
   } catch (error) {
@@ -63,34 +87,34 @@ export const createExpense = async (req, res) => {
       payer,
     } = req.body;
 
-    const user = await User.findById(req.user.id);
-    if (!user || !user.house) {
+    if (!req.user.house) {
       return res
         .status(400)
         .json({ message: "You must be in a house to create expenses" });
     }
 
-    const isAdmin = user.role === "admin";
+    const isAdmin = req.user.role === "admin";
     const status = isAdmin ? "approved" : "pending";
 
-    // Debug: log payer value received
-    console.log("Received payer from request:", payer);
-    console.log("Is admin:", isAdmin);
-    console.log("req.user.id:", req.user.id);
-
     const payerId = isAdmin && payer ? payer : req.user.id;
-    console.log("Final payerId:", payerId);
 
     let finalSplits = [];
+    let splitUsers = null; // users already fetched for the response
 
     if (splitType === "equal") {
-      // Get all active users in the same house
-      const houseUsers = await User.find({ isActive: true, house: user.house });
+      // Get all active users in the same house (name/username needed for the response)
+      const houseUsers = await User.find({ isActive: true, house: req.user.house })
+        .select("name username");
       const amountPerUser = totalAmount / houseUsers.length;
 
       finalSplits = houseUsers.map((u) => ({
         user: u._id,
         amount: amountPerUser,
+      }));
+      splitUsers = houseUsers.map((u) => ({
+        _id: u._id.toString(),
+        name: u.name,
+        username: u.username,
       }));
     } else if (splitType === "specific") {
       // Split equally among selected users
@@ -114,7 +138,7 @@ export const createExpense = async (req, res) => {
       splits: finalSplits,
       createdBy: req.user.id,
       paidBy: payerId,
-      house: user.house,
+      house: req.user.house,
       status,
     });
 
@@ -128,15 +152,52 @@ export const createExpense = async (req, res) => {
           amount: split.amount,
           description: title,
           status: isPayer ? "paid" : "pending",
-          house: user.house,
+          house: req.user.house,
         });
       });
       await Promise.all(invoicePromises);
     }
 
-    const populatedExpense = await Expense.findById(expense._id)
-      .populate("createdBy", "name username")
-      .populate("splits.user", "name username");
+    // Build the populated response directly instead of re-fetching the
+    // expense with populate (saves two sequential round-trips).
+    if (!splitUsers && finalSplits.length > 0) {
+      const userIds = new Set(
+        finalSplits.map((split) => split.user?.toString()).filter(Boolean)
+      );
+      const users = userIds.size
+        ? await User.find({ _id: { $in: [...userIds] } })
+            .select("name username")
+            .lean()
+        : [];
+      splitUsers = users.map((u) => ({
+        _id: u._id.toString(),
+        name: u.name,
+        username: u.username,
+      }));
+    }
+
+    let splitUserById = null;
+    if (splitUsers) {
+      splitUserById = new Map(splitUsers.map((u) => [u._id, u]));
+    }
+
+    const populatedExpense = {
+      ...expense.toObject(),
+      createdBy: {
+        _id: req.user.id,
+        name: req.user.name,
+        username: req.user.username,
+      },
+    };
+
+    if (splitUserById) {
+      const storedSplits =
+        expense.toObject().splits?.map((split) => ({
+          ...split,
+          user: splitUserById.get(split.user?.toString()) || null,
+        })) ?? [];
+      populatedExpense.splits = storedSplits;
+    }
 
     res.status(201).json(populatedExpense);
   } catch (error) {

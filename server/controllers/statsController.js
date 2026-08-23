@@ -1,7 +1,3 @@
-import Expense from "../models/Expense.js";
-import Payment from "../models/Payment.js";
-import Invoice from "../models/Invoice.js";
-import User from "../models/User.js";
 import { getHouseStatsSnapshot } from "../services/statsService.js";
 
 const getBalanceForUser = (balancesByUserId, userId) =>
@@ -16,12 +12,11 @@ const getBalanceForUser = (balancesByUserId, userId) =>
 // Get balance summary for all users
 export const getBalances = async (req, res) => {
   try {
-    const currentUser = await User.findById(req.user.id).select("house").lean();
-    if (!currentUser || !currentUser.house) {
+    if (!req.user.house) {
       return res.status(400).json({ message: "User not in a house" });
     }
 
-    const { users, balancesByUserId } = await getHouseStatsSnapshot(currentUser.house);
+    const { users, balancesByUserId } = await getHouseStatsSnapshot(req.user.house);
 
     const balances = users.map((user) => {
       const stats = getBalanceForUser(balancesByUserId, user._id);
@@ -47,15 +42,14 @@ export const getBalances = async (req, res) => {
 export const getUserStats = async (req, res) => {
   try {
     const userId = req.params.userId;
-    const currentUser = await User.findById(req.user.id).select("house").lean();
 
-    if (!currentUser || !currentUser.house) {
+    if (!req.user.house) {
       return res.status(400).json({ message: "User not in a house" });
     }
 
-    const { balancesByUserId, invoices, expenses } = await getHouseStatsSnapshot(
-      currentUser.house
-    );
+    const { balancesByUserId, invoices, expenses, recentExpenses } =
+      await getHouseStatsSnapshot(req.user.house, { recentExpenseUserId: userId });
+
     const stats = getBalanceForUser(balancesByUserId, userId);
     const expenseCategoryById = new Map(
       expenses.map((expense) => [expense._id.toString(), expense.category || "General"])
@@ -69,14 +63,6 @@ export const getUserStats = async (req, res) => {
       acc[cat] = (acc[cat] || 0) + inv.amount;
       return acc;
     }, {});
-
-    const recentExpenses = await Expense.find({
-      house: currentUser.house,
-      "splits.user": userId,
-    })
-      .sort({ createdAt: -1 })
-      .limit(5)
-      .lean();
 
     // Calculate user's share for each expense
     const recentExpensesWithShare = recentExpenses.map((expense) => {
@@ -106,13 +92,22 @@ export const getUserStats = async (req, res) => {
 // Get admin dashboard stats
 export const getAdminDashboard = async (req, res) => {
   try {
-    const currentUser = await User.findById(req.user.id).select("house").lean();
-    if (!currentUser || !currentUser.house) {
+    if (!req.user.house) {
       return res.status(400).json({ message: "User not in a house" });
     }
 
-    const { users, expenses, invoices, payments, balancesByUserId } =
-      await getHouseStatsSnapshot(currentUser.house);
+    const snapshot = await getHouseStatsSnapshot(req.user.house, {
+      recentActivity: true,
+    });
+    const {
+      users,
+      expenses,
+      invoices,
+      payments,
+      balancesByUserId,
+      recentInvoices,
+      recentPayments,
+    } = snapshot;
 
     const approvedExpenses = expenses.filter((expense) => expense.status === "approved");
 
@@ -156,11 +151,6 @@ export const getAdminDashboard = async (req, res) => {
       acc[cat] = (acc[cat] || 0) + inv.amount;
       return acc;
     }, {});
-
-    const [recentInvoices, recentPayments] = await Promise.all([
-      Invoice.find({ house: currentUser.house }).sort({ createdAt: -1 }).limit(10).lean(),
-      Payment.find({ house: currentUser.house }).sort({ createdAt: -1 }).limit(10).lean(),
-    ]);
 
     res.json({
       overview: {

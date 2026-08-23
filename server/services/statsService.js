@@ -119,8 +119,12 @@ export const buildHouseBalanceSnapshot = ({ users, expenses, invoices, payments 
   };
 };
 
-export const getHouseStatsSnapshot = async (houseId) => {
-  const [users, expenses, invoices, payments] = await Promise.all([
+export const getHouseStatsSnapshot = async (
+  houseId,
+  { recentExpenseUserId, recentActivity } = {}
+) => {
+  // All queries are independent - run them in a single concurrent batch
+  const queries = [
     User.find({ isActive: true, house: houseId })
       .select("name username house")
       .lean(),
@@ -133,13 +137,54 @@ export const getHouseStatsSnapshot = async (houseId) => {
     Payment.find({ house: houseId })
       .select("user amount status transactionType createdAt")
       .lean(),
-  ]);
+  ];
+
+  let recentExpenses = null;
+  if (recentExpenseUserId) {
+    queries.push(
+      Expense.find({
+        house: houseId,
+        "splits.user": recentExpenseUserId,
+      })
+        .sort({ createdAt: -1 })
+        .limit(5)
+        .lean()
+    );
+  }
+
+  let recentInvoices = null;
+  let recentPayments = null;
+  if (recentActivity) {
+    queries.push(
+      Invoice.find({ house: houseId }).sort({ createdAt: -1 }).limit(10).lean()
+    );
+    queries.push(
+      Payment.find({ house: houseId }).sort({ createdAt: -1 }).limit(10).lean()
+    );
+  }
+
+  const results = await Promise.all(queries);
+  let idx = 4;
+  if (recentExpenseUserId) {
+    recentExpenses = results[idx++];
+  }
+  if (recentActivity) {
+    recentInvoices = results[idx++];
+    recentPayments = results[idx++];
+  }
 
   return {
-    users,
-    expenses,
-    invoices,
-    payments,
-    ...buildHouseBalanceSnapshot({ users, expenses, invoices, payments }),
+    users: results[0],
+    expenses: results[1],
+    invoices: results[2],
+    payments: results[3],
+    ...(recentExpenseUserId ? { recentExpenses } : {}),
+    ...(recentActivity ? { recentInvoices, recentPayments } : {}),
+    ...buildHouseBalanceSnapshot({
+      users: results[0],
+      expenses: results[1],
+      invoices: results[2],
+      payments: results[3],
+    }),
   };
 };

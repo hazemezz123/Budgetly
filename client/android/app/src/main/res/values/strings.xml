@@ -1,7 +1,0 @@
-<?xml version='1.0' encoding='utf-8'?>
-<resources>
-    <string name="app_name">budgetly</string>
-    <string name="title_activity_main">budgetly</string>
-    <string name="package_name">budgetly.app</string>
-    <string name="custom_url_scheme">budgetly.app</string>
-</resources>

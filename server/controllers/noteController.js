@@ -4,20 +4,42 @@ import User from "../models/User.js";
 // Get all notes for the user's house
 export const getNotes = async (req, res) => {
   try {
-    const user = await User.findById(req.user.id).select("house").lean();
-    if (!user || !user.house) {
+    if (!req.user.house) {
       return res
         .status(400)
         .json({ message: "You must be in a house to view notes" });
     }
 
-    const notes = await Note.find({ house: user.house })
-      .populate("createdBy", "name username")
-      .populate("replies.createdBy", "name username")
+    const notes = await Note.find({ house: req.user.house })
       .sort({ date: -1 })
       .lean();
 
-    res.json(notes);
+    // Batch-fetch all referenced authors in a single query (replaces per-path populate)
+    const authorIds = new Set();
+    for (const note of notes) {
+      if (note.createdBy) authorIds.add(note.createdBy.toString());
+      for (const reply of note.replies || []) {
+        if (reply.createdBy) authorIds.add(reply.createdBy.toString());
+      }
+    }
+
+    const authors = authorIds.size
+      ? await User.find({ _id: { $in: [...authorIds] } })
+          .select("name username")
+          .lean()
+      : [];
+    const authorById = new Map(authors.map((u) => [u._id.toString(), u]));
+
+    const populated = notes.map((note) => ({
+      ...note,
+      createdBy: authorById.get(note.createdBy?.toString()) || null,
+      replies: (note.replies || []).map((reply) => ({
+        ...reply,
+        createdBy: authorById.get(reply.createdBy?.toString()) || null,
+      })),
+    }));
+
+    res.json(populated);
   } catch (error) {
     console.error("Get notes error:", error);
     res.status(500).json({ message: "Server error" });
@@ -28,9 +50,8 @@ export const getNotes = async (req, res) => {
 export const createNote = async (req, res) => {
   try {
     const { content } = req.body;
-    const user = await User.findById(req.user.id).select("house").lean();
 
-    if (!user || !user.house) {
+    if (!req.user.house) {
       return res
         .status(400)
         .json({ message: "You must be in a house to create notes" });
@@ -39,14 +60,19 @@ export const createNote = async (req, res) => {
     const note = await Note.create({
       content,
       createdBy: req.user.id,
-      house: user.house,
+      house: req.user.house,
     });
 
-    const populatedNote = await Note.findById(note._id)
-      .populate("createdBy", "name username")
-      .populate("replies.createdBy", "name username");
-
-    res.status(201).json(populatedNote);
+    // Build the populated response directly - the creator is the authenticated user
+    // and a new note never has replies, so no extra round-trips are needed.
+    res.status(201).json({
+      ...note.toObject(),
+      createdBy: {
+        _id: req.user.id,
+        name: req.user.name,
+        username: req.user.username,
+      },
+    });
   } catch (error) {
     console.error("Create note error:", error);
     res.status(500).json({ message: "Server error" });

@@ -21,11 +21,11 @@ const NotFound = () => {
           <p className="text-xl text-(--color-secondary) mb-8 max-w-md font-cairo leading-relaxed">
             الصفحة دي مش موجودة، شكلها اختفت زي مرتبك أول الشهر بالظبط! 💸
           </p>
-          <Button asChild className="rounded-xl font-bold px-8 py-4 min-h-[44px] shadow-lg">
-            <Link
-              to="/"
-              className="inline-flex items-center gap-2"
-            >
+          <Button
+            asChild
+            className="rounded-xl font-bold px-8 py-4 min-h-11 shadow-lg"
+          >
+            <Link to="/" className="inline-flex items-center gap-2">
               <Home
                 size={20}
                 className="group-hover:scale-110 transition-transform"

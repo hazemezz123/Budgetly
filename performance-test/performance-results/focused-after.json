@@ -1,0 +1,61 @@
+{
+  "timestamp": "2026-08-23T15:21:23.741Z",
+  "results": {
+    "notes_list": {
+      "avg": 202,
+      "med": 188,
+      "p95": 238,
+      "p99": 478,
+      "max": 478
+    },
+    "notes_create": {
+      "avg": 141,
+      "med": 130,
+      "p95": 203,
+      "p99": 272,
+      "max": 272
+    },
+    "expenses_create": {
+      "avg": 204,
+      "med": 194,
+      "p95": 262,
+      "p99": 393,
+      "max": 393
+    },
+    "stats_admin_dashboard": {
+      "avg": 149,
+      "med": 130,
+      "p95": 171,
+      "p99": 517,
+      "max": 517
+    },
+    "stats_user": {
+      "avg": 146,
+      "med": 130,
+      "p95": 212,
+      "p99": 450,
+      "max": 450
+    },
+    "stats_balances": {
+      "avg": 140,
+      "med": 130,
+      "p95": 173,
+      "p99": 302,
+      "max": 302
+    },
+    "expenses_list": {
+      "avg": 213,
+      "med": 189,
+      "p95": 266,
+      "p99": 940,
+      "max": 940
+    },
+    "auth_login": {
+      "avg": 262,
+      "med": 226,
+      "p95": 401,
+      "p99": 927,
+      "max": 927
+    }
+  }
+}
