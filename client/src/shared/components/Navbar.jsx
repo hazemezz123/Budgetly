@@ -47,10 +47,12 @@ const Navbar = () => {
   return (
     <>
       <nav
-        className="md:hidden backdrop-blur-xl border-b px-3 sm:px-6 py-2.5 pt-safe sticky top-0 z-40 shadow-xs font-primary"
+        className="md:hidden backdrop-blur-xl border-b px-4 sm:px-6 py-3 pt-safe px-safe sticky top-0 z-40 shadow-xs font-primary"
         style={{
           backgroundColor: "var(--color-surface)",
           borderColor: "var(--color-border)",
+          paddingLeft: "max(1rem, env(safe-area-inset-left, 0px))",
+          paddingRight: "max(1rem, env(safe-area-inset-right, 0px))",
         }}
         role="navigation"
         aria-label="التنقل الرئيسي"
@@ -77,17 +79,18 @@ const Navbar = () => {
           </div>
         )}
 
-        <div className="flex justify-between items-center h-11">
-          <div className="flex items-center">
+        <div className="flex justify-between items-center gap-3 h-12">
+          <div className="flex items-center shrink-0 ps-1">
             <img
               src="/assets/logo.png"
               alt="بدجتلي - Budgetly"
-              className="w-16 sm:w-20 h-auto dark:invert"
+              className="w-20 sm:w-24 h-auto dark:invert shrink-0"
+              style={{ minWidth: "80px" }}
             />
           </div>
 
           {/* Header Quick Tools */}
-          <div className="flex items-center gap-1.5 sm:gap-2">
+          <div className="flex items-center gap-1 sm:gap-2 shrink-0">
             {/* Notes Shortcut */}
             <Link
               to="/notes"
