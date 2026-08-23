@@ -59,7 +59,7 @@ const Navbar = () => {
   return (
     <>
       <nav
-        className="md:hidden backdrop-blur-xl border-b px-4 sm:px-6 py-3 pt-safe px-safe sticky top-0 z-40 shadow-xs font-primary bg-(--color-surface) border-(--color-border)"
+        className="md:hidden backdrop-blur-xl border-b px-3 sm:px-6 py-3.5 sm:py-3  px-safe sticky top-0 z-40 shadow-xs font-primary bg-(--color-surface) border-(--color-border)"
         style={{
           paddingLeft: "max(1rem, env(safe-area-inset-left, 0px))",
           paddingRight: "max(1rem, env(safe-area-inset-right, 0px))",
@@ -87,13 +87,13 @@ const Navbar = () => {
           </Card>
         )}
 
-        <div className="flex justify-between items-center gap-3 h-12">
-          <div className="flex items-center shrink-0 ps-1">
+        <div className="flex justify-between items-center gap-2 sm:gap-3 h-14">
+          <div className="flex items-center min-w-0 shrink ps-0 sm:ps-1">
             <img
               src="/assets/logo.png"
               alt="بدجتلي - Budgetly"
-              className="w-20 sm:w-24 h-auto dark:invert shrink-0"
-              style={{ minWidth: "80px" }}
+              className="w-16 sm:w-20 h-auto dark:invert shrink-0 max-w-full"
+              style={{ minWidth: "56px" }}
             />
           </div>
 
@@ -103,7 +103,7 @@ const Navbar = () => {
             <Link
               to="/notes"
               onClick={handleLockedLinkClick}
-              className={`p-2.5 rounded-xl min-w-[40px] min-h-[40px] flex items-center justify-center transition-all ${
+              className={`p-2.5 rounded-lg sm:rounded-xl min-w-[40px] min-h-[40px] flex items-center justify-center transition-all ${
                 isLocked ? "opacity-50 cursor-not-allowed" : ""
               }`}
               style={{
@@ -124,7 +124,7 @@ const Navbar = () => {
               variant="ghost"
               size="icon"
               onClick={toggleTheme}
-              className="h-10 w-10 min-w-[40px] min-h-[40px] rounded-xl text-(--color-secondary) hover:bg-(--color-hover) hover:text-(--color-primary)"
+              className="h-10 w-10 min-w-[40px] min-h-[40px] rounded-lg sm:rounded-xl text-(--color-secondary) hover:bg-(--color-hover) hover:text-(--color-primary)"
               aria-label={
                 themeMode === "dark" ? "الوضع النهاري" : "الوضع الليلي"
               }
@@ -135,7 +135,7 @@ const Navbar = () => {
             <Link
               to="/profile"
               onClick={handleLockedLinkClick}
-              className={`p-2.5 rounded-xl min-w-[40px] min-h-[40px] flex items-center justify-center transition-all ${
+              className={`p-2.5 rounded-lg sm:rounded-xl min-w-[40px] min-h-[40px] flex items-center justify-center transition-all ${
                 isLocked ? "opacity-50 cursor-not-allowed" : ""
               }`}
               style={{
@@ -156,7 +156,7 @@ const Navbar = () => {
               variant="ghost"
               size="icon"
               onClick={() => setShowLogoutModal(true)}
-              className="h-10 w-10 min-w-[40px] min-h-[40px] rounded-xl text-(--color-error) hover:bg-(--color-error)/10 hover:text-(--color-error)"
+              className="h-10 w-10 min-w-[40px] min-h-[40px] rounded-lg sm:rounded-xl text-(--color-error) hover:bg-(--color-error)/10 hover:text-(--color-error)"
               aria-label="تسجيل الخروج"
             >
               <LogOut size={19} aria-hidden="true" />
@@ -166,28 +166,34 @@ const Navbar = () => {
 
         {/* Mobile Bottom Navigation Bar */}
         <div
-          className="md:hidden fixed bottom-0 left-0 right-0 grid grid-cols-5 gap-1 border-t border-(--color-border) bg-(--color-surface) pb-safe backdrop-blur-xl pt-1.5 z-50 shadow-lg px-2"
+          className="md:hidden fixed bottom-0 left-0 right-0 grid grid-cols-5 gap-1.5 sm:gap-1 border-t border-(--color-border) bg-(--color-surface) pb-safe backdrop-blur-xl pt-2 sm:pt-1.5 pb-2 sm:pb-1 z-50 shadow-lg px-1 sm:px-2"
           role="navigation"
           aria-label="التنقل السفلي"
         >
           <Link
             to="/"
             onClick={handleLockedLinkClick}
-            className={`w-full min-h-[48px] flex flex-col items-center justify-center gap-1 py-2 px-2 rounded-xl transition-all text-xs ${
+            className={`w-full min-h-[56px] sm:min-h-[48px] flex flex-col items-center justify-center gap-1 sm:gap-1 py-2.5 sm:py-2 px-1 sm:px-2 rounded-xl transition-all text-xs ${
               isActive("/") ? "text-(--color-primary)" : "text-(--color-muted)"
             } ${isLocked ? "opacity-50 cursor-not-allowed" : ""}`}
             aria-label="الصفحة الرئيسية"
             aria-current={isActive("/") ? "page" : undefined}
             role="menuitem"
           >
-            <LayoutDashboard size={20} aria-hidden="true" />
-            <span className="text-[11px] font-semibold">الرئيسية</span>
+            <LayoutDashboard
+              size={22}
+              aria-hidden="true"
+              className="sm:size-[20px]"
+            />
+            <span className="text-xs sm:text-[11px] font-semibold">
+              الرئيسية
+            </span>
           </Link>
 
           <Link
             to="/expenses"
             onClick={handleLockedLinkClick}
-            className={`w-full min-h-[48px] flex flex-col items-center justify-center gap-1 py-2 px-2 rounded-xl transition-all text-xs ${
+            className={`w-full min-h-[56px] sm:min-h-[48px] flex flex-col items-center justify-center gap-1 sm:gap-1 py-2.5 sm:py-2 px-1 sm:px-2 rounded-xl transition-all text-xs ${
               isActive("/expenses")
                 ? "text-(--color-primary)"
                 : "text-(--color-muted)"
@@ -196,14 +202,16 @@ const Navbar = () => {
             aria-current={isActive("/expenses") ? "page" : undefined}
             role="menuitem"
           >
-            <Receipt size={20} aria-hidden="true" />
-            <span className="text-[11px] font-semibold">المصاريف</span>
+            <Receipt size={22} aria-hidden="true" className="sm:size-[20px]" />
+            <span className="text-xs sm:text-[11px] font-semibold">
+              المصاريف
+            </span>
           </Link>
 
           <Link
             to="/add-expense"
             onClick={handleLockedLinkClick}
-            className={`w-full min-h-[48px] flex flex-col items-center justify-center gap-0.5 py-1 px-2 rounded-2xl transition-all text-xs bg-(--color-primary) text-(--color-on-fill) ${
+            className={`w-full min-h-[56px] sm:min-h-[48px] flex flex-col items-center justify-center gap-1 sm:gap-0.5 py-1.5 sm:py-1 px-2 rounded-2xl transition-all text-xs bg-(--color-primary) text-(--color-on-fill) ${
               isLocked ? "opacity-50 cursor-not-allowed" : ""
             }`}
             style={{
@@ -218,14 +226,18 @@ const Navbar = () => {
             aria-current={isActive("/add-expense") ? "page" : undefined}
             role="menuitem"
           >
-            <PlusCircle size={20} aria-hidden="true" />
-            <span className="text-[11px] font-bold">إضافة</span>
+            <PlusCircle
+              size={22}
+              aria-hidden="true"
+              className="sm:size-[20px]"
+            />
+            <span className="text-xs sm:text-[11px] font-bold">إضافة</span>
           </Link>
 
           <Link
             to={user.role === "admin" ? "/all-invoices" : "/my-invoices"}
             onClick={handleLockedLinkClick}
-            className={`w-full min-h-[48px] flex flex-col items-center justify-center gap-1 py-2 px-2 rounded-xl transition-all text-xs ${
+            className={`w-full min-h-[56px] sm:min-h-[48px] flex flex-col items-center justify-center gap-1 sm:gap-1 py-2.5 sm:py-2 px-1 sm:px-2 rounded-xl transition-all text-xs ${
               isActive("/all-invoices") || isActive("/my-invoices")
                 ? "text-(--color-primary)"
                 : "text-(--color-muted)"
@@ -238,14 +250,16 @@ const Navbar = () => {
             }
             role="menuitem"
           >
-            <Banknote size={20} aria-hidden="true" />
-            <span className="text-[11px] font-semibold">الفواتير</span>
+            <Banknote size={22} aria-hidden="true" className="sm:size-[20px]" />
+            <span className="text-xs sm:text-[11px] font-semibold">
+              الفواتير
+            </span>
           </Link>
 
           <Link
             to="/house-details"
             onClick={handleLockedLinkClick}
-            className={`w-full min-h-[48px] flex flex-col items-center justify-center gap-1 py-2 px-2 rounded-xl transition-all text-xs ${
+            className={`w-full min-h-[56px] sm:min-h-[48px] flex flex-col items-center justify-center gap-1 sm:gap-1 py-2.5 sm:py-2 px-1 sm:px-2 rounded-xl transition-all text-xs ${
               isActive("/house-details")
                 ? "text-(--color-primary)"
                 : "text-(--color-muted)"
@@ -254,8 +268,8 @@ const Navbar = () => {
             aria-current={isActive("/house-details") ? "page" : undefined}
             role="menuitem"
           >
-            <Home size={20} aria-hidden="true" />
-            <span className="text-[11px] font-semibold">البيت</span>
+            <Home size={22} aria-hidden="true" className="sm:size-[20px]" />
+            <span className="text-xs sm:text-[11px] font-semibold">البيت</span>
           </Link>
         </div>
       </nav>
