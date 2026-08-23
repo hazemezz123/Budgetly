@@ -96,32 +96,22 @@ export function useAllInvoices() {
   });
 
   const handleApprove = (id) => {
-    if (!window.confirm("هل أنت متأكد من الموافقة على الدفع؟")) return;
     approvePaymentMutation.mutate(id);
   };
 
-  const handleReject = (id) => {
-    const reason = window.prompt("سبب الرفض:");
-    if (!reason) return;
+  const handleReject = (id, reason = "") => {
     rejectPaymentMutation.mutate({ id, reason });
   };
 
-  const handleApproveAllUserInvoices = (userId, count) => {
-    if (!window.confirm(`هل أنت متأكد من الموافقة على ${count} فواتير دفعة واحدة؟`)) {
-      return;
-    }
-
+  const handleApproveAllUserInvoices = (userId) => {
     approveAllUserInvoicesMutation.mutate(userId);
   };
 
   const handleApproveRequest = (id) => {
-    if (!window.confirm("هل أنت متأكد من الموافقة على هذا الطلب؟")) return;
     approveRequestMutation.mutate(id);
   };
 
-  const handleRejectRequest = (id) => {
-    const reason = window.prompt("سبب الرفض:");
-    if (!reason) return;
+  const handleRejectRequest = (id, reason = "") => {
     rejectRequestMutation.mutate({ id, reason });
   };
 

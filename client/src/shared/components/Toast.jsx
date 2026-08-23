@@ -17,30 +17,55 @@ const Toast = ({ message, type = "info", onClose, duration = 4000 }) => {
     info: <Info size={20} />,
   };
 
+  const tint = (name, percent) =>
+    `color-mix(in srgb, var(--color-${name}) ${percent}%, transparent)`;
+  const darken = (name) =>
+    `color-mix(in srgb, var(--color-${name}) 75%, black)`;
+
   const styles = {
-    success: "bg-green-50 text-green-800 border-green-200",
-    error: "bg-red-50 text-red-800 border-red-200",
-    warning: "bg-yellow-50 text-yellow-800 border-yellow-200",
-    info: "bg-blue-50 text-blue-800 border-blue-200",
+    success: {
+      bg: tint("success", 12),
+      border: tint("success", 30),
+      text: darken("success"),
+    },
+    error: {
+      bg: tint("error", 12),
+      border: tint("error", 30),
+      text: darken("error"),
+    },
+    warning: {
+      bg: tint("warning", 12),
+      border: tint("warning", 30),
+      text: darken("warning"),
+    },
+    info: {
+      bg: tint("info", 12),
+      border: tint("info", 30),
+      text: darken("info"),
+    },
   };
 
-  const iconColors = {
-    success: "text-green-600",
-    error: "text-red-600",
-    warning: "text-yellow-600",
-    info: "text-blue-600",
-  };
+  const style = styles[type];
 
   return (
     <div
-      className={`${styles[type]} border rounded-2xl p-4 shadow-lg backdrop-blur-sm flex items-start gap-3 min-w-[300px] max-w-md animate-slide-in font-primary`}
+      className="border rounded-2xl p-4 shadow-lg backdrop-blur-sm flex items-start gap-3 min-w-[300px] max-w-md animate-slide-in font-primary"
+      style={{
+        backgroundColor: style.bg,
+        borderColor: style.border,
+      }}
       role="alert"
       aria-live="polite"
     >
-      <div className={`${iconColors[type]} flex-shrink-0 mt-0.5`}>
+      <div className="flex-shrink-0 mt-0.5" style={{ color: style.text }}>
         {icons[type]}
       </div>
-      <p className="flex-1 text-sm font-medium leading-relaxed">{message}</p>
+      <p
+        className="flex-1 text-sm font-medium leading-relaxed"
+        style={{ color: style.text }}
+      >
+        {message}
+      </p>
       <button
         onClick={onClose}
         className="flex-shrink-0 opacity-70 hover:opacity-100 transition-opacity p-1 rounded-lg hover:bg-black/5"

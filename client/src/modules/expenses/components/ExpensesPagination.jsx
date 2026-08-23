@@ -1,33 +1,29 @@
+import { Button } from "@/components/ui/button";
+
 export default function ExpensesPagination({ page, totalPages, onPrev, onNext }) {
   if (totalPages <= 1) return null;
 
   return (
-    <div className="flex justify-center items-center gap-4 mt-8">
-      <button
+    <div className="flex flex-col sm:flex-row justify-center items-center gap-3 sm:gap-4 mt-8">
+      <Button
         onClick={onPrev}
         disabled={page === 1}
-        className={`px-4 py-2 rounded-xl transition-all ${
-          page === 1
-            ? "bg-gray-100 dark:bg-gray-800 text-gray-400 cursor-not-allowed"
-            : "bg-white dark:bg-[#1C1C1E] text-gray-700 dark:text-gray-200 hover:bg-gray-50 dark:hover:bg-gray-700 shadow-sm"
-        }`}
+        variant="outline"
+        className="w-full sm:w-auto min-h-[44px] px-6 py-2.5 rounded-xl font-medium bg-(--color-surface) text-(--color-dark) border-(--color-border) hover:bg-(--color-hover) shadow-sm disabled:bg-(--color-light) disabled:text-(--color-muted)"
       >
         السابق
-      </button>
-      <span className="text-gray-600 dark:text-gray-300 font-bold">
+      </Button>
+      <span className="text-(--color-secondary) font-bold text-sm">
         صفحة {page} من {totalPages}
       </span>
-      <button
+      <Button
         onClick={onNext}
         disabled={page === totalPages}
-        className={`px-4 py-2 rounded-xl transition-all ${
-          page === totalPages
-            ? "bg-gray-100 dark:bg-gray-800 text-gray-400 cursor-not-allowed"
-            : "bg-white dark:bg-[#1C1C1E] text-gray-700 dark:text-gray-200 hover:bg-gray-50 dark:hover:bg-gray-700 shadow-sm"
-        }`}
+        variant="outline"
+        className="w-full sm:w-auto min-h-[44px] px-6 py-2.5 rounded-xl font-medium bg-(--color-surface) text-(--color-dark) border-(--color-border) hover:bg-(--color-hover) shadow-sm disabled:bg-(--color-light) disabled:text-(--color-muted)"
       >
         التالي
-      </button>
+      </Button>
     </div>
   );
 }

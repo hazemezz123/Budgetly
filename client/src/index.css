@@ -2,6 +2,56 @@
    Tailwind CSS v4
 =============================== */
 @import "tailwindcss";
+@import "tw-animate-css";
+
+/* ============================
+   shadcn/ui semantic theme
+   (references Budgetly tokens — dark mode follows .dark automatically)
+============================== */
+@custom-variant dark (&:is(.dark *));
+
+@theme inline {
+  --color-background: var(--background);
+  --color-foreground: var(--foreground);
+  --color-card: var(--card);
+  --color-card-foreground: var(--card-foreground);
+  --color-popover: var(--popover);
+  --color-popover-foreground: var(--popover-foreground);
+  --color-primary: var(--primary);
+  --color-primary-foreground: var(--primary-foreground);
+  --color-secondary: var(--secondary);
+  --color-secondary-foreground: var(--secondary-foreground);
+  --color-muted: var(--muted);
+  --color-muted-foreground: var(--muted-foreground);
+  --color-accent: var(--accent);
+  --color-accent-foreground: var(--accent-foreground);
+  --color-destructive: var(--destructive);
+  --color-border: var(--border);
+  --color-input: var(--input);
+  --color-ring: var(--ring);
+}
+
+:root {
+  /* shadcn semantic aliases -> Budgetly tokens */
+  --background: var(--color-bg);
+  --foreground: var(--color-dark);
+  --card: var(--color-surface);
+  --card-foreground: var(--color-dark);
+  --popover: var(--color-surface);
+  --popover-foreground: var(--color-dark);
+  --primary: var(--color-primary);
+  --primary-foreground: var(--color-on-fill);
+  --secondary: var(--color-muted-bg);
+  --secondary-foreground: var(--color-dark);
+  --muted: var(--color-muted-bg);
+  --muted-foreground: var(--color-muted);
+  --accent: var(--color-hover);
+  --accent-foreground: var(--color-dark);
+  --destructive: var(--color-error);
+  --border: var(--color-border);
+  --input: var(--color-border);
+  --ring: var(--color-primary);
+}
 
 /* ============================
    Tailwind Variables & Font Families
@@ -14,6 +64,7 @@
   --font-family-decorative: "Handjet", serif;
   --color-ios-dark: var(--color-dark);
   --color-ios-primary: var(--color-primary);
+  --color-ios-primary-text: var(--color-primary-text);
   --color-ios-secondary: var(--color-secondary);
   --color-ios-light: var(--color-light);
   --color-ios-bg: var(--color-bg);
@@ -24,6 +75,7 @@
   --color-ios-info: var(--color-info);
   --color-ios-border: var(--color-border);
   --color-ios-hover: var(--color-hover);
+  --color-ios-text: var(--color-dark);
 
   --shadow-sm: 0 1px 2px 0 rgb(0 0 0 / 0.07);
   --shadow-md: 0 4px 6px -1px rgb(0 0 0 / 0.12);
@@ -49,6 +101,7 @@
   /* Colors — WCAG Contrast Fix */
   --color-dark: #0e1628;
   --color-primary: #ca8a04; /* Yellow-600 */
+  --color-primary-text: #a16207; /* Yellow-700: gold text on light surfaces */
   --color-primary-bg: #fefce8; /* Yellow-50 */
   --color-primary-border: #fef08a; /* Yellow-200 */
   --color-secondary: #475569;
@@ -60,6 +113,14 @@
   --color-error: #dc2626;
   --color-warning: #ca8a04;
   --color-info: #0284c7;
+  --color-info-bg: #e0f2fe;
+  --color-info-border: #7dd3fc;
+
+  /* 700-shades: colored text on light surfaces */
+  --color-success-text: #15803d;
+  --color-warning-text: #a16207;
+  --color-info-text: #0369a1;
+  --color-error-text: #b91c1c;
 
   /* تحسين contrast الخلفيات الفاتحة */
   --color-muted-bg: #f3f6fa;
@@ -82,6 +143,10 @@
   --gradient-bg: linear-gradient(135deg, #f8fafc 0%, #e5eaf1 100%);
   --zigzag-color: #f9fafb;
 
+  /* Text on filled action/success/error targets: ink keeps AAA on all
+     token fills (white fails 2.9:1 on Ledger Gold) */
+  --color-on-fill: #0e1628;
+
   --transition-fast: 150ms ease;
   --transition-base: 200ms ease;
   --transition-slow: 300ms ease;
@@ -99,6 +164,7 @@
   --color-bg: #0b0b0d;
   --color-surface: #151518;
   --color-primary: #ffc400;
+  --color-primary-text: #ffc400;
   --color-primary-border: #ffb300;
   --color-primary-bg: #2a2a2e;
   --color-dark: #f2f2f2;
@@ -114,6 +180,13 @@
   --color-error: #ff4d4d;
   --color-warning: #f59e0b;
   --color-info: #60a5fa;
+  --color-info-bg: #0c4a6e;
+  --color-info-border: #075985;
+
+  --color-success-text: #22c55e;
+  --color-warning-text: #f59e0b;
+  --color-info-text: #60a5fa;
+  --color-error-text: #ff4d4d;
 
   --color-status-pending: #f59e0b;
   --color-status-pending-bg: #422006;
@@ -129,6 +202,14 @@
 
   --gradient-bg: linear-gradient(135deg, #0b0b0d 0%, #151518 100%);
   --zigzag-color: #151518;
+}
+
+/* Token-filled buttons carry ink text, not white: Ledger Gold #ca8a04
+   and Candlelight #ffc400 fail contrast with white (2.9:1 / 1.6:1);
+   ink passes AAA on every token fill in both modes. */
+[class*="bg-("][class~="text-white"],
+[class*="bg-ios-"][class~="text-white"] {
+  color: var(--color-on-fill);
 }
 
 /* ============================
@@ -184,17 +265,33 @@ input[type="number"],
   font-family: var(--font-decorative);
 }
 /* ============================
-   Mobile padding
+   Mobile padding & Safe Area
 =============================== */
 @media (max-width: 768px) {
   main {
-    padding-bottom: 80px !important;
+    padding-bottom: calc(80px + env(safe-area-inset-bottom, 0px)) !important;
   }
 }
 
-/* iPhone Safe Area */
+.pt-safe {
+  padding-top: env(safe-area-inset-top, 0px);
+}
+
 .pb-safe {
   padding-bottom: env(safe-area-inset-bottom, 0.5rem);
+}
+
+.pl-safe {
+  padding-left: env(safe-area-inset-left, 0px);
+}
+
+.pr-safe {
+  padding-right: env(safe-area-inset-right, 0px);
+}
+
+.px-safe {
+  padding-left: env(safe-area-inset-left, 0px);
+  padding-right: env(safe-area-inset-right, 0px);
 }
 
 /* ============================
@@ -221,7 +318,7 @@ input[type="number"],
   top: -40px;
   left: 0;
   background: var(--color-primary);
-  color: white;
+  color: var(--color-on-fill);
   padding: 8px;
   text-decoration: none;
   z-index: 100;
@@ -439,34 +536,16 @@ select {
   -webkit-appearance: none; /* Chrome, Safari, Edge */
   -moz-appearance: none; /* Firefox */
   appearance: none;
+  color-scheme: light;
 }
 
-/* ============================
-   New Dark Palettes
-   Must be combined with .dark class
-   Example: <html class="dark theme-yellow-black">
-=============================== */
-
-/* A) YellowBlack */
-
-/* E) DarkOrange */
-.dark.theme-dark-orange {
-  --color-bg: #0d0d0d;
-  --color-surface: #181818;
-  --color-primary: #fb923c;
-  --color-primary-border: #f97316;
-  --color-primary-bg: #202020;
-  --color-dark: #f3f4f6;
-  --color-secondary: #9ca3af;
-  --color-light: #2a2a2a;
-  --color-border: #333333;
-  --color-hover: #202020;
-  --color-muted-bg: #0d0d0d;
-  --color-muted: #9ca3af;
-  --color-success: #22c55e;
-  --color-error: #f87171;
-  --color-warning: #fbbf24;
-  --color-info: #60a5fa;
-  --gradient-bg: linear-gradient(135deg, #0d0d0d 0%, #181818 100%);
-  --zigzag-color: #181818;
+.dark select {
+  color-scheme: dark;
 }
+
+select option {
+  background-color: var(--color-bg);
+  color: var(--color-dark);
+}
+
+

@@ -2,7 +2,6 @@ import React, { useState } from "react";
 import { Link, useLocation } from "react-router-dom";
 import { useAuth } from "../context/AuthContext";
 import { useTheme } from "../context/ThemeContext";
-import ConfirmModal from "./ConfirmModal";
 import {
   LayoutDashboard,
   Receipt,
@@ -14,12 +13,24 @@ import {
   Home,
   Lock,
   StickyNote,
-  ChevronLeft,
   ChevronRight,
   Mail,
   Sun,
   Moon,
 } from "lucide-react";
+import { Button } from "@/components/ui/button";
+import { Card, CardContent } from "@/components/ui/card";
+import { Badge } from "@/components/ui/badge";
+import {
+  AlertDialog,
+  AlertDialogAction,
+  AlertDialogCancel,
+  AlertDialogContent,
+  AlertDialogDescription,
+  AlertDialogFooter,
+  AlertDialogHeader,
+  AlertDialogTitle,
+} from "@/components/ui/alert-dialog";
 
 const Sidebar = () => {
   const { user, logout } = useAuth();
@@ -122,89 +133,119 @@ const Sidebar = () => {
 
   return (
     <aside
-      className={`hidden md:flex flex-col h-screen sticky top-0 transition-all duration-300 border-l z-40 ${
-        collapsed ? "w-20" : "w-64"
+      className={`hidden md:flex flex-col h-screen sticky top-0 border-l z-40 select-none transition-all duration-300 ease-in-out bg-(--color-surface) border-(--color-border) ${
+        collapsed ? "w-20 overflow-visible" : "w-64 overflow-hidden"
       }`}
-      style={{
-        backgroundColor: "var(--color-surface)",
-        borderColor: "var(--color-border)",
-      }}
     >
       {/* Header / Logo */}
       <div
-        className="p-4 flex items-center justify-between border-b"
-        style={{ borderColor: "var(--color-border)" }}
+        className={`p-4 flex items-center border-b border-(--color-border) transition-all duration-300 ease-in-out ${
+          collapsed ? "justify-center" : "justify-between"
+        }`}
       >
-        {!collapsed && (
-          <div className="flex items-center gap-2">
-            <img
-              src="/assets/logo.png"
-              alt="Budgetly"
-              className=" h-14 dark:invert transition-all"
-            />
-          </div>
-        )}
-        <button
-          onClick={() => setCollapsed(!collapsed)}
-          className="p-2 rounded-lg hover:bg-(--color-surface) transition-colors hover:text-(--color-primary) text-(--color-secondary) cursor-pointer"
+        <div
+          className={`flex items-center gap-2 overflow-hidden transition-all duration-300 ease-in-out ${
+            collapsed
+              ? "opacity-0 max-w-0 pointer-events-none"
+              : "opacity-100 max-w-xs"
+          }`}
         >
-          {collapsed ? <ChevronLeft size={20} /> : <ChevronRight size={20} />}
-        </button>
+          <img
+            src="/assets/logo.png"
+            alt="Budgetly"
+            className="h-14 dark:invert transition-all shrink-0"
+          />
+        </div>
+        <Button
+          variant="ghost"
+          size="icon"
+          onClick={() => setCollapsed(!collapsed)}
+          className="h-10 w-10 rounded-xl text-(--color-secondary) hover:bg-(--color-hover) hover:text-(--color-primary) shrink-0"
+          aria-label={collapsed ? "توسيع القائمة" : "طي القائمة"}
+          title={collapsed ? "توسيع القائمة" : "طي القائمة"}
+        >
+          <ChevronRight
+            size={20}
+            className={`transition-transform duration-300 ease-in-out ${
+              collapsed ? "rotate-180" : "rotate-0"
+            }`}
+          />
+        </Button>
       </div>
 
-      <div className="flex-1 overflow-y-auto py-4 px-3 custom-scrollbar space-y-6">
-        {isLocked && !collapsed && (
-          <div
-            className="mb-4 px-3 py-2 rounded-lg flex items-center gap-2 text-xs"
-            style={{
-              backgroundColor: "var(--color-status-pending-bg)",
-              color: "var(--color-status-pending)",
-              border: "1px solid var(--color-status-pending-border)",
-            }}
+      <div
+        className={`flex-1 py-4 custom-scrollbar space-y-4 transition-all duration-300 ease-in-out ${
+          collapsed
+            ? "overflow-visible px-2"
+            : "overflow-y-auto overflow-x-hidden px-3"
+        }`}
+      >
+        {isLocked && (
+          <Card
+            className={`rounded-lg border border-(--color-status-pending-border) bg-(--color-status-pending-bg) shadow-none py-0 gap-0 overflow-hidden transition-all duration-300 ease-in-out ${
+              collapsed
+                ? "max-h-0 opacity-0 mb-0 py-0 border-0"
+                : "max-h-20 opacity-100 mb-4"
+            }`}
           >
-            <Lock size={14} />
-            <span>انضم لبيت أولاً</span>
-          </div>
+            <CardContent className="flex items-center gap-2 px-3 py-2 text-xs text-(--color-status-pending) p-3">
+              <Badge
+                variant="outline"
+                className="border-(--color-status-pending-border) bg-(--color-status-pending-bg) text-(--color-status-pending) p-1 rounded-md h-auto"
+              >
+                <Lock size={14} className="shrink-0" />
+              </Badge>
+              <span className="whitespace-nowrap">انضم لبيت أولاً</span>
+            </CardContent>
+          </Card>
         )}
 
         {navGroups.map((group, groupIndex) => (
           <div key={groupIndex}>
-            {!collapsed && (
-              <h3
-                className="px-3 mb-2 text-xs font-semibold uppercase tracking-wider opacity-50"
-                style={{ color: "var(--color-secondary)" }}
-              >
-                {group.title}
-              </h3>
+            <h3
+              className={`px-3 text-xs font-semibold uppercase tracking-wider whitespace-nowrap overflow-hidden transition-all duration-300 ease-in-out text-(--color-muted) ${
+                collapsed
+                  ? "opacity-0 max-h-0 mb-0 py-0"
+                  : "opacity-100 max-h-8 mb-2"
+              }`}
+            >
+              {group.title}
+            </h3>
+            {groupIndex > 0 && (
+              <div
+                className={`mx-auto border-t border-(--color-border) transition-all duration-300 ease-in-out ${
+                  collapsed
+                    ? "opacity-100 w-8 my-3"
+                    : "opacity-0 w-0 my-0 border-transparent"
+                }`}
+              />
             )}
             <div className="space-y-1">
               {group.items.map((item) => {
                 if (item.roles && !item.roles.includes(user.role)) return null;
 
                 const active = isActive(item.path);
+                const itemLocked =
+                  isLocked &&
+                  item.path !== "/profile" &&
+                  item.path !== "/house-selection";
+
                 return (
                   <Link
                     key={item.path}
                     to={item.path}
-                    className={`flex items-center gap-3 px-3 py-2.5 rounded-xl transition-all duration-200 group relative ${
-                      isLocked &&
-                      item.path !== "/profile" &&
-                      item.path !== "/house-selection"
-                        ? "opacity-50 cursor-not-allowed"
-                        : ""
+                    aria-current={active ? "page" : undefined}
+                    className={`flex items-center rounded-xl transition-all duration-300 ease-in-out group relative ${
+                      collapsed
+                        ? "justify-center h-11 w-11 mx-auto px-0 py-0"
+                        : "gap-3 px-3 py-2.5 w-full"
+                    } ${itemLocked ? "opacity-50 cursor-not-allowed" : ""} ${
+                      active
+                        ? "bg-(--color-primary) text-(--color-on-fill)"
+                        : "text-(--color-secondary) hover:bg-(--color-hover) hover:text-(--color-primary)"
                     }`}
-                    style={{
-                      backgroundColor: active
-                        ? "var(--color-primary)"
-                        : "transparent",
-                      color: active ? "white" : "var(--color-secondary)",
-                    }}
                     onClick={(e) => {
-                      if (
-                        isLocked &&
-                        item.path !== "/profile" &&
-                        item.path !== "/house-selection"
-                      ) {
+                      if (itemLocked) {
                         e.preventDefault();
                       }
                     }}
@@ -213,24 +254,41 @@ const Sidebar = () => {
                       size={20}
                       className={`${
                         active
-                          ? "text-white"
+                          ? "text-(--color-on-fill)"
                           : "text-(--color-secondary) group-hover:text-(--color-primary)"
-                      } transition-colors`}
+                      } transition-colors shrink-0`}
                     />
 
-                    {!collapsed && (
-                      <span
-                        className={`font-medium text-sm ${
-                          active ? "text-white" : "text-(--color-dark)"
-                        }`}
-                      >
-                        {item.label}
-                      </span>
-                    )}
+                    <span
+                      className={`font-medium text-sm whitespace-nowrap overflow-hidden transition-all duration-300 ease-in-out ${
+                        collapsed
+                          ? "opacity-0 max-w-0 pointer-events-none"
+                          : "opacity-100 max-w-xs"
+                      } ${
+                        active
+                          ? "text-(--color-on-fill)"
+                          : "text-(--color-dark)"
+                      }`}
+                    >
+                      {item.label}
+                    </span>
 
                     {collapsed && (
-                      <div className="absolute right-full top-1/2 -translate-y-1/2 px-2 py-1 bg-gray-900 text-white text-xs rounded opacity-0 group-hover:opacity-100 transition-opacity whitespace-nowrap z-50 pointer-events-none mr-2 shadow-lg">
-                        {item.label}
+                      <div className="absolute right-full mr-2 top-1/2 -translate-y-1/2 hidden group-hover:block whitespace-nowrap rounded-lg bg-(--color-surface) border border-(--color-border) px-3 py-1.5 text-xs shadow-lg z-50 pointer-events-none">
+                        <div className="flex items-center gap-1.5">
+                          {itemLocked && (
+                            <Lock
+                              size={12}
+                              className="text-(--color-status-pending) shrink-0"
+                            />
+                          )}
+                          <span>{item.label}</span>
+                          {itemLocked && (
+                            <span className="text-[10px] text-(--color-muted) font-normal">
+                              (مقفل)
+                            </span>
+                          )}
+                        </div>
                       </div>
                     )}
                   </Link>
@@ -243,58 +301,98 @@ const Sidebar = () => {
 
       {/* Footer / User Tools */}
       <div
-        className="p-4 border-t relative"
-        style={{ borderColor: "var(--color-border)" }}
+        className={`border-t border-(--color-border) relative transition-all duration-300 ease-in-out ${
+          collapsed ? "p-3" : "p-4"
+        }`}
       >
         <div
-          className={`flex ${
+          className={`flex transition-all duration-300 ease-in-out ${
             collapsed
-              ? "flex-col gap-4 items-center"
+              ? "flex-col gap-3 items-center justify-center"
               : "flex-row items-center justify-between"
           }`}
         >
-          <div className="flex items-center gap-1">
-            {/* Theme Toggle */}
-            <button
+          {/* Theme Toggle */}
+          <div className="relative group flex items-center justify-center">
+            <Button
+              variant="ghost"
+              size="icon"
               onClick={toggleTheme}
-              className="p-2 rounded-lg hover:bg-(--color-bg) transition-colors text-(--color-secondary)"
-              title={themeMode === "dark" ? "الوضع النهاري" : "الوضع الليلي"}
+              className="h-10 w-10 rounded-xl text-(--color-secondary) hover:bg-(--color-hover) hover:text-(--color-primary)"
+              aria-label={
+                themeMode === "dark" ? "الوضع النهاري" : "الوضع الليلي"
+              }
+              title={
+                !collapsed
+                  ? themeMode === "dark"
+                    ? "الوضع النهاري"
+                    : "الوضع الليلي"
+                  : undefined
+              }
             >
-              {themeMode === "dark" ? <Sun size={22} /> : <Moon size={22} />}
-            </button>
+              {themeMode === "dark" ? <Sun size={20} /> : <Moon size={20} />}
+            </Button>
+            {collapsed && (
+              <div className="absolute right-full mr-2 top-1/2 -translate-y-1/2 hidden group-hover:block whitespace-nowrap rounded-lg bg-(--color-surface) border border-(--color-border) px-3 py-1.5 text-xs shadow-lg z-50 pointer-events-none">
+                {themeMode === "dark" ? "الوضع النهاري" : "الوضع الليلي"}
+              </div>
+            )}
           </div>
 
           {/* User Info (Expanded only) */}
           {!collapsed && (
-            <div className="flex flex-col items-end">
+            <div className="flex flex-col items-end whitespace-nowrap overflow-hidden transition-all duration-300 ease-in-out">
               <span className="text-sm font-semibold text-(--color-dark)">
                 {user.name}
               </span>
-              <span className="text-xs text-(--color-secondary)">
+              <span className="text-xs text-(--color-muted)">
                 {user.role === "admin" ? "مشرف" : "عضو"}
               </span>
             </div>
           )}
 
           {/* Logout */}
-          <button
-            onClick={() => setShowLogoutModal(true)}
-            className="p-2 rounded-lg hover:bg-(--color-error)/10 cursor-pointer text-(--color-error) transition-colors"
-            title="تسجيل الخروج"
-          >
-            <LogOut size={22} />
-          </button>
+          <div className="relative group flex items-center justify-center">
+            <Button
+              variant="ghost"
+              size="icon"
+              onClick={() => setShowLogoutModal(true)}
+              className="h-10 w-10 rounded-xl text-(--color-error) hover:bg-(--color-error)/10 hover:text-(--color-error)"
+              aria-label="تسجيل الخروج"
+              title={!collapsed ? "تسجيل الخروج" : undefined}
+            >
+              <LogOut size={20} />
+            </Button>
+            {collapsed && (
+              <div className="absolute right-full mr-2 top-1/2 -translate-y-1/2 hidden group-hover:block whitespace-nowrap rounded-lg bg-(--color-surface) border border-(--color-border) px-3 py-1.5 text-xs shadow-lg z-50 pointer-events-none">
+                تسجيل الخروج
+              </div>
+            )}
+          </div>
         </div>
       </div>
 
-      <ConfirmModal
-        isOpen={showLogoutModal}
-        onClose={() => setShowLogoutModal(false)}
-        onConfirm={handleLogoutConfirmation}
-        title="تسجيل الخروج"
-        message="هل أنت متأكد أنك تريد تسجيل الخروج؟"
-        type="danger"
-      />
+      <AlertDialog open={showLogoutModal} onOpenChange={setShowLogoutModal}>
+        <AlertDialogContent dir="rtl">
+          <AlertDialogHeader>
+            <AlertDialogTitle>تسجيل الخروج</AlertDialogTitle>
+            <AlertDialogDescription>
+              هل أنت متأكد أنك تريد تسجيل الخروج؟
+            </AlertDialogDescription>
+          </AlertDialogHeader>
+          <AlertDialogFooter>
+            <AlertDialogCancel onClick={() => setShowLogoutModal(false)}>
+              إلغاء
+            </AlertDialogCancel>
+            <AlertDialogAction
+              onClick={handleLogoutConfirmation}
+              className="bg-(--color-error) text-white hover:bg-(--color-error)/90"
+            >
+              تسجيل الخروج
+            </AlertDialogAction>
+          </AlertDialogFooter>
+        </AlertDialogContent>
+      </AlertDialog>
     </aside>
   );
 };

@@ -11,6 +11,19 @@ import {
 } from "lucide-react";
 import useRoleRotation from "../hooks/useRoleRotation";
 import { getId, getParticipantLabel, groupAssignmentsByRole } from "../utils/rotationUtils";
+import { Button } from "@/components/ui/button";
+import { Input } from "@/components/ui/input";
+import {
+  AlertDialog,
+  AlertDialogAction,
+  AlertDialogCancel,
+  AlertDialogContent,
+  AlertDialogDescription,
+  AlertDialogFooter,
+  AlertDialogHeader,
+  AlertDialogTitle,
+  AlertDialogTrigger,
+} from "@/components/ui/alert-dialog";
 
 const RoleRotationSettings = ({ houseId, members = [], isAdmin }) => {
   const {
@@ -110,7 +123,6 @@ const RoleRotationSettings = ({ houseId, members = [], isAdmin }) => {
   };
 
   const handleReset = async () => {
-    if (!window.confirm("متأكد من إعادة ضبط التدوير؟")) return;
     await resetRotation();
     setParticipants([]);
     setRoles([{ name: "Cooking", count: 1 }]);
@@ -158,8 +170,7 @@ const RoleRotationSettings = ({ houseId, members = [], isAdmin }) => {
                   return (
                     <div
                       key={memberId}
-                      className="flex items-center gap-2 rounded-xl p-3"
-                      style={{ backgroundColor: "var(--color-light)" }}
+                      className="flex items-center gap-2 rounded-xl p-3 bg-(--color-light)"
                     >
                       <GripVertical size={16} className="text-(--color-muted)" />
                       <span className="flex-1 font-medium text-(--color-dark)">
@@ -199,12 +210,7 @@ const RoleRotationSettings = ({ houseId, members = [], isAdmin }) => {
             {availableMembers.length > 0 && (
               <div className="flex gap-2">
                 <select
-                  className="flex-1 rounded-xl px-4 py-2.5 outline-none"
-                  style={{
-                    backgroundColor: "var(--color-light)",
-                    border: "1px solid var(--color-border)",
-                    color: "var(--color-dark)",
-                  }}
+                  className="flex-1 h-11 rounded-xl border border-(--color-border) bg-(--color-bg) px-3 text-sm sm:text-base text-(--color-dark) [color-scheme:light] dark:[color-scheme:dark] cursor-pointer focus:border-(--color-primary) focus:ring-2 focus:ring-(--color-primary)/20 outline-none"
                   defaultValue=""
                   onChange={(e) => {
                     handleAddMember(e.target.value);
@@ -236,18 +242,18 @@ const RoleRotationSettings = ({ houseId, members = [], isAdmin }) => {
                   key={index}
                   className="grid gap-2 rounded-xl border border-(--color-border) p-3 sm:grid-cols-[1fr_120px_auto]"
                 >
-                  <input
+                  <Input
                     value={role.name}
                     onChange={(e) => handleUpdateRole(index, { name: e.target.value })}
                     placeholder="اسم الدور"
-                    className="rounded-lg border border-(--color-border) px-3 py-2 outline-none"
+                    className="h-11 rounded-xl bg-(--color-bg) border-(--color-border) text-sm sm:text-base"
                   />
-                  <input
+                  <Input
                     type="number"
                     min="1"
                     value={role.count}
                     onChange={(e) => handleUpdateRole(index, { count: Number(e.target.value) })}
-                    className="rounded-lg border border-(--color-border) px-3 py-2 outline-none"
+                    className="h-11 rounded-xl bg-(--color-bg) border-(--color-border) text-sm sm:text-base font-numbers"
                   />
                   <div className="flex items-center justify-end gap-1">
                     <button
@@ -277,14 +283,15 @@ const RoleRotationSettings = ({ houseId, members = [], isAdmin }) => {
                 </div>
               ))}
 
-              <button
+              <Button
                 type="button"
                 onClick={handleAddRole}
-                className="flex items-center justify-center gap-2 rounded-xl border border-dashed border-(--color-border) py-3 font-bold text-(--color-muted) hover:border-(--color-primary) hover:text-(--color-primary)"
+                variant="outline"
+                className="flex items-center justify-center gap-2 min-h-[44px] rounded-xl border-dashed font-bold text-(--color-muted) hover:text-(--color-primary)"
               >
                 <Plus size={18} />
                 إضافة دور
-              </button>
+              </Button>
             </div>
           </div>
 
@@ -295,33 +302,50 @@ const RoleRotationSettings = ({ houseId, members = [], isAdmin }) => {
           )}
 
           <div className="flex flex-col gap-2 sm:flex-row">
-            <button
+            <Button
               type="button"
               onClick={handleSave}
               disabled={!canSave || isUpdatingRotation}
-              className="flex flex-1 items-center justify-center gap-2 rounded-xl bg-(--color-primary) px-4 py-3 font-bold text-white disabled:opacity-50"
+              className="flex flex-1 min-h-[44px] items-center justify-center gap-2 rounded-xl px-4 py-3 font-bold"
             >
               <Save size={18} />
               {isUpdatingRotation ? "جاري الحفظ..." : "حفظ التوزيع"}
-            </button>
-            <button
+            </Button>
+            <Button
               type="button"
               onClick={handleStartCycle}
               disabled={!canStartCycle || isStartingCycle}
-              className="flex flex-1 items-center justify-center gap-2 rounded-xl border border-(--color-border) px-4 py-3 font-bold text-(--color-dark) disabled:opacity-50"
+              variant="outline"
+              className="flex flex-1 min-h-[44px] items-center justify-center gap-2 rounded-xl px-4 py-3 font-bold"
             >
               <RotateCcw size={18} />
               {isStartingCycle ? "جاري بدء الدورة..." : "بدء دورة جديدة"}
-            </button>
-            <button
-              type="button"
-              onClick={handleReset}
-              disabled={isResettingRotation}
-              className="flex flex-1 items-center justify-center gap-2 rounded-xl border border-(--color-error) px-4 py-3 font-bold text-(--color-error) disabled:opacity-50"
-            >
-              <Trash2 size={18} />
-              {isResettingRotation ? "جاري الإعادة..." : "إعادة ضبط"}
-            </button>
+            </Button>
+            <AlertDialog>
+              <AlertDialogTrigger asChild>
+                <Button
+                  type="button"
+                  disabled={isResettingRotation}
+                  variant="outline"
+                  className="flex flex-1 min-h-[44px] items-center justify-center gap-2 rounded-xl border-(--color-error) px-4 py-3 font-bold text-(--color-error) hover:text-(--color-error)"
+                >
+                  <Trash2 size={18} />
+                  {isResettingRotation ? "جاري الإعادة..." : "إعادة ضبط"}
+                </Button>
+              </AlertDialogTrigger>
+              <AlertDialogContent dir="rtl">
+                <AlertDialogHeader>
+                  <AlertDialogTitle>إعادة ضبط التدوير؟</AlertDialogTitle>
+                  <AlertDialogDescription>
+                    متأكد من إعادة ضبط التدوير؟ سيتم مسح الإعدادات الحالية.
+                  </AlertDialogDescription>
+                </AlertDialogHeader>
+                <AlertDialogFooter>
+                  <AlertDialogCancel>إلغاء</AlertDialogCancel>
+                  <AlertDialogAction onClick={handleReset}>إعادة ضبط</AlertDialogAction>
+                </AlertDialogFooter>
+              </AlertDialogContent>
+            </AlertDialog>
           </div>
         </div>
       </section>

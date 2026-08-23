@@ -1,0 +1,753 @@
+{
+  "options": {
+    "summaryTrendStats": [
+      "min",
+      "med",
+      "avg",
+      "p(75)",
+      "p(90)",
+      "p(95)",
+      "p(99)",
+      "max",
+      "count"
+    ],
+    "summaryTimeUnit": "",
+    "noColor": false
+  },
+  "state": {
+    "isStdOutTTY": false,
+    "isStdErrTTY": false,
+    "testRunDurationMs": 170713.0495
+  },
+  "metrics": {
+    "http_req_tls_handshaking": {
+      "type": "trend",
+      "contains": "time",
+      "values": {
+        "min": 0,
+        "med": 0,
+        "p(95)": 0,
+        "p(99)": 0,
+        "max": 0,
+        "avg": 0,
+        "p(75)": 0,
+        "p(90)": 0,
+        "count": 2313
+      }
+    },
+    "iterations": {
+      "type": "counter",
+      "contains": "default",
+      "values": {
+        "count": 240,
+        "rate": 1.405867921069502
+      }
+    },
+    "latency_expenses_create": {
+      "values": {
+        "min": 181.6645,
+        "med": 195.06685,
+        "avg": 230.16725666666665,
+        "p(90)": 320.5309300000002,
+        "p(95)": 477.9238499999998,
+        "p(99)": 536.4769620000001,
+        "count": 30,
+        "p(75)": 209.85325,
+        "max": 544.8876
+      },
+      "type": "trend",
+      "contains": "default"
+    },
+    "latency_stats_user": {
+      "type": "trend",
+      "contains": "default",
+      "values": {
+        "min": 122.0925,
+        "med": 129.6606,
+        "avg": 151.18113000000002,
+        "p(75)": 135.63185,
+        "p(99)": 462.8269730000003,
+        "p(90)": 178.42643000000004,
+        "p(95)": 205.53755999999998,
+        "max": 566.7184,
+        "count": 30
+      }
+    },
+    "errors_stats_balances": {
+      "type": "counter",
+      "contains": "default",
+      "values": {
+        "count": 0,
+        "rate": 0
+      }
+    },
+    "latency_stats_balances": {
+      "type": "trend",
+      "contains": "default",
+      "values": {
+        "min": 121.6829,
+        "med": 149.27185,
+        "avg": 188.55384708333332,
+        "p(75)": 186.09105,
+        "p(95)": 419.58592499999963,
+        "p(99)": 628.8842169999997,
+        "p(90)": 331.92352999999997,
+        "max": 808.7635,
+        "count": 240
+      }
+    },
+    "checks": {
+      "type": "rate",
+      "contains": "default",
+      "values": {
+        "rate": 1,
+        "passes": 2,
+        "fails": 0
+      }
+    },
+    "http_req_connecting": {
+      "contains": "time",
+      "values": {
+        "min": 0,
+        "p(75)": 0,
+        "p(95)": 0,
+        "p(99)": 0,
+        "count": 2313,
+        "med": 0,
+        "avg": 0.0019305663640293994,
+        "p(90)": 0,
+        "max": 2.9958
+      },
+      "type": "trend"
+    },
+    "data_sent": {
+      "values": {
+        "count": 976091,
+        "rate": 5717.729270602714
+      },
+      "type": "counter",
+      "contains": "data"
+    },
+    "errors_houses_get_by_id": {
+      "type": "counter",
+      "contains": "default",
+      "values": {
+        "count": 0,
+        "rate": 0
+      }
+    },
+    "errors_notes_reply": {
+      "type": "counter",
+      "contains": "default",
+      "values": {
+        "count": 0,
+        "rate": 0
+      }
+    },
+    "errors_root": {
+      "type": "counter",
+      "contains": "default",
+      "values": {
+        "count": 0,
+        "rate": 0
+      }
+    },
+    "latency_expenses_list": {
+      "type": "trend",
+      "contains": "default",
+      "values": {
+        "med": 222.0865,
+        "avg": 282.3552250000002,
+        "p(75)": 291.30395,
+        "p(90)": 464.66600999999986,
+        "p(99)": 811.0533279999995,
+        "min": 176.4737,
+        "p(95)": 604.2226149999999,
+        "max": 1274.999,
+        "count": 240
+      }
+    },
+    "http_req_failed": {
+      "thresholds": {
+        "rate<0.05": {
+          "ok": true
+        }
+      },
+      "type": "rate",
+      "contains": "default",
+      "values": {
+        "rate": 0,
+        "passes": 0,
+        "fails": 2313
+      }
+    },
+    "latency_notes_list": {
+      "type": "trend",
+      "contains": "default",
+      "values": {
+        "min": 183.7931,
+        "p(75)": 367.0806,
+        "p(90)": 575.2661400000001,
+        "p(95)": 622.53222,
+        "p(99)": 1158.7031319999974,
+        "max": 1525.9464,
+        "count": 240,
+        "med": 276.1488,
+        "avg": 338.7532341666668
+      }
+    },
+    "errors_api_health": {
+      "type": "counter",
+      "contains": "default",
+      "values": {
+        "count": 0,
+        "rate": 0
+      }
+    },
+    "latency_analytics_trends": {
+      "type": "trend",
+      "contains": "default",
+      "values": {
+        "p(75)": 136.684225,
+        "p(90)": 171.14230000000003,
+        "p(99)": 357.31725100000017,
+        "max": 412.5965,
+        "min": 115.8762,
+        "med": 127.5969,
+        "avg": 144.84676333333334,
+        "p(95)": 208.8849299999999,
+        "count": 30
+      }
+    },
+    "latency_invoices_my": {
+      "type": "trend",
+      "contains": "default",
+      "values": {
+        "p(75)": 435.88100000000003,
+        "p(95)": 663.61538,
+        "p(99)": 1345.6791269999972,
+        "count": 240,
+        "med": 299.476,
+        "p(90)": 599.98878,
+        "max": 1591.65,
+        "min": 235.574,
+        "avg": 373.6505470833333
+      }
+    },
+    "errors_houses_rotation": {
+      "type": "counter",
+      "contains": "default",
+      "values": {
+        "rate": 0,
+        "count": 0
+      }
+    },
+    "errors_auth_login": {
+      "type": "counter",
+      "contains": "default",
+      "values": {
+        "count": 0,
+        "rate": 0
+      }
+    },
+    "http_req_receiving": {
+      "type": "trend",
+      "contains": "time",
+      "values": {
+        "count": 2313,
+        "p(75)": 0.6949,
+        "p(90)": 0.9371400000000003,
+        "p(95)": 0.999,
+        "p(99)": 1.998388,
+        "min": 0,
+        "med": 0.3186,
+        "avg": 0.4124500216169471,
+        "max": 17.9901
+      }
+    },
+    "vus_max": {
+      "type": "gauge",
+      "contains": "default",
+      "values": {
+        "value": 11,
+        "min": 11,
+        "max": 11
+      }
+    },
+    "vus": {
+      "type": "gauge",
+      "contains": "default",
+      "values": {
+        "value": 2,
+        "min": 1,
+        "max": 10
+      }
+    },
+    "latency_users_list": {
+      "values": {
+        "med": 185.34640000000002,
+        "p(75)": 197.5351,
+        "p(95)": 240.6957,
+        "p(99)": 315.17513400000007,
+        "max": 344.1564,
+        "min": 174.4634,
+        "avg": 197.8817266666667,
+        "p(90)": 221.71988000000005,
+        "count": 30
+      },
+      "type": "trend",
+      "contains": "default"
+    },
+    "errors_invoices_all": {
+      "contains": "default",
+      "values": {
+        "count": 0,
+        "rate": 0
+      },
+      "type": "counter"
+    },
+    "errors_analytics_trends": {
+      "type": "counter",
+      "contains": "default",
+      "values": {
+        "count": 0,
+        "rate": 0
+      }
+    },
+    "http_reqs": {
+      "contains": "default",
+      "values": {
+        "count": 2313,
+        "rate": 13.549052089307326
+      },
+      "type": "counter"
+    },
+    "latency_notes_create": {
+      "type": "trend",
+      "contains": "default",
+      "values": {
+        "max": 274.2642,
+        "min": 120.4619,
+        "med": 129.79775,
+        "avg": 138.43981333333332,
+        "count": 30,
+        "p(75)": 141.2217,
+        "p(90)": 151.1768,
+        "p(95)": 167.04078499999991,
+        "p(99)": 246.8623900000001
+      }
+    },
+    "latency_root": {
+      "type": "trend",
+      "contains": "default",
+      "values": {
+        "min": 0,
+        "med": 0.8974500000000001,
+        "p(75)": 1.009025,
+        "p(95)": 4.992569999999989,
+        "count": 30,
+        "avg": 1.4403833333333331,
+        "p(90)": 2.0910700000000015,
+        "p(99)": 9.037766000000003,
+        "max": 9.9961
+      }
+    },
+    "errors_users_get_by_id": {
+      "type": "counter",
+      "contains": "default",
+      "values": {
+        "count": 0,
+        "rate": 0
+      }
+    },
+    "errors_invoices_my": {
+      "type": "counter",
+      "contains": "default",
+      "values": {
+        "count": 0,
+        "rate": 0
+      }
+    },
+    "errors_expenses_create": {
+      "contains": "default",
+      "values": {
+        "rate": 0,
+        "count": 0
+      },
+      "type": "counter"
+    },
+    "http_req_blocked": {
+      "type": "trend",
+      "contains": "time",
+      "values": {
+        "p(90)": 0,
+        "p(99)": 0,
+        "min": 0,
+        "med": 0,
+        "p(75)": 0,
+        "p(95)": 0,
+        "max": 14.8694,
+        "count": 2313,
+        "avg": 0.012334803285776049
+      }
+    },
+    "latency_houses_list": {
+      "type": "trend",
+      "contains": "default",
+      "values": {
+        "avg": 143.20957333333328,
+        "p(90)": 156.78446000000002,
+        "count": 30,
+        "p(75)": 136.404575,
+        "p(95)": 187.67499499999997,
+        "p(99)": 368.79483000000016,
+        "max": 442.2295,
+        "min": 119.3192,
+        "med": 126.26689999999999
+      }
+    },
+    "latency_api_health": {
+      "type": "trend",
+      "contains": "default",
+      "values": {
+        "min": 0,
+        "med": 0.78725,
+        "avg": 2.2490945833333327,
+        "p(75)": 1.00085,
+        "p(90)": 2.345969999999999,
+        "p(95)": 5.51047,
+        "max": 93.4811,
+        "count": 240,
+        "p(99)": 49.42093599999926
+      }
+    },
+    "latency_analytics_monthly": {
+      "values": {
+        "p(99)": 1091.3155559999943,
+        "count": 240,
+        "med": 223.1624,
+        "p(95)": 590.9655399999998,
+        "max": 1343.9801,
+        "min": 178.457,
+        "avg": 288.27061249999963,
+        "p(75)": 286.944525,
+        "p(90)": 494.4770899999999
+      },
+      "type": "trend",
+      "contains": "default"
+    },
+    "http_req_duration": {
+      "type": "trend",
+      "contains": "time",
+      "values": {
+        "p(75)": 279.5327,
+        "max": 1591.65,
+        "min": 0,
+        "med": 200.208,
+        "p(90)": 450.7549200000001,
+        "p(95)": 572.82748,
+        "p(99)": 827.8867760000005,
+        "count": 2313,
+        "avg": 235.82048115002135
+      }
+    },
+    "http_req_waiting": {
+      "type": "trend",
+      "contains": "time",
+      "values": {
+        "count": 2313,
+        "med": 199.9396,
+        "avg": 235.3992516212713,
+        "p(99)": 827.7304880000005,
+        "max": 1591.65,
+        "min": 0,
+        "p(75)": 279.4962,
+        "p(90)": 450.48202000000015,
+        "p(95)": 572.3882000000001
+      }
+    },
+    "errors_notes_create": {
+      "type": "counter",
+      "contains": "default",
+      "values": {
+        "count": 0,
+        "rate": 0
+      }
+    },
+    "errors_notes_list": {
+      "contains": "default",
+      "values": {
+        "count": 0,
+        "rate": 0
+      },
+      "type": "counter"
+    },
+    "latency_notes_reply": {
+      "type": "trend",
+      "contains": "default",
+      "values": {
+        "min": 302.0912,
+        "p(90)": 463.71246,
+        "max": 833.5415,
+        "med": 322.431,
+        "avg": 362.12376666666665,
+        "p(75)": 341.1062,
+        "p(95)": 612.4297399999994,
+        "p(99)": 797.3245310000001,
+        "count": 30
+      }
+    },
+    "errors_expenses_list": {
+      "type": "counter",
+      "contains": "default",
+      "values": {
+        "rate": 0,
+        "count": 0
+      }
+    },
+    "errors_stats_user": {
+      "type": "counter",
+      "contains": "default",
+      "values": {
+        "count": 0,
+        "rate": 0
+      }
+    },
+    "errors_stats_admin_dashboard": {
+      "type": "counter",
+      "contains": "default",
+      "values": {
+        "count": 0,
+        "rate": 0
+      }
+    },
+    "latency_auth_me": {
+      "type": "trend",
+      "contains": "default",
+      "values": {
+        "med": 213.07555000000002,
+        "avg": 271.1717904166666,
+        "p(75)": 284.349725,
+        "p(90)": 445.3742099999999,
+        "max": 1199.0989,
+        "count": 240,
+        "p(95)": 538.6098499999999,
+        "p(99)": 712.937141999998,
+        "min": 172.3465
+      }
+    },
+    "errors_auth_me": {
+      "values": {
+        "count": 0,
+        "rate": 0
+      },
+      "type": "counter",
+      "contains": "default"
+    },
+    "latency_houses_get_by_id": {
+      "type": "trend",
+      "contains": "default",
+      "values": {
+        "med": 188.1216,
+        "p(75)": 196.09285,
+        "p(95)": 256.418995,
+        "p(99)": 263.99620200000004,
+        "count": 30,
+        "min": 178.4342,
+        "avg": 199.00947666666667,
+        "p(90)": 244.32194,
+        "max": 266.3528
+      }
+    },
+    "data_received": {
+      "type": "counter",
+      "contains": "data",
+      "values": {
+        "count": 10234205,
+        "rate": 59949.75211312126
+      }
+    },
+    "errors_analytics_monthly": {
+      "type": "counter",
+      "contains": "default",
+      "values": {
+        "rate": 0,
+        "count": 0
+      }
+    },
+    "latency_stats_admin_dashboard": {
+      "values": {
+        "min": 122.6834,
+        "med": 156.2603,
+        "avg": 232.31794291666677,
+        "p(90)": 483.0795,
+        "p(95)": 616.7975149999997,
+        "max": 992.1526,
+        "p(75)": 214.734275,
+        "p(99)": 944.2465429999995,
+        "count": 240
+      },
+      "type": "trend",
+      "contains": "default"
+    },
+    "errors_houses_list": {
+      "type": "counter",
+      "contains": "default",
+      "values": {
+        "rate": 0,
+        "count": 0
+      }
+    },
+    "latency_auth_login": {
+      "type": "trend",
+      "contains": "default",
+      "values": {
+        "min": 212.0431,
+        "avg": 245.86453333333333,
+        "p(90)": 293.96375000000006,
+        "max": 406.6641,
+        "count": 30,
+        "med": 226.47485,
+        "p(75)": 237.0917,
+        "p(95)": 371.18498499999987,
+        "p(99)": 402.20598800000005
+      }
+    },
+    "http_req_sending": {
+      "type": "trend",
+      "contains": "time",
+      "values": {
+        "p(90)": 0,
+        "p(95)": 0,
+        "count": 2313,
+        "med": 0,
+        "p(75)": 0,
+        "p(99)": 0.07022400000000871,
+        "max": 4.5102,
+        "min": 0,
+        "avg": 0.008779507133592736
+      }
+    },
+    "http_req_duration{expected_response:true}": {
+      "type": "trend",
+      "contains": "time",
+      "values": {
+        "count": 2313,
+        "min": 0,
+        "p(95)": 572.82748,
+        "p(99)": 827.8867760000005,
+        "max": 1591.65,
+        "med": 200.208,
+        "avg": 235.82048115002135,
+        "p(75)": 279.5327,
+        "p(90)": 450.7549200000001
+      }
+    },
+    "errors_users_list": {
+      "type": "counter",
+      "contains": "default",
+      "values": {
+        "count": 0,
+        "rate": 0
+      }
+    },
+    "latency_invoices_all": {
+      "type": "trend",
+      "contains": "default",
+      "values": {
+        "max": 445.4884,
+        "count": 30,
+        "min": 240.413,
+        "med": 249.63875000000002,
+        "avg": 266.41605333333337,
+        "p(75)": 275.65950000000004,
+        "p(90)": 307.17452,
+        "p(99)": 406.5877710000001,
+        "p(95)": 309.50825
+      }
+    },
+    "latency_users_get_by_id": {
+      "type": "trend",
+      "contains": "default",
+      "values": {
+        "max": 274.2987,
+        "count": 30,
+        "p(90)": 144.69503000000003,
+        "min": 116.2585,
+        "med": 124.72135,
+        "avg": 133.36846666666668,
+        "p(75)": 130.17132500000002,
+        "p(95)": 164.46405499999997,
+        "p(99)": 244.2110260000001
+      }
+    },
+    "iteration_duration": {
+      "type": "trend",
+      "contains": "time",
+      "values": {
+        "min": 1327.4218,
+        "med": 2155.48625,
+        "avg": 2416.4734737499984,
+        "p(95)": 4155.93639,
+        "p(99)": 5133.162198999995,
+        "count": 240,
+        "p(75)": 2621.28105,
+        "p(90)": 3916.73364,
+        "max": 8224.7435
+      }
+    },
+    "latency_houses_rotation": {
+      "type": "trend",
+      "contains": "default",
+      "values": {
+        "min": 116.7725,
+        "med": 125.29825,
+        "avg": 128.8592366666667,
+        "p(75)": 129.697025,
+        "p(90)": 137.83114,
+        "p(99)": 176.84304900000004,
+        "max": 189.1889,
+        "p(95)": 143.56343499999997,
+        "count": 30
+      }
+    }
+  },
+  "setup_data": {
+    "houseId": "6a8af587bf5a802ab9046144",
+    "noteId": "6a8b159d2429f1ba42a348e5",
+    "userId": "6a8af587bf5a802ab9046142",
+    "userToken": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6IjZhOGFmNTg3YmY1YTgwMmFiOTA0NjE0MiIsInVzZXJuYW1lIjoicGVyZl90ZXN0X3VzZXIiLCJyb2xlIjoidXNlciIsImlhdCI6MTc4NzQ5OTkzMywiZXhwIjoxNzkwMDkxOTMzfQ.8QoNDGzPMpX2Frg8T-ws8rht0OYSKQ0NYKan3kBJScQ",
+    "adminId": "6a8af587bf5a802ab904613f",
+    "adminToken": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6IjZhOGFmNTg3YmY1YTgwMmFiOTA0NjEzZiIsInVzZXJuYW1lIjoicGVyZl90ZXN0X2FkbWluIiwicm9sZSI6ImFkbWluIiwiaWF0IjoxNzg3NDk5OTMzLCJleHAiOjE3OTAwOTE5MzN9.S3_g3cglL_zS7pL7K8LmuO25fBjNC6PNTnhRfdqu6gM"
+  },
+  "root_group": {
+    "name": "",
+    "path": "",
+    "id": "d41d8cd98f00b204e9800998ecf8427e",
+    "groups": [
+      {
+        "path": "::setup",
+        "id": "5c0f8025f7e0b6654089e5b00e950f1a",
+        "groups": [],
+        "checks": [
+            {
+              "fails": 0,
+              "name": "Admin setup login successful",
+              "path": "::setup::Admin setup login successful",
+              "id": "2766726e518be12902868cce841b7c8a",
+              "passes": 1
+            },
+            {
+              "id": "cf0204e2584cdf96d60bd4f771548a2e",
+              "passes": 1,
+              "fails": 0,
+              "name": "Regular user setup login successful",
+              "path": "::setup::Regular user setup login successful"
+            }
+          ],
+        "name": "setup"
+      }
+    ],
+    "checks": []
+  }
+}

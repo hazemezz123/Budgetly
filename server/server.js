@@ -1,6 +1,7 @@
 import express from "express";
 import cors from "cors";
 import dotenv from "dotenv";
+import cookieParser from "cookie-parser";
 
 // Import routes
 import authRoutes from "./routes/auth.js";
@@ -11,7 +12,6 @@ import statsRoutes from "./routes/stats.js";
 import analyticsRoutes from "./routes/analytics.js";
 import noteRoutes from "./routes/notes.js";
 import housesRoutes from "./routes/houses.js";
-import aiRoutes from "./routes/ai.js";
 import invoiceRoutes from "./routes/invoices.js";
 import rotationRoutes from "./routes/rotation.js";
 import { connectToDatabase, getDatabaseStatus } from "./config/db.js";
@@ -23,19 +23,29 @@ dotenv.config();
 const app = express();
 const PORT = process.env.PORT || 5000;
 
-// CORS Configuration
+// CORS Configuration Updated for Mobile & Web
+const allowedOrigins = [
+  process.env.CLIENT_URL,
+  "http://localhost:5173",
+  "http://localhost:5174",
+  "capacitor://localhost",
+  "http://localhost",
+];
+
 const corsOptions = {
-  origin: [
-    process.env.CLIENT_URL,
-    "http://localhost:5173",
-    "http://localhost:5174",
-  ],
+  origin: (origin, callback) => {
+    if (!origin || allowedOrigins.includes(origin)) {
+      return callback(null, true);
+    }
+    return callback(null, true); // لتجنب أي حظر أثناء مرحلة التطوير على الموبايل
+  },
   credentials: true,
   optionsSuccessStatus: 200,
 };
 
 // Middleware
 app.use(cors(corsOptions));
+app.use(cookieParser());
 app.use(express.json());
 app.use(rateLimiter);
 
@@ -73,7 +83,6 @@ app.use("/api/expenses", expenseRoutes);
 app.use("/api/stats", statsRoutes);
 app.use("/api/analytics", analyticsRoutes);
 app.use("/api/notes", noteRoutes);
-app.use("/api/ai", aiRoutes);
 app.use("/api/invoices", invoiceRoutes);
 app.use("/api/houses", rotationRoutes); // Role rotation routes under houses
 

@@ -1,6 +1,5 @@
 import { useState } from "react";
 import { useAuth } from "../../../shared/context/AuthContext";
-import { ConfirmModal } from "../../../shared/components";
 import { useExpenses } from "../hooks";
 import {
   ExpenseDetailsModal,
@@ -10,6 +9,16 @@ import {
   ExpensesPagination,
   ExpensesResultsSummary,
 } from "../components";
+import {
+  AlertDialog,
+  AlertDialogAction,
+  AlertDialogCancel,
+  AlertDialogContent,
+  AlertDialogDescription,
+  AlertDialogFooter,
+  AlertDialogHeader,
+  AlertDialogTitle,
+} from "@/components/ui/alert-dialog";
 
 const Expenses = () => {
   const { user } = useAuth();
@@ -31,7 +40,6 @@ const Expenses = () => {
     hasActiveFilters,
   } = useExpenses();
 
-  const [showDeleteModal, setShowDeleteModal] = useState(false);
   const [deletingExpenseId, setDeletingExpenseId] = useState(null);
   const [showFilters, setShowFilters] = useState(false);
   const [selectedExpense, setSelectedExpense] = useState(null);
@@ -39,13 +47,11 @@ const Expenses = () => {
 
   const handleDeleteClick = (id) => {
     setDeletingExpenseId(id);
-    setShowDeleteModal(true);
   };
 
   const confirmDelete = async () => {
     const success = await deleteExpense(deletingExpenseId);
     if (success) {
-      setShowDeleteModal(false);
       setDeletingExpenseId(null);
     }
   };
@@ -100,18 +106,33 @@ const Expenses = () => {
         />
       )}
 
-      {/* Confirm Delete Modal */}
-      <ConfirmModal
-        isOpen={showDeleteModal}
-        onClose={() => {
-          setShowDeleteModal(false);
-          setDeletingExpenseId(null);
+      {/* Confirm Delete AlertDialog */}
+      <AlertDialog
+        open={!!deletingExpenseId}
+        onOpenChange={(open) => {
+          if (!open) setDeletingExpenseId(null);
         }}
-        onConfirm={confirmDelete}
-        title="حذف المصروف"
-        message="متأكد تمسح المصروف ده؟"
-        type="danger"
-      />
+      >
+        <AlertDialogContent dir="rtl">
+          <AlertDialogHeader>
+            <AlertDialogTitle>حذف المصروف</AlertDialogTitle>
+            <AlertDialogDescription>
+              متأكد تمسح المصروف ده؟ لا يمكن التراجع.
+            </AlertDialogDescription>
+          </AlertDialogHeader>
+          <AlertDialogFooter>
+            <AlertDialogCancel onClick={() => setDeletingExpenseId(null)}>
+              إلغاء
+            </AlertDialogCancel>
+            <AlertDialogAction
+              onClick={confirmDelete}
+              className="bg-(--color-error) text-white hover:bg-(--color-error)/90"
+            >
+              حذف
+            </AlertDialogAction>
+          </AlertDialogFooter>
+        </AlertDialogContent>
+      </AlertDialog>
 
       {/* Expense Details Modal */}
       <ExpenseDetailsModal

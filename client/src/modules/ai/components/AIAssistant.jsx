@@ -12,6 +12,10 @@ import {
 } from "lucide-react";
 import api from "../../../utils/api";
 import { useToast } from "../../../shared/context/ToastContext";
+import { Input } from "@/components/ui/input";
+import { Button } from "@/components/ui/button";
+import { Card, CardContent } from "@/components/ui/card";
+import { ScrollArea } from "@/components/ui/scroll-area";
 
 const _motion = motion;
 
@@ -40,7 +44,6 @@ const AIAssistant = ({ isOpen, onClose }) => {
     scrollToBottom();
   }, [messages]);
 
-  // Fetch chat history
   const fetchChatHistory = async () => {
     try {
       setLoadingHistory(true);
@@ -54,7 +57,6 @@ const AIAssistant = ({ isOpen, onClose }) => {
     }
   };
 
-  // Load a previous chat
   const loadPreviousChat = async (chatId) => {
     try {
       setIsLoading(true);
@@ -70,7 +72,6 @@ const AIAssistant = ({ isOpen, onClose }) => {
     }
   };
 
-  // Delete a chat
   const deleteChat = async (chatId, e) => {
     e.stopPropagation();
     try {
@@ -93,7 +94,6 @@ const AIAssistant = ({ isOpen, onClose }) => {
     }
   };
 
-  // Start new chat
   const startNewChat = () => {
     setMessages([
       {
@@ -126,7 +126,6 @@ const AIAssistant = ({ isOpen, onClose }) => {
           ...prev,
           { role: "assistant", content: response.data.response },
         ]);
-        // Update current chat ID if it's a new chat
         if (!currentChatId && response.data.chatId) {
           setCurrentChatId(response.data.chatId);
         }
@@ -147,10 +146,8 @@ const AIAssistant = ({ isOpen, onClose }) => {
     }
   };
 
-  // Format message content to handle markdown-like bolding and lists
   const formatMessage = (content) => {
     return content.split("\n").map((line, i) => {
-      // Bold text handling (**text**)
       const parts = line.split(/(\*\*.*?\*\*)/g);
       return (
         <div
@@ -180,38 +177,46 @@ const AIAssistant = ({ isOpen, onClose }) => {
           animate={{ opacity: 1, y: 0, scale: 1 }}
           exit={{ opacity: 0, y: 20, scale: 0.95 }}
           transition={{ duration: 0.2 }}
-          className="fixed bottom-24 left-4 w-[90vw] sm:w-[400px] h-[600px] max-h-[80vh] bg-ios-surface rounded-2xl shadow-2xl border border-ios-border flex flex-col z-50 overflow-hidden"
+          className="fixed bottom-24 left-4 w-[90vw] sm:w-[400px] h-[600px] max-h-[80vh] bg-(--color-surface) rounded-2xl shadow-2xl border border-(--color-border) flex flex-col z-50 overflow-hidden"
         >
           {/* Header */}
-          <div className="p-4 flex items-center justify-between text-(--color-primary) shadow-md shrink-0 border-b border-(--color-muted) ">
+          <div className="p-4 flex items-center justify-between text-(--color-primary) shadow-md shrink-0 border-b border-(--color-border) bg-(--color-surface)">
             <div className="flex items-center gap-2">
-              <div className="p-2 bg-white/20 rounded-lg backdrop-blur-sm">
-                <Bot className="w-5 h-5" />
+              <div className="p-2 bg-(--color-primary)/10 rounded-lg">
+                <Bot className="w-5 h-5 text-(--color-primary)" />
               </div>
               <div>
-                <h3 className="font-bold text-lg leading-tight">Budgetly AI</h3>
-                <p className="text-xs  opacity-90">Financial Assistant</p>
+                <h3 className="font-bold text-lg leading-tight text-(--color-dark)">
+                  Budgetly AI
+                </h3>
+                <p className="text-xs opacity-70 text-(--color-muted)">
+                  Financial Assistant
+                </p>
               </div>
             </div>
-            <div className="flex gap-2 items-center">
-              <button
+            <div className="flex gap-1 items-center">
+              <Button
+                variant="ghost"
+                size="icon"
                 onClick={() => {
                   setShowHistory(!showHistory);
                   if (!showHistory && chatHistory.length === 0) {
                     fetchChatHistory();
                   }
                 }}
-                className="p-2 hover:bg-white/20 rounded-full transition-colors"
                 title="السجل"
+                className="rounded-full"
               >
                 <History className="w-5 h-5" />
-              </button>
-              <button
+              </Button>
+              <Button
+                variant="ghost"
+                size="icon"
                 onClick={onClose}
-                className="p-2 hover:bg-white/20 rounded-full transition-colors"
+                className="rounded-full"
               >
                 <X className="w-5 h-5" />
-              </button>
+              </Button>
             </div>
           </div>
 
@@ -221,160 +226,182 @@ const AIAssistant = ({ isOpen, onClose }) => {
               initial={{ opacity: 0, x: -10 }}
               animate={{ opacity: 1, x: 0 }}
               exit={{ opacity: 0, x: -10 }}
-              className="absolute inset-0 bg-ios-surface rounded-2xl z-40 flex flex-col"
+              className="absolute inset-0 bg-(--color-surface) rounded-2xl z-40 flex flex-col"
             >
-              <div className="p-4 border-b border-ios-border flex items-center justify-between">
-                <h3 className="font-bold text-ios-text">سجل المحادثات</h3>
-                <button
+              <div className="p-4 border-b border-(--color-border) flex items-center justify-between">
+                <h3 className="font-bold text-(--color-dark)">سجل المحادثات</h3>
+                <Button
+                  variant="ghost"
+                  size="icon"
                   onClick={() => setShowHistory(false)}
-                  className="p-1 hover:bg-ios-hover rounded-lg transition-colors"
+                  className="h-8 w-8"
                 >
                   <X className="w-5 h-5" />
-                </button>
+                </Button>
               </div>
 
-              <div className="flex-1 overflow-y-auto p-3 space-y-2">
-                <button
-                  onClick={startNewChat}
-                  className="w-full p-3 text-left bg-ios-primary/10 text-ios-primary rounded-lg font-medium text-sm hover:bg-ios-primary/20 transition-colors mb-2"
-                >
-                  + محادثة جديدة
-                </button>
+              <ScrollArea className="flex-1 p-3">
+                <div className="space-y-2">
+                  <Button
+                    onClick={startNewChat}
+                    variant="outline"
+                    className="w-full justify-start gap-2 bg-(--color-primary)/10 text-(--color-primary) border-(--color-primary)/20 hover:bg-(--color-primary)/20"
+                  >
+                    + محادثة جديدة
+                  </Button>
 
-                {loadingHistory ? (
-                  <div className="text-center py-4">
-                    <Loader2 className="w-5 h-5 animate-spin mx-auto text-ios-secondary" />
-                  </div>
-                ) : chatHistory.length === 0 ? (
-                  <div className="text-center py-8 text-ios-secondary text-sm">
-                    لا توجد محادثات سابقة
-                  </div>
-                ) : (
-                  chatHistory.map((chat) => (
-                    <motion.button
-                      key={chat._id}
-                      whileHover={{ x: 2 }}
-                      onClick={() => loadPreviousChat(chat._id)}
-                      className="w-full p-3 text-left bg-ios-bg hover:bg-ios-hover rounded-lg transition-colors group"
-                    >
-                      <div className="flex items-start justify-between gap-2">
-                        <div className="flex-1 min-w-0">
-                          <p className="font-medium text-ios-text text-sm truncate">
-                            {chat.title}
-                          </p>
-                          <p className="text-xs text-ios-secondary">
-                            {new Date(chat.createdAt).toLocaleDateString(
-                              "ar-EG",
-                              {
-                                month: "short",
-                                day: "numeric",
-                              }
-                            )}
-                          </p>
+                  {loadingHistory ? (
+                    <div className="text-center py-4">
+                      <Loader2 className="w-5 h-5 animate-spin mx-auto text-(--color-muted)" />
+                    </div>
+                  ) : chatHistory.length === 0 ? (
+                    <div className="text-center py-8 text-(--color-muted) text-sm">
+                      لا توجد محادثات سابقة
+                    </div>
+                  ) : (
+                    chatHistory.map((chat) => (
+                      <motion.button
+                        key={chat._id}
+                        whileHover={{ x: 2 }}
+                        onClick={() => loadPreviousChat(chat._id)}
+                        className="w-full p-3 text-right bg-(--color-bg) hover:bg-(--color-hover) rounded-lg transition-colors group"
+                      >
+                        <div className="flex items-start justify-between gap-2">
+                          <div className="flex-1 min-w-0">
+                            <p className="font-medium text-(--color-dark) text-sm truncate">
+                              {chat.title}
+                            </p>
+                            <p className="text-xs text-(--color-muted)">
+                              {new Date(chat.createdAt).toLocaleDateString(
+                                "ar-EG",
+                                {
+                                  month: "short",
+                                  day: "numeric",
+                                }
+                              )}
+                            </p>
+                          </div>
+                          <Button
+                            variant="ghost"
+                            size="icon-xs"
+                            onClick={(e) => deleteChat(chat._id, e)}
+                            className="opacity-0 group-hover:opacity-100 h-7 w-7 shrink-0 hover:bg-(--color-error)/10 hover:text-(--color-error)"
+                          >
+                            <Trash2 className="w-4 h-4" />
+                          </Button>
                         </div>
-                        <button
-                          onClick={(e) => deleteChat(chat._id, e)}
-                          className="p-1 opacity-0 group-hover:opacity-100 hover:bg-ios-error/10 text-ios-error rounded transition-all"
-                        >
-                          <Trash2 className="w-4 h-4" />
-                        </button>
-                      </div>
-                    </motion.button>
-                  ))
-                )}
-              </div>
+                      </motion.button>
+                    ))
+                  )}
+                </div>
+              </ScrollArea>
             </motion.div>
           )}
 
           {/* Messages Area */}
-          <div className="flex-1 overflow-y-auto p-4 space-y-4 bg-ios-bg scrollbar-thin">
-            {messages.map((msg, idx) => (
-              <motion.div
-                initial={{ opacity: 0, y: 10 }}
-                animate={{ opacity: 1, y: 0 }}
-                key={idx}
-                className={`flex ${
-                  msg.role === "user" ? "justify-end" : "justify-start"
-                }`}
-              >
-                <div
-                  className={`max-w-[85%] rounded-2xl p-3.5 shadow-sm ${
-                    msg.role === "user"
-                      ? "bg-ios-primary text-white rounded-br-none"
-                      : msg.isError
-                      ? "bg-ios-error/10 text-ios-error border border-ios-error/30 rounded-bl-none"
-                      : "bg-ios-surface text-ios-text border border-ios-border rounded-bl-none"
+          <ScrollArea className="flex-1 bg-(--color-bg)">
+            <div className="p-4 space-y-4">
+              {messages.map((msg, idx) => (
+                <motion.div
+                  initial={{ opacity: 0, y: 10 }}
+                  animate={{ opacity: 1, y: 0 }}
+                  key={idx}
+                  className={`flex ${
+                    msg.role === "user" ? "justify-end" : "justify-start"
                   }`}
                 >
-                  {msg.role === "assistant" && !msg.isError && (
-                    <div className="flex items-center gap-2 mb-2 text-xs font-medium text-ios-primary">
-                      <Sparkles className="w-3 h-3" />
-                      AI Assistant
-                    </div>
-                  )}
-                  <div className="text-sm leading-relaxed whitespace-pre-wrap">
-                    {msg.role === "assistant"
-                      ? formatMessage(msg.content)
-                      : msg.content}
-                  </div>
-                </div>
-              </motion.div>
-            ))}
-            {isLoading && (
-              <motion.div
-                initial={{ opacity: 0, y: 10 }}
-                animate={{ opacity: 1, y: 0 }}
-                className="flex justify-start"
-              >
-                <div className="bg-ios-surface rounded-2xl rounded-bl-none p-4 shadow-sm border border-ios-border">
-                  <div className="flex gap-1.5">
-                    <motion.div
-                      animate={{ scale: [1, 1.2, 1] }}
-                      transition={{ repeat: Infinity, duration: 1, delay: 0 }}
-                      className="w-2 h-2 bg-ios-primary rounded-full"
-                    />
-                    <motion.div
-                      animate={{ scale: [1, 1.2, 1] }}
-                      transition={{ repeat: Infinity, duration: 1, delay: 0.2 }}
-                      className="w-2 h-2 bg-ios-primary rounded-full"
-                    />
-                    <motion.div
-                      animate={{ scale: [1, 1.2, 1] }}
-                      transition={{ repeat: Infinity, duration: 1, delay: 0.4 }}
-                      className="w-2 h-2 bg-ios-primary rounded-full"
-                    />
-                  </div>
-                </div>
-              </motion.div>
-            )}
-            <div ref={messagesEndRef} />
-          </div>
+                  <Card
+                    className={`max-w-[85%] rounded-2xl py-0 gap-0 shadow-sm ${
+                      msg.role === "user"
+                        ? "bg-(--color-primary) text-white rounded-br-none border-(--color-primary)"
+                        : msg.isError
+                          ? "bg-(--color-error)/10 text-(--color-error) border border-(--color-error)/30 rounded-bl-none"
+                          : "bg-(--color-surface) text-(--color-dark) border border-(--color-border) rounded-bl-none"
+                    }`}
+                  >
+                    <CardContent className="p-3.5">
+                      {msg.role === "assistant" && !msg.isError && (
+                        <div className="flex items-center gap-2 mb-2 text-xs font-medium text-(--color-primary)">
+                          <Sparkles className="w-3 h-3" />
+                          AI Assistant
+                        </div>
+                      )}
+                      <div className="text-sm leading-relaxed whitespace-pre-wrap">
+                        {msg.role === "assistant"
+                          ? formatMessage(msg.content)
+                          : msg.content}
+                      </div>
+                    </CardContent>
+                  </Card>
+                </motion.div>
+              ))}
+              {isLoading && (
+                <motion.div
+                  initial={{ opacity: 0, y: 10 }}
+                  animate={{ opacity: 1, y: 0 }}
+                  className="flex justify-start"
+                >
+                  <Card className="bg-(--color-surface) rounded-2xl rounded-bl-none border border-(--color-border) py-0 gap-0 shadow-sm">
+                    <CardContent className="p-4">
+                      <div className="flex gap-1.5">
+                        <motion.div
+                          animate={{ scale: [1, 1.2, 1] }}
+                          transition={{ repeat: Infinity, duration: 1, delay: 0 }}
+                          className="w-2 h-2 bg-(--color-primary) rounded-full"
+                        />
+                        <motion.div
+                          animate={{ scale: [1, 1.2, 1] }}
+                          transition={{
+                            repeat: Infinity,
+                            duration: 1,
+                            delay: 0.2,
+                          }}
+                          className="w-2 h-2 bg-(--color-primary) rounded-full"
+                        />
+                        <motion.div
+                          animate={{ scale: [1, 1.2, 1] }}
+                          transition={{
+                            repeat: Infinity,
+                            duration: 1,
+                            delay: 0.4,
+                          }}
+                          className="w-2 h-2 bg-(--color-primary) rounded-full"
+                        />
+                      </div>
+                    </CardContent>
+                  </Card>
+                </motion.div>
+              )}
+              <div ref={messagesEndRef} />
+            </div>
+          </ScrollArea>
 
           {/* Input Area */}
-          <div className="p-4 bg-ios-surface border-t border-ios-border shrink-0">
+          <div className="p-4 bg-(--color-surface) border-t border-(--color-border) shrink-0">
             <form onSubmit={handleSubmit} className="flex gap-2">
-              <input
+              <Input
                 type="text"
                 value={input}
                 onChange={(e) => setInput(e.target.value)}
                 placeholder="اسألني عن أي حسابات أو نصايح..."
-                className="flex-1 bg-ios-bg border-0 rounded-xl px-4 py-3 text-sm focus:ring-2 focus:ring-ios-primary text-ios-text placeholder:text-ios-secondary"
+                className="flex-1 h-11 rounded-xl bg-(--color-bg) border-(--color-border) text-sm sm:text-base"
                 disabled={isLoading}
               />
-              <button
+              <Button
                 type="submit"
                 disabled={!input.trim() || isLoading}
-                className="bg-ios-primary hover:bg-ios-hover text-white p-3 rounded-xl transition-colors disabled:opacity-50 disabled:cursor-not-allowed flex items-center justify-center min-w-12"
+                size="icon"
+                className="h-11 w-11 rounded-xl shrink-0"
               >
                 {isLoading ? (
                   <Loader2 className="w-5 h-5 animate-spin" />
                 ) : (
                   <Send className="w-5 h-5" />
                 )}
-              </button>
+              </Button>
             </form>
             <div className="mt-2 text-center">
-              <p className="text-[10px] text-ios-secondary flex items-center justify-center gap-1">
+              <p className="text-[10px] text-(--color-muted) flex items-center justify-center gap-1">
                 <Calculator className="w-3 h-3" />
                 Powered by Gemini AI • Can make mistakes
               </p>

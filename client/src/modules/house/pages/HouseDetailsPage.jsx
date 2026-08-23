@@ -17,9 +17,25 @@ import {
   AlertTriangle,
   RotateCcw,
 } from "lucide-react";
-import { ConfirmModal, Input, Loader } from "../../../shared/components";
+import { Loader2 } from "lucide-react";
+import { Input } from "@/components/ui/input";
+import { Button } from "@/components/ui/button";
+import { Tabs, TabsList, TabsTrigger } from "@/components/ui/tabs";
+import {
+  AlertDialog,
+  AlertDialogAction,
+  AlertDialogCancel,
+  AlertDialogContent,
+  AlertDialogDescription,
+  AlertDialogFooter,
+  AlertDialogHeader,
+  AlertDialogTitle,
+} from "@/components/ui/alert-dialog";
 import { RoleRotationSettings } from "../components";
 import { useHouse } from "../hooks";
+
+const tabTriggerCls =
+  "min-h-[44px] rounded-lg font-bold text-xs sm:text-sm flex items-center justify-center gap-1.5 sm:gap-2 data-[state=active]:bg-(--color-primary) data-[state=active]:text-(--color-on-fill) dark:data-[state=active]:bg-(--color-primary) dark:data-[state=active]:text-(--color-on-fill) dark:data-[state=active]:border-transparent";
 
 const HouseDetails = () => {
   const { id } = useParams();
@@ -139,7 +155,18 @@ const HouseDetails = () => {
     await exportData(type);
   };
 
-  if (loading) return <Loader text="بنحمّل تفاصيل البيت..." />;
+  if (loading)
+    return (
+      <div className="flex flex-col items-center justify-center min-h-[50vh] w-full p-8">
+        <div className="relative">
+          <div className="absolute inset-0 bg-(--color-primary)/20 blur-xl rounded-full animate-pulse" />
+          <Loader2 className="w-12 h-12 text-(--color-primary) animate-spin relative z-10" />
+        </div>
+        <p className="mt-4 text-(--color-muted) font-medium animate-pulse">
+          بنحمّل تفاصيل البيت...
+        </p>
+      </div>
+    );
 
   if (error || !house) {
     return (
@@ -152,37 +179,42 @@ const HouseDetails = () => {
   return (
     <div className="pb-8 px-3 sm:px-4 max-w-4xl mx-auto font-primary">
       {/* Header */}
-      <div className="bg-(--color-surface) rounded-2xl p-4 sm:p-6 shadow-sm border border-(--color-border) mb-6">
-        <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4 mb-4">
-          <div className="flex items-start sm:items-center gap-3 min-w-0">
-            <div className="p-3 bg-(--color-primary)/10 rounded-xl">
-              <Home className="text-(--color-primary)" size={32} />
+      <div className="bg-(--color-surface) rounded-2xl p-3 sm:p-6 shadow-sm border border-(--color-border) mb-6 relative">
+        <div className="flex flex-row items-start justify-between gap-2 sm:gap-4 mb-4">
+          <div className="flex items-start gap-2 sm:gap-3 min-w-0 flex-1 pl-7 sm:pl-0">
+            <div className="p-2 sm:p-3 bg-(--color-primary)/10 rounded-lg sm:rounded-xl shrink-0">
+              <Home className="text-(--color-primary) size-5 sm:size-8" />
             </div>
             <div className="min-w-0 flex-1">
-              <h1 className="text-xl sm:text-2xl font-bold text-(--color-dark) break-words">
+              <h1 className="text-base sm:text-2xl font-bold text-(--color-dark) break-words leading-tight">
                 {house.name}
               </h1>
-              <div
-                className="flex items-start sm:items-center gap-2 text-xs sm:text-sm text-(--color-muted) cursor-pointer hover:text-(--color-primary) transition-colors break-all"
+              <button
+                type="button"
+                className="flex items-center gap-1.5 sm:gap-2 text-[11px] sm:text-sm text-(--color-muted) cursor-pointer hover:text-(--color-primary) transition-colors break-all text-start"
                 onClick={handleCopyId}
                 title="نسخ كود البيت"
               >
                 <span className="leading-relaxed">ID: {house._id}</span>
-                {copiedId ? <CheckCheck size={14} /> : <Copy size={14} />}
-              </div>
+                {copiedId ? (
+                  <CheckCheck size={12} className="sm:size-[14px] shrink-0" />
+                ) : (
+                  <Copy size={12} className="sm:size-[14px] shrink-0" />
+                )}
+              </button>
             </div>
           </div>
           {isAdmin && (
-            <div className="flex gap-2">
+            <div className="absolute top-2.5 left-2.5 sm:static flex gap-2 shrink-0 self-start">
               <button
                 onClick={() => {
                   setNewName(house.name);
                   setEditingName(true);
                 }}
-                className="p-2 hover:bg-(--color-bg) rounded-xl transition-colors text-(--color-primary)"
+                className="p-1.5 sm:p-2 hover:bg-(--color-bg) rounded-lg sm:rounded-xl transition-colors text-(--color-primary) shrink-0 bg-(--color-surface) sm:bg-transparent border border-(--color-border) sm:border-0 shadow-sm sm:shadow-none"
                 title="تعديل الاسم"
               >
-                <Settings size={20} />
+                <Settings size={16} className="sm:size-[20px]" />
               </button>
             </div>
           )}
@@ -197,21 +229,22 @@ const HouseDetails = () => {
                 value={newName}
                 onChange={(e) => setNewName(e.target.value)}
                 placeholder="اسم البيت الجديد"
-                className="flex-1"
+                className="flex-1 h-11 rounded-xl bg-(--color-bg) border-(--color-border) text-sm sm:text-base"
               />
-              <button
+              <Button
                 onClick={handleUpdateName}
                 disabled={isUpdatingName}
-                className="px-4 py-2 bg-(--color-primary) text-white rounded-xl font-bold disabled:opacity-50"
+                className="min-h-[44px] px-4 py-2.5 rounded-xl font-bold flex-1 sm:flex-none"
               >
                 {isUpdatingName ? "حفظ..." : "حفظ"}
-              </button>
-              <button
+              </Button>
+              <Button
                 onClick={() => setEditingName(false)}
-                className="px-4 py-2 bg-(--color-surface) border border-(--color-border) rounded-xl font-bold"
+                variant="outline"
+                className="min-h-[44px] px-4 py-2.5 rounded-xl font-bold flex-1 sm:flex-none bg-(--color-surface)"
               >
                 إلغاء
-              </button>
+              </Button>
             </div>
           </div>
         )}
@@ -226,7 +259,7 @@ const HouseDetails = () => {
           </div>
           <div className="p-4 bg-(--color-bg) rounded-xl text-center">
             <p className="text-(--color-muted) text-sm mb-1">الأدمن</p>
-            <p className="font-bold text-(--color-primary)">
+            <p className="font-bold text-(--color-primary-text)">
               {house.admin.name}
             </p>
           </div>
@@ -234,53 +267,30 @@ const HouseDetails = () => {
       </div>
 
       {/* Tabs */}
-      <div className="mb-6 p-1 bg-(--color-surface) rounded-xl border border-(--color-border) overflow-x-auto">
-        <div className="flex gap-2 min-w-full">
-        <button
-          onClick={() => setActiveTab("members")}
-          className={`min-w-[120px] sm:min-w-0 sm:flex-1 py-2 px-4 rounded-lg font-bold whitespace-nowrap transition-all ${
-            activeTab === "members"
-              ? "bg-(--color-primary) text-white shadow-md"
-              : "text-(--color-muted) hover:bg-(--color-bg)"
+      <Tabs value={activeTab} onValueChange={setActiveTab} className="mb-6">
+        <TabsList
+          className={`w-full group-data-[orientation=horizontal]/tabs:h-auto p-1 rounded-xl border border-(--color-border) bg-(--color-surface) grid ${
+            isAdmin ? "grid-cols-3" : "grid-cols-2"
           }`}
         >
-          <div className="flex items-center justify-center gap-2">
-            <Users size={18} />
+          <TabsTrigger value="members" className={tabTriggerCls}>
+            <Users size={16} className="sm:size-[18px]" />
             <span>الأعضاء</span>
-          </div>
-        </button>
-        {isAdmin && (
-          <button
-            onClick={() => setActiveTab("settings")}
-            className={`min-w-[120px] sm:min-w-0 sm:flex-1 py-2 px-4 rounded-lg font-bold whitespace-nowrap transition-all ${
-              activeTab === "settings"
-                ? "bg-(--color-primary) text-white shadow-md"
-                : "text-(--color-muted) hover:bg-(--color-bg)"
-            }`}
-          >
-            <div className="flex items-center justify-center gap-2">
-              <Settings size={18} />
-              <span>إعدادات</span>
-            </div>
-          </button>
-        )}
+          </TabsTrigger>
           {isAdmin && (
-            <button
-              onClick={() => setActiveTab("rotation")}
-              className={`min-w-[120px] sm:min-w-0 sm:flex-1 py-2 px-4 rounded-lg font-bold whitespace-nowrap transition-all ${
-                activeTab === "rotation"
-                  ? "bg-(--color-primary) text-white shadow-md"
-                  : "text-(--color-muted) hover:bg-(--color-bg)"
-              }`}
-            >
-              <div className="flex items-center justify-center gap-2">
-                <RotateCcw size={18} />
-                <span>المهام</span>
-              </div>
-            </button>
+            <TabsTrigger value="settings" className={tabTriggerCls}>
+              <Settings size={16} className="sm:size-[18px]" />
+              <span>إعدادات</span>
+            </TabsTrigger>
           )}
-        </div>
-      </div>
+          {isAdmin && (
+            <TabsTrigger value="rotation" className={tabTriggerCls}>
+              <RotateCcw size={16} className="sm:size-[18px]" />
+              <span>المهام</span>
+            </TabsTrigger>
+          )}
+        </TabsList>
+      </Tabs>
 
       {/* Tab Content */}
       <div className="space-y-4">
@@ -289,7 +299,7 @@ const HouseDetails = () => {
             {house.members.map((member) => (
               <div
                 key={member._id}
-                className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3 p-4 bg-(--color-surface) rounded-xl border border-(--color-border) shadow-sm"
+                className="flex items-center justify-between gap-3 p-4 bg-(--color-surface) rounded-xl border border-(--color-border) shadow-sm"
               >
                 <div className="flex items-center gap-3 min-w-0">
                   <div className="relative">
@@ -300,12 +310,12 @@ const HouseDetails = () => {
                         className="w-12 h-12 rounded-full object-cover border-2 border-(--color-border)"
                       />
                     ) : (
-                      <div className="w-12 h-12 rounded-full bg-(--color-primary)/10 flex items-center justify-center text-(--color-primary) font-bold text-lg border-2 border-(--color-primary)/20">
+                      <div className="w-12 h-12 rounded-full bg-(--color-primary)/10 flex items-center justify-center text-(--color-primary-text) font-bold text-lg border-2 border-(--color-primary)/20">
                         {member.name.charAt(0).toUpperCase()}
                       </div>
                     )}
                     {house.admin._id === member._id && (
-                      <div className="absolute -bottom-1 -right-1 bg-yellow-400 text-white p-1 rounded-full shadow-sm">
+                      <div className="absolute -bottom-1 -right-1 bg-(--color-warning) text-white p-1 rounded-full shadow-sm">
                         <Shield size={10} fill="currentColor" />
                       </div>
                     )}
@@ -326,13 +336,16 @@ const HouseDetails = () => {
                 </div>
 
                 {isAdmin && member._id !== userId && (
-                  <button
+                  <Button
                     onClick={() => setMemberToRemove(member)}
-                    className="self-end sm:self-auto p-2 text-(--color-error) hover:bg-(--color-error)/10 cursor-pointer rounded-lg transition-colors"
+                    variant="ghost"
+                    size="icon"
+                    className="shrink-0 p-2 text-(--color-error) hover:text-(--color-error) hover:bg-(--color-error)/10 rounded-lg"
                     title="حذف العضو"
+                    aria-label="حذف العضو"
                   >
                     <UserX size={20} />
-                  </button>
+                  </Button>
                 )}
               </div>
             ))}
@@ -364,23 +377,25 @@ const HouseDetails = () => {
                     value={newPassword}
                     onChange={(e) => setNewPassword(e.target.value)}
                     placeholder="الباسوورد الجديد"
+                    className="h-11 rounded-xl bg-(--color-bg) border-(--color-border) text-sm sm:text-base"
                   />
                   <div className="flex flex-col-reverse sm:flex-row gap-2 sm:justify-end">
-                    <button
+                    <Button
                       onClick={() => setEditingPassword(false)}
-                      className="px-4 py-2 text-sm font-bold  cursor-pointer text-(--color-muted) hover:bg-(--color-bg) rounded-xl"
+                      variant="ghost"
+                      className="min-h-[44px] px-4 py-2 text-sm font-bold rounded-xl"
                     >
                       إلغاء
-                    </button>
-                    <button
+                    </Button>
+                    <Button
                       onClick={handleUpdatePassword}
                       disabled={isUpdatingPassword}
-                      className="px-4 py-2 text-sm font-bold cursor-pointer bg-(--color-primary) text-white rounded-xl shadow-md hover:shadow-lg transition-all disabled:opacity-50"
+                      className="min-h-[44px] px-4 py-2 text-sm font-bold rounded-xl shadow-md hover:shadow-lg"
                     >
                       {isUpdatingPassword
                         ? "جاري التغيير..."
                         : "تغيير الباسوورد"}
-                    </button>
+                    </Button>
                   </div>
                 </div>
               ) : (
@@ -409,20 +424,22 @@ const HouseDetails = () => {
                 </div>
               </div>
               <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
-                <button
+                <Button
                   onClick={() => handleExport("expenses")}
-                  className="flex items-center justify-center gap-2 py-3 border-2 border-dashed border-(--color-border) rounded-xl text-(--color-secondary) font-bold hover:border-(--color-success) hover:text-(--color-success) transition-all"
+                  variant="outline"
+                  className="flex items-center justify-center gap-2 min-h-[44px] py-3 border-2 border-dashed rounded-xl text-(--color-secondary) font-bold hover:border-(--color-success) hover:text-(--color-success)"
                 >
                   <FileSpreadsheet size={18} />
                   تصدير المصاريف
-                </button>
-                <button
+                </Button>
+                <Button
                   onClick={() => handleExport("invoices")}
-                  className="flex items-center justify-center gap-2 py-3 border-2 border-dashed border-(--color-border) rounded-xl text-(--color-secondary) font-bold hover:border-(--color-success) hover:text-(--color-success) transition-all"
+                  variant="outline"
+                  className="flex items-center justify-center gap-2 min-h-[44px] py-3 border-2 border-dashed rounded-xl text-(--color-secondary) font-bold hover:border-(--color-success) hover:text-(--color-success)"
                 >
                   <FileSpreadsheet size={18} />
                   تصدير الفواتير
-                </button>
+                </Button>
               </div>
             </div>
 
@@ -437,10 +454,11 @@ const HouseDetails = () => {
 
               <div className="flex flex-col gap-3">
                 {/* Clear All Data */}
-                <button
+                <Button
                   onClick={() => setShowClearDataModal(true)}
                   disabled={isClearingData}
-                  className="flex items-center justify-between p-4 hover:bg-(--color-warning)/10 rounded-xl border border-(--color-warning) text-(--color-warning) cursor-pointer transition-all shadow-sm group disabled:opacity-50"
+                  variant="outline"
+                  className="flex items-center justify-between p-4 h-auto min-h-[44px] rounded-xl border-(--color-warning) text-(--color-warning) shadow-sm group"
                 >
                   <div className="text-right">
                     <span className="font-bold block">مسح كل البيانات</span>
@@ -452,12 +470,13 @@ const HouseDetails = () => {
                     size={20}
                     className="group-hover:scale-110 transition-transform"
                   />
-                </button>
+                </Button>
 
                 {/* Delete House */}
-                <button
+                <Button
                   onClick={() => setShowDeleteModal(true)}
-                  className="flex items-center justify-between p-4 hover:bg-(--color-error)/20 rounded-xl border border-(--color-error) text-(--color-error) cursor-pointer transition-all shadow-sm group"
+                  variant="outline"
+                  className="flex items-center justify-between p-4 h-auto min-h-[44px] rounded-xl border-(--color-error) text-(--color-error) shadow-sm group"
                 >
                   <div className="text-right">
                     <span className="font-bold block">حذف البيت بالكامل</span>
@@ -469,7 +488,7 @@ const HouseDetails = () => {
                     size={20}
                     className="group-hover:scale-110 transition-transform"
                   />
-                </button>
+                </Button>
               </div>
             </div>
           </div>
@@ -486,59 +505,87 @@ const HouseDetails = () => {
 
       {/* Leave House Button (Visible to everyone) */}
       <div className="mt-8 pt-6 border-t border-(--color-border)">
-        <button
+        <Button
           onClick={() => setShowLeaveModal(true)}
-          className="w-full border cursor-pointer flex items-center justify-center gap-2 py-3 text-(--color-error) font-bold hover:bg-(--color-error)/10 rounded-xl transition-all"
+          variant="outline"
+          className="w-full min-h-[44px] flex items-center justify-center gap-2 py-3 text-(--color-error) hover:text-(--color-error) hover:bg-(--color-error)/10 font-bold rounded-xl"
         >
           <LogOut size={20} />
           مغادرة البيت
-        </button>
+        </Button>
       </div>
 
       {/* Modals */}
-      <ConfirmModal
-        isOpen={!!memberToRemove}
-        onClose={() => setMemberToRemove(null)}
-        onConfirm={handleRemoveMember}
-        title="حذف عضو"
-        message={`متأكد إنك عايز تحذف ${memberToRemove?.name} من البيت؟`}
-        confirmText="حذف"
-        cancelText="إلغاء"
-        type="danger"
-      />
+      <AlertDialog
+        open={!!memberToRemove}
+        onOpenChange={(open) => !open && setMemberToRemove(null)}
+      >
+        <AlertDialogContent dir="rtl">
+          <AlertDialogHeader>
+            <AlertDialogTitle>حذف عضو</AlertDialogTitle>
+            <AlertDialogDescription>
+              {`متأكد إنك عايز تحذف ${memberToRemove?.name} من البيت؟`}
+            </AlertDialogDescription>
+          </AlertDialogHeader>
+          <AlertDialogFooter>
+            <AlertDialogCancel onClick={() => setMemberToRemove(null)}>
+              إلغاء
+            </AlertDialogCancel>
+            <AlertDialogAction onClick={handleRemoveMember}>حذف</AlertDialogAction>
+          </AlertDialogFooter>
+        </AlertDialogContent>
+      </AlertDialog>
 
-      <ConfirmModal
-        isOpen={showLeaveModal}
-        onClose={() => setShowLeaveModal(false)}
-        onConfirm={handleLeaveHouse}
-        title="مغادرة البيت"
-        message="متأكد إنك عايز تخرج من البيت ده؟ مش هتقدر تشوف المصاريف تاني."
-        confirmText="مغادرة"
-        cancelText="إلغاء"
-        type="danger"
-      />
+      <AlertDialog open={showLeaveModal} onOpenChange={setShowLeaveModal}>
+        <AlertDialogContent dir="rtl">
+          <AlertDialogHeader>
+            <AlertDialogTitle>مغادرة البيت</AlertDialogTitle>
+            <AlertDialogDescription>
+              متأكد إنك عايز تخرج من البيت ده؟ مش هتقدر تشوف المصاريف تاني.
+            </AlertDialogDescription>
+          </AlertDialogHeader>
+          <AlertDialogFooter>
+            <AlertDialogCancel>إلغاء</AlertDialogCancel>
+            <AlertDialogAction onClick={handleLeaveHouse}>مغادرة</AlertDialogAction>
+          </AlertDialogFooter>
+        </AlertDialogContent>
+      </AlertDialog>
 
-      <ConfirmModal
-        isOpen={showDeleteModal}
-        onClose={() => setShowDeleteModal(false)}
-        onConfirm={handleDeleteHouse}
-        title="حذف البيت"
-        message="تحذير: الإجراء ده نهائي! كل البيانات والمصاريف هتتحذف تماماً ومحدش هيقدر يرجعها. متأكد؟"
-        confirmText="حذف نهائي"
-        cancelText="إلغاء"
-        type="danger"
-      />
+      <AlertDialog open={showDeleteModal} onOpenChange={setShowDeleteModal}>
+        <AlertDialogContent dir="rtl">
+          <AlertDialogHeader>
+            <AlertDialogTitle>حذف البيت</AlertDialogTitle>
+            <AlertDialogDescription>
+              تحذير: الإجراء ده نهائي! كل البيانات والمصاريف هتتحذف تماماً ومحدش
+              هيقدر يرجعها. متأكد؟
+            </AlertDialogDescription>
+          </AlertDialogHeader>
+          <AlertDialogFooter>
+            <AlertDialogCancel>إلغاء</AlertDialogCancel>
+            <AlertDialogAction onClick={handleDeleteHouse}>
+              حذف نهائي
+            </AlertDialogAction>
+          </AlertDialogFooter>
+        </AlertDialogContent>
+      </AlertDialog>
 
-      <ConfirmModal
-        isOpen={showClearDataModal}
-        onClose={() => setShowClearDataModal(false)}
-        onConfirm={handleClearAllData}
-        title="مسح كل البيانات"
-        message="هيتم حذف كل المصاريف والفواتير والمدفوعات. البيت والأعضاء هيفضلوا زي ما هم. متأكد؟"
-        confirmText="مسح البيانات"
-        cancelText="إلغاء"
-        type="danger"
-      />
+      <AlertDialog open={showClearDataModal} onOpenChange={setShowClearDataModal}>
+        <AlertDialogContent dir="rtl">
+          <AlertDialogHeader>
+            <AlertDialogTitle>مسح كل البيانات</AlertDialogTitle>
+            <AlertDialogDescription>
+              هيتم حذف كل المصاريف والفواتير والمدفوعات. البيت والأعضاء هيفضلوا زي
+              ما هم. متأكد؟
+            </AlertDialogDescription>
+          </AlertDialogHeader>
+          <AlertDialogFooter>
+            <AlertDialogCancel>إلغاء</AlertDialogCancel>
+            <AlertDialogAction onClick={handleClearAllData}>
+              مسح البيانات
+            </AlertDialogAction>
+          </AlertDialogFooter>
+        </AlertDialogContent>
+      </AlertDialog>
     </div>
   );
 };

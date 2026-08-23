@@ -1,5 +1,4 @@
 import { createContext, useContext, useState, useEffect } from "react";
-import { palettes } from "../../constants/themes";
 
 const ThemeContext = createContext();
 
@@ -14,62 +13,40 @@ export const useTheme = () => {
 
 export const ThemeProvider = ({ children }) => {
   const [themeMode, setThemeMode] = useState("dark"); // 'light' | 'dark'
-  const [currentPalette, setCurrentPalette] = useState("default");
 
-  // Load saved theme and palette
+  // Load saved theme
   useEffect(() => {
     try {
       const savedTheme = localStorage.getItem("budgetly-theme-config");
       if (savedTheme) {
-        const { mode, palette } = JSON.parse(savedTheme);
-        if (mode) setThemeMode(mode);
-        // Validate palette exists
-        if (palette && palettes.some((p) => p.id === palette)) {
-          setCurrentPalette(palette);
-        }
+        const parsed = JSON.parse(savedTheme);
+        // Support both new string format and legacy object format
+        const mode = typeof parsed === "string" ? parsed : parsed?.mode;
+        if (mode === "light" || mode === "dark") setThemeMode(mode);
       } else {
-        // Fallback for migration from old system
         const oldTheme = localStorage.getItem("budgetly-theme");
-        if (oldTheme === "dark") setThemeMode("dark");
+        if (oldTheme === "light" || oldTheme === "dark") setThemeMode(oldTheme);
       }
     } catch (e) {
       console.error("Error parsing theme config", e);
     }
   }, []);
 
-  // Save changes
+  // Persist and apply theme
   useEffect(() => {
-    localStorage.setItem(
-      "budgetly-theme-config",
-      JSON.stringify({ mode: themeMode, palette: currentPalette })
-    );
+    localStorage.setItem("budgetly-theme-config", JSON.stringify(themeMode));
 
-    // Apply classes
     const root = document.documentElement;
-
-    // 1. Handle Light/Dark Mode
     if (themeMode === "dark") {
       root.classList.add("dark");
     } else {
       root.classList.remove("dark");
     }
 
-    // 2. Handle Palettes (Only active in dark mode usually, but class logic separates them)
-    // Remove all known palette classes first
-    palettes.forEach((p) => {
-      if (p.class) root.classList.remove(p.class);
-    });
+    // Clean up any leftover palette classes from previous versions
+    root.classList.remove("theme-dark-orange");
 
-    // Add current palette class if in dark mode (and if it has a class)
-    if (themeMode === "dark") {
-      const paletteConfig = palettes.find((p) => p.id === currentPalette);
-      if (paletteConfig && paletteConfig.class) {
-        root.classList.add(paletteConfig.class);
-      }
-    }
-
-    // Clean up inline styles from previous version if they exist
-    // This ensures CSS classes take priority
+    // Clean up inline styles from previous version
     [
       "dark",
       "primary",
@@ -93,7 +70,7 @@ export const ThemeProvider = ({ children }) => {
     root.style.removeProperty("--gradient-bg");
     root.style.removeProperty("--zigzag-color");
     document.body.style.background = "";
-  }, [themeMode, currentPalette]);
+  }, [themeMode]);
 
   const changeThemeMode = (mode) => {
     if (mode === "light" || mode === "dark") {
@@ -101,19 +78,9 @@ export const ThemeProvider = ({ children }) => {
     }
   };
 
-  const changePalette = (paletteId) => {
-    if (palettes.some((p) => p.id === paletteId)) {
-      setCurrentPalette(paletteId);
-    }
-  };
-
   const value = {
     themeMode,
-    currentPalette,
     changeThemeMode,
-    changePalette,
-    palettes,
-    // Backward compatibility aliases if needed, but updating usage is better
     currentTheme: themeMode,
     changeTheme: changeThemeMode,
   };

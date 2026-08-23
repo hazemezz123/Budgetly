@@ -1,5 +1,6 @@
-import { createContext, useContext, useState, useCallback } from "react";
-import { Toast } from "../components";
+import { createContext, useContext, useCallback } from "react";
+import { toast as sonnerToast } from "sonner";
+import { Toaster } from "@/components/ui/sonner";
 
 const ToastContext = createContext();
 
@@ -13,52 +14,57 @@ export const useToast = () => {
 };
 
 export const ToastProvider = ({ children }) => {
-  const [toasts, setToasts] = useState([]);
-
   const showToast = useCallback((message, type = "info", duration = 4000) => {
-    const id = Date.now();
-    setToasts((prev) => [...prev, { id, message, type, duration }]);
-  }, []);
-
-  const removeToast = useCallback((id) => {
-    setToasts((prev) => prev.filter((toast) => toast.id !== id));
+    const opts = duration ? { duration } : undefined;
+    switch (type) {
+      case "success":
+        sonnerToast.success(message, opts);
+        break;
+      case "error":
+        sonnerToast.error(message, opts);
+        break;
+      case "warning":
+        sonnerToast.warning(message, opts);
+        break;
+      case "info":
+      default:
+        sonnerToast.info(message, opts);
+        break;
+    }
   }, []);
 
   const success = useCallback(
-    (message, duration) => showToast(message, "success", duration),
-    [showToast]
+    (message, duration) => {
+      sonnerToast.success(message, duration ? { duration } : undefined);
+    },
+    []
   );
 
   const error = useCallback(
-    (message, duration) => showToast(message, "error", duration),
-    [showToast]
+    (message, duration) => {
+      sonnerToast.error(message, duration ? { duration } : undefined);
+    },
+    []
   );
 
   const warning = useCallback(
-    (message, duration) => showToast(message, "warning", duration),
-    [showToast]
+    (message, duration) => {
+      sonnerToast.warning(message, duration ? { duration } : undefined);
+    },
+    []
   );
 
   const info = useCallback(
-    (message, duration) => showToast(message, "info", duration),
-    [showToast]
+    (message, duration) => {
+      sonnerToast.info(message, duration ? { duration } : undefined);
+    },
+    []
   );
 
   return (
     <ToastContext.Provider value={{ showToast, success, error, warning, info }}>
       {children}
-      <div className="fixed top-4 left-1/2 -translate-x-1/2 z-9999 flex flex-col gap-3 pointer-events-none">
-        {toasts.map((toast) => (
-          <div key={toast.id} className="pointer-events-auto">
-            <Toast
-              message={toast.message}
-              type={toast.type}
-              duration={toast.duration}
-              onClose={() => removeToast(toast.id)}
-            />
-          </div>
-        ))}
-      </div>
+      <Toaster position="top-center" richColors dir="rtl" toastOptions={{ duration: 4000 }} />
     </ToastContext.Provider>
   );
 };

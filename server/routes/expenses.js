@@ -1,5 +1,7 @@
 import express from "express";
 import { authenticate, isAdmin } from "../middleware/auth.js";
+import { validate } from "../middleware/validate.js";
+import { createExpenseSchema } from "../validators/expenseValidators.js";
 import {
   getExpenses,
   createExpense,
@@ -16,7 +18,7 @@ const router = express.Router();
 router.get("/", authenticate, getExpenses);
 
 // Create expense (Authenticated users can create pending expenses, Admins create approved ones)
-router.post("/", authenticate, createExpense);
+router.post("/", authenticate, validate({ body: createExpenseSchema }), createExpense);
 
 // Update expense (Admin only)
 router.put("/:id", authenticate, isAdmin, updateExpense);

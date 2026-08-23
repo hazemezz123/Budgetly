@@ -58,7 +58,7 @@ test.afterEach(() => {
 
 test("getRotationSettings returns 403 for non-members", async () => {
   const house = createHouse();
-  House.findById = async () => house;
+  House.findById = () => house;
 
   const req = {
     params: { id: house._id.toString() },

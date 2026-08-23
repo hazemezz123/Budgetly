@@ -2,9 +2,21 @@ import bcrypt from "bcryptjs";
 import jwt from "jsonwebtoken";
 import crypto from "crypto";
 import User from "../models/User.js";
+import House from "../models/House.js";
 import sendEmail from "../utils/sendEmail.js";
 import { OAuth2Client } from "google-auth-library";
 import { resolveGoogleUser } from "../services/googleAuthService.js";
+
+export const setAuthCookie = (res, token) => {
+  if (res && typeof res.cookie === "function") {
+    res.cookie("token", token, {
+      httpOnly: true,
+      secure: process.env.NODE_ENV === "production",
+      sameSite: "lax",
+      maxAge: 7 * 24 * 60 * 60 * 1000,
+    });
+  }
+};
 
 // Register
 export const register = async (req, res) => {
@@ -49,6 +61,8 @@ export const register = async (req, res) => {
       { expiresIn: "30d" },
     );
 
+    setAuthCookie(res, token);
+
     res.status(201).json({
       token,
       user: {
@@ -73,11 +87,8 @@ export const login = async (req, res) => {
   try {
     const { username, password } = req.body;
 
-    // Find user and populate house
-    const user = await User.findOne({ username }).populate(
-      "house",
-      "name admin members",
-    );
+    // Find user
+    const user = await User.findOne({ username });
     if (!user) {
       return res.status(401).json({ message: "Invalid credentials" });
     }
@@ -92,8 +103,15 @@ export const login = async (req, res) => {
       return res.status(401).json({ message: "Invalid credentials" });
     }
 
-    // Check password
-    const isMatch = await bcrypt.compare(password, user.password);
+    // Password check and house fetch are independent - run them concurrently
+    // (same data the previous populate("house", ...) returned)
+    const [isMatch, house] = await Promise.all([
+      bcrypt.compare(password, user.password),
+      user.house
+        ? House.findById(user.house).select("name admin members").lean()
+        : Promise.resolve(null),
+    ]);
+
     if (!isMatch) {
       return res.status(401).json({ message: "Invalid credentials" });
     }
@@ -105,6 +123,8 @@ export const login = async (req, res) => {
       { expiresIn: "30d" },
     );
 
+    setAuthCookie(res, token);
+
     res.json({
       token,
       user: {
@@ -113,7 +133,7 @@ export const login = async (req, res) => {
         name: user.name,
         email: user.email,
         role: user.role,
-        house: user.house,
+        house,
         profilePicture: user.profilePicture,
         createdAt: user.createdAt,
       },
@@ -363,6 +383,8 @@ export const googleLogin = async (req, res) => {
       { expiresIn: "30d" },
     );
 
+    setAuthCookie(res, token);
+
     res.json({
       token,
       user: {
@@ -380,4 +402,11 @@ export const googleLogin = async (req, res) => {
     console.error("Google login error:", error);
     res.status(500).json({ message: "Server error" });
   }
+};
+
+export const logoutUser = (req, res) => {
+  if (res && typeof res.clearCookie === "function") {
+    res.clearCookie("token");
+  }
+  res.json({ message: "Logged out successfully" });
 };

@@ -11,7 +11,6 @@ import { DashboardPage as Dashboard } from "../../modules/dashboard/pages";
 import { ExpensesPage as Expenses, AddExpensePage as AddExpense } from "../../modules/expenses/pages";
 import { MyInvoicesPage as MyInvoices, AllInvoicesPage as AllInvoices } from "../../modules/invoices/pages";
 import { NotesPage } from "../../modules/notes/pages";
-import { AIPage } from "../../modules/ai/pages";
 import { AnalyticsPage } from "../../modules/analytics/pages";
 import { ProfilePage } from "../../modules/profile/pages";
 import { AboutPage, ContactDeveloperPage, GuidePage } from "../../modules/info/pages";
@@ -125,14 +124,6 @@ export default function AppRoutes() {
         element={
           <ProtectedRoute>
             <NotesPage />
-          </ProtectedRoute>
-        }
-      />
-      <Route
-        path="/ai"
-        element={
-          <ProtectedRoute>
-            <AIPage />
           </ProtectedRoute>
         }
       />

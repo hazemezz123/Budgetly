@@ -1,0 +1,156 @@
+{
+  "schemaVersion": 2,
+  "generatedAt": "2026-08-10T00:00:00.000Z",
+  "title": "Design System: Budgetly",
+  "extensions": {
+    "colorMeta": {
+      "primary": { "role": "primary", "displayName": "Ledger Gold", "canonical": "#ca8a04", "tonalRamp": ["#3f2a01", "#5c3f03", "#7a5404", "#986f05", "#ca8a04", "#f4c25e", "#fefce8", "#fffbeb"] },
+      "primary-dark": { "role": "primary", "displayName": "Candlelight Gold", "canonical": "#ffc400", "tonalRamp": ["#4a3900", "#665100", "#8a7100", "#b39500", "#ffc400", "#ffd94d", "#fff1a8", "#fffbeb"] },
+      "ink": { "role": "neutral", "displayName": "Ink", "canonical": "#0e1628", "tonalRamp": ["#05080f", "#0e1628", "#1c2842", "#2d3d5e", "#45597f", "#64789c", "#9db0cc", "#e2e8f0"] },
+      "bg": { "role": "neutral", "displayName": "Paper", "canonical": "#ffffff" },
+      "surface": { "role": "neutral", "displayName": "Card Paper", "canonical": "#f8fafc" },
+      "secondary": { "role": "secondary", "displayName": "Slate Blue", "canonical": "#475569" },
+      "muted": { "role": "neutral", "displayName": "Quiet Slate", "canonical": "#64748b" },
+      "border": { "role": "neutral", "displayName": "Divider Slate", "canonical": "#c3cedd" },
+      "status-pending": { "role": "status", "displayName": "Pending Amber", "canonical": "#b45309" },
+      "status-approved": { "role": "status", "displayName": "Approved Emerald", "canonical": "#047857" },
+      "status-rejected": { "role": "status", "displayName": "Rejected Red", "canonical": "#b91c1c" },
+      "dark-bg": { "role": "neutral", "displayName": "Night", "canonical": "#0b0b0d" },
+      "dark-surface": { "role": "neutral", "displayName": "Night Surface", "canonical": "#151518" },
+      "dark-muted": { "role": "neutral", "displayName": "Dim Ash", "canonical": "#b5b5b5" },
+      "dark-border": { "role": "neutral", "displayName": "Night Line", "canonical": "#2a2a2e" },
+      "primary-text": { "role": "primary", "displayName": "Ink-Gold Text", "canonical": "#a16207", "note": "Gold-toned text on light surfaces (700 shade, AAA). Dark: Candlelight #ffc400." },
+      "success-text": { "role": "status", "displayName": "Success Text", "canonical": "#15803d" },
+      "warning-text": { "role": "status", "displayName": "Warning Text", "canonical": "#a16207" },
+      "info-text": { "role": "status", "displayName": "Info Text", "canonical": "#0369a1" },
+      "error-text": { "role": "status", "displayName": "Error Text", "canonical": "#b91c1c" },
+      "on-fill": { "role": "neutral", "displayName": "Ink on Fill", "canonical": "#0e1628", "note": "Text color whenever it sits on a gold fill (buttons, active nav, badges)." }
+    },
+    "typographyMeta": {
+      "display": { "displayName": "Display", "purpose": "Page titles and headline stats only." },
+      "body": { "displayName": "Body", "purpose": "All reading text and UI copy." },
+      "numbers": { "displayName": "Ledger Digits", "purpose": "Every currency amount, balance, and stat." },
+      "decorative": { "displayName": "Decorative", "purpose": "Amiri serif flourishes and signature quotes." }
+    },
+    "shadows": [
+      { "name": "lift", "value": "0 1px 2px 0 rgb(0 0 0 / 0.07)", "purpose": "Card hover state." },
+      { "name": "raise", "value": "0 4px 6px -1px rgb(0 0 0 / 0.12)", "purpose": "Dropdown menus and elevated panels." },
+      { "name": "float", "value": "0 10px 15px -3px rgb(0 0 0 / 0.14)", "purpose": "Modals." },
+      { "name": "float-xl", "value": "0 20px 25px -5px rgb(0 0 0 / 0.16)", "purpose": "Active bottom-nav add button." }
+    ],
+    "motion": [
+      { "name": "ease-fast", "value": "150ms ease", "purpose": "Border and state color transitions." },
+      { "name": "ease-base", "value": "200ms ease", "purpose": "Default button/link/icon transitions, hover lift." },
+      { "name": "ease-slow", "value": "300ms ease", "purpose": "Background and theme transitions." },
+      { "name": "caret-glow", "value": "1.2s ease-in-out infinite", "purpose": "Pulsing gold input caret." },
+      { "name": "slide-in", "value": "0.3s ease-out", "purpose": "Toast entrance." }
+    ],
+    "breakpoints": [
+      { "name": "sm", "value": "640px" },
+      { "name": "md", "value": "768px" },
+      { "name": "lg", "value": "1024px" },
+      { "name": "xl", "value": "1280px" }
+    ]
+  },
+  "components": [
+    {
+      "name": "Primary Button",
+      "kind": "button",
+      "refersTo": "button-primary",
+      "description": "The one gold action target. Full-width on mobile, lifts 1px on hover.",
+      "html": "<button class=\"ds-btn-primary\">سجل المصروف</button>",
+      "css": ".ds-btn-primary { background: #ca8a04; color: #0e1628; border: none; border-radius: 16px; padding: 12px 24px; font-family: 'Cairo', sans-serif; font-size: 15px; font-weight: 600; cursor: pointer; transition: transform 200ms ease, box-shadow 200ms ease; } .ds-btn-primary:hover { transform: translateY(-1px); box-shadow: 0 4px 6px -1px rgb(0 0 0 / 0.12); } .ds-btn-primary:focus-visible { outline: 3px solid #ca8a04; outline-offset: 2px; } .ds-btn-primary:active { transform: translateY(0); }"
+    },
+    {
+      "name": "Ghost Icon Button",
+      "kind": "button",
+      "refersTo": "button-ghost",
+      "description": "Quiet circular icon button; gold on hover, red for destructive.",
+      "html": "<button class=\"ds-icon-btn\" aria-label=\"تغيير الثيم\"><svg width=\"20\" height=\"20\" viewBox=\"0 0 24 24\" fill=\"none\" stroke=\"currentColor\" stroke-width=\"2\"><circle cx=\"12\" cy=\"12\" r=\"4\"/><path d=\"M12 2v2M12 20v2M4.93 4.93l1.41 1.41M17.66 17.66l1.41 1.41M2 12h2M20 12h2M4.93 19.07l1.41-1.41M17.66 6.34l1.41-1.41\"/></svg></button>",
+      "css": ".ds-icon-btn { background: transparent; border: none; color: #475569; border-radius: 9999px; padding: 10px; cursor: pointer; transition: color 200ms ease, background-color 200ms ease, transform 200ms ease; } .ds-icon-btn:hover { color: #ca8a04; background-color: #f1f5f9; transform: translateY(-1px); } .ds-icon-btn:focus-visible { outline: 3px solid #ca8a04; outline-offset: 2px; }"
+    },
+    {
+      "name": "Text Input",
+      "kind": "input",
+      "refersTo": "input-default",
+      "description": "Paper field with gold focus ring and pulsing gold caret.",
+      "html": "<label class=\"ds-label\" for=\"ds-input\">المبلغ</label><input id=\"ds-input\" class=\"ds-input\" type=\"text\" placeholder=\"مثال: 300\" />",
+      "css": ".ds-label { display: block; font-family: 'Cairo', sans-serif; font-weight: 600; font-size: 14px; color: #0e1628; margin-bottom: 8px; } .ds-input { width: 100%; box-sizing: border-box; background: #ffffff; border: 1px solid #c3cedd; border-radius: 16px; padding: 12px 16px; font-family: 'Roboto Mono', monospace; font-size: 16px; color: #0e1628; caret-color: #ca8a04; transition: border-color 150ms ease, box-shadow 150ms ease; } .ds-input::placeholder { color: #64748b; opacity: 0.5; } .ds-input:hover { border-color: #ca8a04; opacity: 0.5; } .ds-input:focus { outline: none; border-color: #ca8a04; box-shadow: 0 0 0 2px rgb(202 138 4 / 0.2); }"
+    },
+    {
+      "name": "Status Badge",
+      "kind": "chip",
+      "refersTo": "status-pending",
+      "description": "Pill with fixed triad — pending amber, approved emerald, rejected red.",
+      "html": "<span class=\"ds-badge ds-badge-pending\">مستني موافقة</span><span class=\"ds-badge ds-badge-approved\">تم الموافقة</span><span class=\"ds-badge ds-badge-rejected\">مرفوض</span>",
+      "css": ".ds-badge { display: inline-block; border-radius: 9999px; padding: 4px 12px; font-family: 'Cairo', sans-serif; font-size: 12px; font-weight: 500; margin-right: 8px; } .ds-badge-pending { background: #fff5e6; color: #b45309; } .ds-badge-approved { background: #edfdf4; color: #047857; } .ds-badge-rejected { background: #feecec; color: #b91c1c; }"
+    },
+    {
+      "name": "Expense Card",
+      "kind": "card",
+      "refersTo": "card",
+      "description": "The signature record card: surface paper, tinted category tile, mono amount, hover lift.",
+      "html": "<div class=\"ds-card\"><div class=\"ds-card-top\"><span class=\"ds-tile\"><svg width=\"20\" height=\"20\" viewBox=\"0 0 24 24\" fill=\"none\" stroke=\"currentColor\" stroke-width=\"2\"><path d=\"M6 2 3 6v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2V6l-3-4Z\"/><path d=\"M3 6h18\"/><path d=\"M16 10a4 4 0 0 1-8 0\"/></svg></span><span class=\"ds-amount\">300.00 <span class=\"ds-unit\">جنيه</span></span></div><h3 class=\"ds-title\">فاتورة كهرباء</h3><span class=\"ds-chip\">فواتير</span><div class=\"ds-card-footer\"><span class=\"ds-meta\">10 أغسطس 2026</span></div></div>",
+      "css": ".ds-card { background: #f8fafc; border: 1px solid #c3cedd; border-radius: 16px; padding: 20px; font-family: 'Cairo', sans-serif; transition: box-shadow 200ms ease, transform 200ms ease; } .ds-card:hover { box-shadow: 0 1px 2px 0 rgb(0 0 0 / 0.07); transform: translateY(-1px); } .ds-card-top { display: flex; justify-content: space-between; align-items: flex-start; margin-bottom: 12px; } .ds-tile { display: inline-flex; padding: 10px; border-radius: 12px; background: #fff5e6; color: #b45309; } .ds-amount { font-family: 'Roboto Mono', monospace; font-size: 20px; font-weight: 700; color: #0e1628; } .ds-unit { font-family: 'Cairo', sans-serif; font-size: 12px; font-weight: 400; color: #64748b; margin-right: 4px; } .ds-title { font-size: 15px; font-weight: 600; color: #475569; margin: 0 0 8px; } .ds-chip { display: inline-block; background: #e2e8f0; color: #475569; border-radius: 9999px; padding: 4px 10px; font-size: 12px; font-weight: 500; margin-bottom: 16px; } .ds-card-footer { display: flex; justify-content: space-between; border-top: 1px solid #c3cedd; padding-top: 16px; color: #64748b; font-size: 12px; }"
+    },
+    {
+      "name": "Stat Card",
+      "kind": "card",
+      "refersTo": "card",
+      "description": "Dashboard metric with tinted wash instead of fill; rounded-3xl.",
+      "html": "<div class=\"ds-stat\"><svg class=\"ds-stat-icon\" width=\"24\" height=\"24\" viewBox=\"0 0 24 24\" fill=\"none\" stroke=\"currentColor\" stroke-width=\"2\"><path d=\"M12 2v20M17 5H9.5a3.5 3.5 0 0 0 0 7h5a3.5 3.5 0 0 1 0 7H6\"/></svg><h3 class=\"ds-stat-title\">رصيدي</h3><p class=\"ds-stat-value\">+850 <span class=\"ds-stat-sub\">جنيه</span></p></div>",
+      "css": ".ds-stat { background: #f8fafc; border: 1px solid #c3cedd; border-radius: 24px; padding: 24px; font-family: 'Cairo', sans-serif; box-shadow: 0 1px 2px 0 rgb(0 0 0 / 0.07); transition: box-shadow 200ms ease, transform 200ms ease; } .ds-stat:hover { box-shadow: 0 10px 15px -3px rgb(0 0 0 / 0.14); } .ds-stat-icon { color: #475569; opacity: 0.6; margin-bottom: 12px; } .ds-stat-title { font-size: 14px; font-weight: 600; opacity: 0.7; letter-spacing: 0.05em; margin: 0 0 8px; color: #0e1628; } .ds-stat-value { font-family: 'Roboto Mono', monospace; font-size: 30px; font-weight: 700; margin: 0; color: #0e1628; } .ds-stat-sub { font-family: 'Cairo', sans-serif; font-size: 16px; font-weight: 400; opacity: 0.6; margin-right: 8px; }"
+    },
+    {
+      "name": "Bottom Nav Add Button",
+      "kind": "nav",
+      "refersTo": "button-primary",
+      "description": "The raised gold center slot of the mobile nav — the one permanently elevated element.",
+      "html": "<nav class=\"ds-nav\"><button class=\"ds-nav-item\">الرئيسية</button><button class=\"ds-nav-item\">المصاريف</button><button class=\"ds-add\" aria-label=\"إضافة مصروف\"><svg width=\"20\" height=\"20\" viewBox=\"0 0 24 24\" fill=\"none\" stroke=\"currentColor\" stroke-width=\"2\"><path d=\"M12 5v14M5 12h14\"/></svg><span class=\"ds-add-label\">إضافة</span></button><button class=\"ds-nav-item\">الفواتير</button><button class=\"ds-nav-item\">البيت</button></nav>",
+      "css": ".ds-nav { display: flex; align-items: center; justify-content: space-around; background: rgba(248, 250, 252, 0.8); backdrop-filter: blur(24px); border-top: 1px solid #c3cedd; padding: 8px 8px 12px; font-family: 'Cairo', sans-serif; } .ds-nav-item { background: transparent; border: none; color: #475569; font-size: 12px; font-weight: 500; padding: 8px; border-radius: 12px; cursor: pointer; } .ds-add { display: flex; flex-direction: column; align-items: center; gap: 4px; background: #ca8a04; color: #ffffff; border: none; border-radius: 16px; padding: 10px 16px; box-shadow: 0 4px 12px rgb(0 0 0 / 0.16); cursor: pointer; font-family: 'Cairo', sans-serif; font-size: 12px; font-weight: 500; transition: transform 200ms ease, box-shadow 200ms ease; } .ds-add:hover { transform: translateY(-1px); box-shadow: 0 8px 20px rgb(0 0 0 / 0.2); } .ds-add:focus-visible { outline: 3px solid #ca8a04; outline-offset: 2px; }"
+    },
+    {
+      "name": "Receipt Zigzag",
+      "kind": "custom",
+      "refersTo": "card",
+      "description": "The signature torn-paper edge on financial documents.",
+      "html": "<div class=\"ds-receipt\"><p class=\"ds-receipt-title\">فاتورة الكهرباء</p><p class=\"ds-receipt-line\">الإجمالي</p><p class=\"ds-receipt-amount\">300.00 جنيه</p></div>",
+      "css": ".ds-receipt { position: relative; background: #f8fafc; padding: 24px 20px; margin: 12px 0; font-family: 'Cairo', sans-serif; } .ds-receipt::before, .ds-receipt::after { content: ''; position: absolute; left: 0; right: 0; height: 12px; background-repeat: repeat-x; background-size: 20px 12px; } .ds-receipt::before { top: -12px; background-image: radial-gradient(circle at 10px 0, transparent 10px, #f8fafc 10px); } .ds-receipt::after { bottom: -12px; background-image: radial-gradient(circle at 10px 12px, transparent 10px, #f8fafc 10px); } .ds-receipt-title { font-weight: 600; color: #475569; margin: 0 0 8px; } .ds-receipt-line { color: #64748b; font-size: 13px; margin: 0; } .ds-receipt-amount { font-family: 'Roboto Mono', monospace; font-size: 20px; font-weight: 700; color: #0e1628; margin: 4px 0 0; }"
+    }
+  ],
+  "narrative": {
+    "northStar": "The Kitchen Ledger",
+    "overview": "Budgetly is the ledger that lives on the shared kitchen table — a warm, honest record of who paid for what, trusted because every line is plain and every balance is checkable. The gold accent is the pencil that underlines the total; the calm slate-and-white surfaces are the paper it's written on. In dark mode the paper becomes a night desk: near-black, with the gold turning to candlelight so numbers stay legible at midnight.\n\nThe system is deliberately warm rather than institutional: rounded corners everywhere, generous padding, and Egyptian colloquial voice make money feel like housemate conversation, not banking. But precision is never sacrificed for friendliness — amounts are set in mono type, statuses carry exact color triads, and WCAG AAA contrast is a binding constraint across all four theme states. The aesthetic is iOS-inspired: glassy blurred navigation, tactile rounded cards, subtle lift on interaction, flat at rest.",
+    "keyCharacteristics": [
+      "Gold-led: one accent (Ledger Gold #ca8a04, Candlelight #ffc400 in dark) used for actions, active nav, and emphasis — never decoration",
+      "Paper-and-ink surfaces: white/slate-light palette with a soft diagonal gradient wash",
+      "Four voice fonts with strict roles: Cairo for reading, Poppins for headings, Roboto Mono for every number, Amiri for decorative flourishes",
+      "Big radii (16–24px), generous padding, tactile but calm",
+      "Receipt zigzag edges as the signature flourish on financial documents",
+      "Flat by default; depth appears only as hover/active lift and glassy blur"
+    ],
+    "rules": [
+      { "name": "The One Gold Rule", "body": "Ledger Gold appears on action targets and active states only — buttons, current nav, focus. It never colors body text or fills a whole screen; its rarity is the point.", "section": "colors" },
+      { "name": "The Gradient Wash Rule", "body": "The page background is always the soft 135° diagonal (light: #f8fafc→#e5eaf1; dark: #0b0b0d→#151518). Never use a flat background color; the wash is what keeps the paper from feeling dead.", "section": "colors" },
+      { "name": "The Ledger Digits Rule", "body": "Every money figure is set in Roboto Mono. If it's a number about money, it's mono — in cards, stats, tables, and inputs alike.", "section": "typography" },
+      { "name": "The Flat-By-Default Rule", "body": "Surfaces are flat at rest. Shadows appear only on hover, elevation, or state — never as permanent card furniture. If a card always needs a shadow, it needs a border instead.", "section": "elevation" }
+    ],
+    "dos": [
+      "Do use Ledger Gold only for action and active-state targets (One Gold Rule).",
+      "Do set every money figure in Roboto Mono (Ledger Digits Rule).",
+      "Do keep cards flat at rest and lift them only on hover (Flat-By-Default Rule).",
+      "Do keep the gradient wash on the page background in both modes.",
+      "Do use the receipt zigzag on financial documents and statements only.",
+      "Do write UI copy in Egyptian colloquial Arabic with full RTL layout.",
+      "Do hit WCAG AAA on all text/background pairs in all four theme states."
+    ],
+    "donts": [
+      "Don't use gold as a background wash for whole screens or sections — it is a target color, not a canvas color.",
+      "Don't render amounts in Cairo or any proportional font — mono or nothing.",
+      "Don't stack permanent shadows on cards; borders do the separating at rest.",
+      "Don't flatten the focus ring — 3px gold with offset is required for keyboard navigation.",
+      "Don't invent new status colors; pending/approved/rejected triads are fixed.",
+      "Don't use pure black or pure white surfaces in dark mode — always Night #0b0b0d / Night Surface #151518."
+    ]
+  }
+}

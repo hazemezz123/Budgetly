@@ -17,6 +17,13 @@ const createRes = () => {
   const res = {
     statusCode: 200,
     body: undefined,
+    cookies: {},
+    cookie(name, value, options) {
+      this.cookies[name] = { value, options };
+    },
+    clearCookie(name) {
+      delete this.cookies[name];
+    },
     status(code) {
       this.statusCode = code;
       return this;
