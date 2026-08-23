@@ -8,7 +8,7 @@ import { useAddExpense } from "../hooks";
 // Shared classes for the native selects on this page (compact mobile ramp).
 // Native selects keep the system wheel/sheet picker on phones.
 const selectClasses =
-  "h-11 sm:h-10 w-full cursor-pointer rounded-xl border border-(--color-border) bg-transparent px-3 text-start text-sm sm:text-base text-(--color-dark) transition-colors focus:border-(--color-primary) disabled:opacity-60";
+  "h-11 sm:h-10 w-full cursor-pointer rounded-xl border border-(--color-border) bg-(--color-bg) px-3 text-start text-sm sm:text-base text-(--color-dark) transition-colors focus:border-(--color-primary) disabled:opacity-60";
 
 // صفحة إضافة مصروف - تصميم مضغوط للموبايل
 const AddExpense = () => {

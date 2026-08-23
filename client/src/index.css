@@ -532,6 +532,16 @@ select {
   -webkit-appearance: none; /* Chrome, Safari, Edge */
   -moz-appearance: none; /* Firefox */
   appearance: none;
+  color-scheme: light;
+}
+
+.dark select {
+  color-scheme: dark;
+}
+
+select option {
+  background-color: var(--color-bg);
+  color: var(--color-dark);
 }
 
 
