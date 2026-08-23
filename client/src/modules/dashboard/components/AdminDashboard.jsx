@@ -1,9 +1,9 @@
 import { TrendingUp, TrendingDown, Users, Wallet } from "lucide-react";
 import StatCard from "./StatCard";
+import { Card, CardContent, CardHeader } from "@/components/ui/card";
 
 export default function AdminDashboard({ stats }) {
   const adminBalance = stats.overview.adminBalance || 0;
-  const isPositive = adminBalance > 0;
 
   return (
     <div className="space-y-6 sm:space-y-8">
@@ -23,54 +23,50 @@ export default function AdminDashboard({ stats }) {
             icon={TrendingDown}
           />
           <StatCard
-            title={isPositive ? "اللي فلوس ليك" : "اللي عليك"}
+            title={adminBalance > 0 ? "اللي فلوس ليك" : "اللي عليك"}
             value={`${Math.abs(adminBalance).toFixed(2)} جنيه`}
             icon={Wallet}
           />
-          <StatCard
-            title="عدد الأعضاء"
-            value={stats.overview.totalUsers}
-            icon={Users}
-          />
+          <StatCard title="عدد الأعضاء" value={stats.overview.totalUsers} icon={Users} />
         </div>
       </section>
 
-      <section
-        aria-labelledby="debtors-heading"
-        className="bg-ios-surface backdrop-blur-xl rounded-2xl sm:rounded-3xl border border-ios-border overflow-hidden shadow-sm sm:shadow-md"
-      >
-        <div className="p-4 sm:p-6 border-b border-ios-border">
-          <h2 id="debtors-heading" className="text-lg sm:text-xl font-bold text-ios-dark">
+      <Card className="rounded-2xl sm:rounded-3xl border-(--color-border) bg-(--color-surface) overflow-hidden shadow-sm sm:shadow-md py-0 gap-0">
+        <CardHeader className="p-4 sm:p-6 border-b border-(--color-border)">
+          <h2
+            id="debtors-heading"
+            className="text-lg sm:text-xl font-bold text-(--color-dark)"
+          >
             الناس اللي عليها فلوس
           </h2>
-        </div>
-        <div className="divide-y divide-ios-border">
+        </CardHeader>
+        <CardContent className="p-0">
           {stats.usersOwing.length > 0 ? (
-            <ul className="divide-y divide-ios-border">
+            <ul className="divide-y divide-(--color-border)">
               {stats.usersOwing.map((u) => (
                 <li
                   key={u.userId}
-                  className="p-4 sm:p-5 flex justify-between items-center gap-3 hover:bg-ios-hover transition-colors min-w-0"
+                  className="p-4 sm:p-5 flex justify-between items-center gap-3 hover:bg-(--color-hover) transition-colors min-w-0"
                 >
-                  <span className="font-semibold text-ios-dark text-sm sm:text-base truncate flex-1 min-w-0">
+                  <span className="font-semibold text-(--color-dark) text-sm sm:text-base truncate flex-1 min-w-0">
                     {u.name}{" "}
-                    <span className="text-ios-secondary text-xs sm:text-sm">
+                    <span className="text-(--color-secondary) text-xs sm:text-sm">
                       (@{u.username})
                     </span>
                   </span>
-                  <span className="text-ios-error font-bold text-sm sm:text-base shrink-0">
+                  <span className="text-(--color-error) font-bold text-sm sm:text-base shrink-0">
                     عليه {u.owes.toFixed(2)} جنيه
                   </span>
                 </li>
               ))}
             </ul>
           ) : (
-            <p className="p-6 text-ios-secondary text-center text-sm">
+            <p className="p-6 text-(--color-secondary) text-center text-sm">
               مفيش حد عليه فلوس!
             </p>
           )}
-        </div>
-      </section>
+        </CardContent>
+      </Card>
     </div>
   );
 }

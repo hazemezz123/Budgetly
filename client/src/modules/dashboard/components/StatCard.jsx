@@ -1,3 +1,5 @@
+import { Card, CardContent } from "@/components/ui/card";
+
 export default function StatCard({
   title,
   value,
@@ -5,38 +7,45 @@ export default function StatCard({
   type = "neutral",
   icon: Icon,
 }) {
-  const getColors = () => {
+  const getCardClasses = () => {
     switch (type) {
       case "positive":
-        return "bg-ios-success/10 border-ios-success/20 text-ios-success";
+        return "border-(--color-success)/20 bg-(--color-success)/10";
       case "negative":
-        return "bg-ios-error/10 border-ios-error/20 text-ios-error";
+        return "border-(--color-error)/20 bg-(--color-error)/10";
       default:
-        return "bg-ios-surface border-ios-border text-ios-dark";
+        return "border-(--color-border) bg-(--color-surface)";
+    }
+  };
+
+  const getIconColor = () => {
+    switch (type) {
+      case "positive":
+        return "text-(--color-success)";
+      case "negative":
+        return "text-(--color-error)";
+      default:
+        return "text-(--color-muted)";
     }
   };
 
   return (
-    <div
-      className={`${getColors()} backdrop-blur-xl p-6 rounded-3xl border shadow-md hover:shadow-lg transition-all`}
+    <Card
+      className={`rounded-2xl ${getCardClasses()} shadow-sm hover:shadow-md transition-all py-0 gap-0`}
       role="article"
     >
-      {Icon && (
-        <div className="mb-3" aria-hidden="true">
-          <Icon size={24} className="opacity-60" />
+      <CardContent className="p-5">
+        <div className="flex items-center gap-2 mb-2">
+          {Icon && <Icon size={16} className={getIconColor()} aria-hidden="true" />}
+          <p className="text-xs sm:text-sm text-(--color-secondary)">{title}</p>
         </div>
-      )}
-      <h3 className="text-sm font-semibold opacity-70 mb-2 tracking-wider">
-        {title}
-      </h3>
-      <p className="text-3xl font-bold">
-        {value}
-        {subtext && (
-          <span className="text-base font-normal opacity-60 mr-2">
-            {subtext}
-          </span>
-        )}
-      </p>
-    </div>
+        <p className="text-xl sm:text-2xl font-bold text-(--color-dark) font-numbers">
+          {value}
+          {subtext && (
+            <span className="text-base font-normal opacity-60 mr-2">{subtext}</span>
+          )}
+        </p>
+      </CardContent>
+    </Card>
   );
 }

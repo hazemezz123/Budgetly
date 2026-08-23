@@ -1,16 +1,27 @@
-import React, { useEffect, useState } from "react";
-import { X, ExternalLink, Sparkles } from "lucide-react";
+import { useEffect, useState } from "react";
+import { ExternalLink, Sparkles } from "lucide-react";
 import { useNavigate } from "react-router-dom";
+import {
+  Dialog,
+  DialogContent,
+  DialogTitle,
+  DialogDescription,
+} from "@/components/ui/dialog";
+import { Button } from "@/components/ui/button";
+
+const dialogClasses =
+  "top-auto bottom-0 left-0 right-0 translate-x-0 translate-y-0 " +
+  "max-w-none w-full rounded-t-3xl rounded-b-none border-b-0 sm:border-b p-0 gap-0 " +
+  "sm:top-1/2 sm:bottom-auto sm:left-1/2 sm:right-auto sm:-translate-x-1/2 sm:-translate-y-1/2 " +
+  "sm:max-w-lg sm:w-full sm:rounded-3xl bg-(--color-surface) max-h-[85vh] sm:max-h-[90vh] flex flex-col overflow-hidden";
 
 const WelcomeModal = () => {
   const [isOpen, setIsOpen] = useState(false);
   const navigate = useNavigate();
 
   useEffect(() => {
-    // Check if user has seen the welcome modal
     const hasSeenWelcome = localStorage.getItem("hasSeenWelcome");
     if (!hasSeenWelcome) {
-      // Small delay for better UX
       const timer = setTimeout(() => setIsOpen(true), 1000);
       return () => clearTimeout(timer);
     }
@@ -26,65 +37,59 @@ const WelcomeModal = () => {
     navigate("/guide");
   };
 
-  if (!isOpen) return null;
-
   return (
-    <div className="fixed inset-0 z-50 flex items-end sm:items-center justify-center p-0 sm:p-4 bg-black/50 backdrop-blur-sm transition-opacity duration-300">
-      <div
-        className="bg-ios-surface border border-ios-border rounded-t-3xl sm:rounded-3xl shadow-2xl max-w-md w-full p-5 sm:p-6 relative animate-in slide-in-from-bottom sm:zoom-in duration-300 max-h-[85vh] overflow-y-auto flex flex-col"
-        role="dialog"
-        aria-labelledby="welcome-title"
-        aria-modal="true"
-      >
+    <Dialog open={isOpen} onOpenChange={(open) => !open && handleClose()}>
+      <DialogContent className={dialogClasses} dir="rtl" showCloseButton={false}>
         <div className="sm:hidden pt-1 pb-2 flex justify-center shrink-0">
           <div className="w-10 h-1.5 rounded-full bg-(--color-border)" />
         </div>
-        {/* Close Button */}
-        <button
-          onClick={handleClose}
-          className="absolute top-6 sm:top-4 left-4 p-2.5 sm:p-2 rounded-full hover:bg-black/5 transition-colors text-ios-secondary min-w-[40px] min-h-[40px] flex items-center justify-center"
-          aria-label="إغلاق الترحيب"
-        >
-          <X size={20} />
-        </button>
 
-        {/* Content */}
-        <div className="text-center pt-2 sm:pt-4">
-          <div className="mx-auto bg-ios-primary/10 w-20 h-20 rounded-full flex items-center justify-center mb-6">
-            <Sparkles className="text-ios-primary w-10 h-10" />
-          </div>
+        <DialogTitle id="welcome-title" className="sr-only">
+          أهلاً بيك في Budgetly! 👋
+        </DialogTitle>
+        <DialogDescription className="sr-only">
+          دليل ترحيبي لشرح مميزات Budgetly وكيفية إدارة الميزانية.
+        </DialogDescription>
 
-          <h2
-            id="welcome-title"
-            className="text-xl sm:text-2xl font-bold text-ios-dark mb-3"
-          >
-            أهلاً بيك في Budgetly! 👋
-          </h2>
+        <div className="p-5 sm:p-6 flex flex-col overflow-hidden">
+          <div className="text-center pt-2 sm:pt-4">
+            <div className="mx-auto bg-(--color-primary)/10 w-20 h-20 rounded-full flex items-center justify-center mb-6">
+              <Sparkles className="text-(--color-primary) w-10 h-10" />
+            </div>
 
-          <p className="text-sm sm:text-base text-ios-secondary mb-6 sm:mb-8 leading-relaxed">
-            مبسوطين إنك انضميت لينا. عشان تستفيد أقصى استفادة من الموقع، عملنا
-            دليل سريع يشرحلك كل المميزات وازاي تدير ميزانيتك بسهولة.
-          </p>
-
-          <div className="space-y-3 pb-safe">
-            <button
-              onClick={handleStartGuide}
-              className="w-full bg-ios-primary hover:bg-ios-primary/90 text-white font-bold min-h-[48px] py-3.5 px-6 rounded-2xl transition-all duration-200 flex items-center justify-center gap-2 shadow-lg hover:shadow-xl"
+            <h2
+              id="welcome-title-visible"
+              className="text-xl sm:text-2xl font-bold text-(--color-dark) mb-3"
             >
-              <span>ابدأ الجولة التعريفية</span>
-              <ExternalLink size={18} />
-            </button>
+              أهلاً بيك في Budgetly! 👋
+            </h2>
 
-            <button
-              onClick={handleClose}
-              className="w-full bg-transparent hover:bg-black/5 text-ios-secondary font-medium min-h-[44px] py-3 px-6 rounded-2xl transition-colors"
-            >
-              لا شكراً، هكتشف بنفسي
-            </button>
+            <p className="text-sm sm:text-base text-(--color-secondary) mb-6 sm:mb-8 leading-relaxed">
+              مبسوطين إنك انضميت لينا. عشان تستفيد أقصى استفادة من الموقع، عملنا
+              دليل سريع يشرحلك كل المميزات وازاي تدير ميزانيتك بسهولة.
+            </p>
+
+            <div className="space-y-3 pb-safe">
+              <Button
+                onClick={handleStartGuide}
+                className="w-full min-h-[48px] py-3.5 px-6 rounded-2xl font-bold flex items-center justify-center gap-2 shadow-lg hover:shadow-xl"
+              >
+                <span>ابدأ الجولة التعريفية</span>
+                <ExternalLink size={18} />
+              </Button>
+
+              <Button
+                variant="ghost"
+                onClick={handleClose}
+                className="w-full min-h-[44px] py-3 px-6 rounded-2xl font-medium text-(--color-secondary) hover:bg-black/5"
+              >
+                لا شكراً، هكتشف بنفسي
+              </Button>
+            </div>
           </div>
         </div>
-      </div>
-    </div>
+      </DialogContent>
+    </Dialog>
   );
 };
 

@@ -1,5 +1,6 @@
 import { Wallet, TrendingDown, DollarSign } from "lucide-react";
 import StatCard from "./StatCard";
+import { Card, CardContent, CardHeader } from "@/components/ui/card";
 
 export default function UserDashboard({ stats }) {
   return (
@@ -29,32 +30,32 @@ export default function UserDashboard({ stats }) {
         </div>
       </section>
 
-      <section
-        aria-labelledby="activity-heading"
-        className="bg-ios-surface backdrop-blur-xl rounded-2xl sm:rounded-3xl border border-ios-border overflow-hidden shadow-sm sm:shadow-md"
-      >
-        <div className="p-4 sm:p-6 border-b border-ios-border">
-          <h2 id="activity-heading" className="text-lg sm:text-xl font-bold text-ios-dark">
+      <Card className="rounded-2xl sm:rounded-3xl border-(--color-border) bg-(--color-surface) overflow-hidden shadow-sm sm:shadow-md py-0 gap-0">
+        <CardHeader className="p-4 sm:p-6 border-b border-(--color-border)">
+          <h2
+            id="activity-heading"
+            className="text-lg sm:text-xl font-bold text-(--color-dark)"
+          >
             آخر المصاريف
           </h2>
-        </div>
-        <div className="divide-y divide-ios-border">
+        </CardHeader>
+        <CardContent className="p-0">
           {stats.recentExpenses?.length > 0 ? (
-            <ul className="divide-y divide-ios-border">
+            <ul className="divide-y divide-(--color-border)">
               {stats.recentExpenses.map((expense) => (
                 <li
                   key={expense._id}
-                  className="p-4 sm:p-5 flex justify-between items-center gap-3 hover:bg-ios-hover transition-colors min-w-0"
+                  className="p-4 sm:p-5 flex justify-between items-center gap-3 hover:bg-(--color-hover) transition-colors min-w-0"
                 >
-                  <span className="text-ios-dark font-medium text-sm sm:text-base truncate flex-1 min-w-0">
+                  <span className="text-(--color-dark) font-medium text-sm sm:text-base truncate flex-1 min-w-0">
                     {expense.title}
                   </span>
                   <div className="flex flex-col items-end gap-1 shrink-0">
-                    <span className="font-bold text-ios-primary text-sm sm:text-base">
+                    <span className="font-bold text-(--color-primary) text-sm sm:text-base">
                       {expense.totalAmount.toFixed(2)} جنيه
                     </span>
                     {expense.userShare && (
-                      <span className="text-xs sm:text-sm text-ios-error">
+                      <span className="text-xs sm:text-sm text-(--color-error)">
                         حصتك: {expense.userShare.toFixed(2)} جنيه
                       </span>
                     )}
@@ -63,12 +64,12 @@ export default function UserDashboard({ stats }) {
               ))}
             </ul>
           ) : (
-            <p className="p-6 text-ios-secondary text-center text-sm">
+            <p className="p-6 text-(--color-secondary) text-center text-sm">
               مفيش مصاريف لسه
             </p>
           )}
-        </div>
-      </section>
+        </CardContent>
+      </Card>
     </div>
   );
 }
