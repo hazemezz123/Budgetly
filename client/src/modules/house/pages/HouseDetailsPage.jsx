@@ -295,7 +295,7 @@ const HouseDetails = () => {
             {house.members.map((member) => (
               <div
                 key={member._id}
-                className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3 p-4 bg-(--color-surface) rounded-xl border border-(--color-border) shadow-sm"
+                className="flex items-center justify-between gap-3 p-4 bg-(--color-surface) rounded-xl border border-(--color-border) shadow-sm"
               >
                 <div className="flex items-center gap-3 min-w-0">
                   <div className="relative">
@@ -336,7 +336,7 @@ const HouseDetails = () => {
                     onClick={() => setMemberToRemove(member)}
                     variant="ghost"
                     size="icon"
-                    className="self-end sm:self-auto p-2 text-(--color-error) hover:text-(--color-error) hover:bg-(--color-error)/10 rounded-lg"
+                    className="shrink-0 p-2 text-(--color-error) hover:text-(--color-error) hover:bg-(--color-error)/10 rounded-lg"
                     title="حذف العضو"
                     aria-label="حذف العضو"
                   >
