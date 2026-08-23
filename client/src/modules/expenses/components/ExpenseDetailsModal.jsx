@@ -83,7 +83,7 @@ export default function ExpenseDetailsModal({ expense, isOpen, onClose }) {
 
   return (
     <Dialog open={isOpen} onOpenChange={(open) => !open && onClose()}>
-      <DialogContent className={dialogClasses} dir="rtl" aria-describedby={undefined}>
+      <DialogContent className={dialogClasses} dir="rtl">
         {/* Mobile handle */}
         <div className="sm:hidden absolute top-2 left-1/2 -translate-x-1/2 w-10 h-1.5 rounded-full bg-(--color-border)" />
 

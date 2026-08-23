@@ -27,7 +27,7 @@ export default function NoteReplySection({ note, onReply }) {
   return (
     <div className="mt-4 pt-4 border-t border-(--color-border)">
       {note.replies?.length > 0 && (
-        <div className="space-y-3 mb-4 pl-4 border-l-2 border-(--color-border)">
+        <div className="space-y-3 mb-4 ps-4 border-s-2 border-(--color-border)">
           {note.replies.map((reply) => (
             <div key={reply._id} className="text-sm">
               <div className="flex items-center gap-2 mb-1">
