@@ -18,7 +18,6 @@ import {
   DialogDescription,
 } from "@/components/ui/dialog";
 import { Button } from "@/components/ui/button";
-import { ScrollArea } from "@/components/ui/scroll-area";
 
 const dialogClasses =
   "top-auto bottom-0 left-0 right-0 translate-x-0 translate-y-0 " +
@@ -56,8 +55,8 @@ export default function ExpenseDetailsModal({ expense, isOpen, onClose }) {
         color: "var(--color-status-pending)",
       },
       approved: {
-        bg: "var(--color-status-paid-bg)",
-        color: "var(--color-status-paid)",
+        bg: "var(--color-status-approved-bg)",
+        color: "var(--color-status-approved)",
       },
       rejected: {
         bg: "var(--color-status-rejected-bg)",
@@ -128,7 +127,7 @@ export default function ExpenseDetailsModal({ expense, isOpen, onClose }) {
         </div>
 
         {/* Content */}
-        <ScrollArea className="flex-1 min-h-0">
+        <div className="flex-1 min-h-0 overflow-y-auto">
           <div className="p-5 sm:p-6 space-y-5">
             {expense && (
               <>
@@ -309,7 +308,7 @@ export default function ExpenseDetailsModal({ expense, isOpen, onClose }) {
               </>
             )}
           </div>
-        </ScrollArea>
+        </div>
 
         {/* Footer */}
         <div
