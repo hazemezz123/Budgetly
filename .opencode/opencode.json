@@ -1,9 +1,0 @@
-{
-  "$schema": "https://opencode.ai/config.json",
-  "skills": {
-    "paths": [".opencode/skills"]
-  },
-  "plugin": [
-    "file:///C:/Users/Administrator/AppData/Roaming/opencode/plugins/caveman/plugin.js"
-  ]
-}
