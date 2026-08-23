@@ -53,9 +53,9 @@ const availableAvatars = [
 // positioned responsively.
 const avatarDialogClasses =
   "top-auto bottom-0 left-0 right-0 translate-x-0 translate-y-0 " +
-  "max-w-none w-full rounded-t-3xl rounded-b-none border-b-0 p-4 pb-6 pt-3 sm:p-6 " +
+  "max-w-none w-full rounded-t-3xl rounded-b-none border-b-0 sm:border-b p-4 pb-6 pt-3 sm:p-6 " +
   "sm:top-1/2 sm:bottom-auto sm:left-1/2 sm:right-auto sm:-translate-x-1/2 sm:-translate-y-1/2 " +
-  "sm:max-w-lg sm:w-full sm:rounded-b-3xl sm:rounded-t-3xl";
+  "sm:max-w-lg sm:w-full sm:rounded-b-3xl sm:rounded-t-3xl bg-(--color-surface)";
 
 const Profile = () => {
   const { user, updateUser } = useAuth();
@@ -532,7 +532,7 @@ const Profile = () => {
           </DialogDescription>
 
           <div className="grid grid-cols-4 sm:grid-cols-5 gap-2.5 sm:gap-3 max-h-[50vh] overflow-y-auto custom-scrollbar p-1">
-            {availableAvatars.map((avatar) => (
+            {availableAvatars.map((avatar, i) => (
               <button
                 key={avatar}
                 type="button"
@@ -544,7 +544,7 @@ const Profile = () => {
                     : "border-transparent"
                 )}
                 aria-pressed={selectedAvatar === avatar}
-                aria-label={`صورة ${availableAvatars.indexOf(avatar) + 1}`}
+                aria-label={`صورة ${i + 1}`}
               >
                 <img
                   src={`/profiles/${avatar}`}
