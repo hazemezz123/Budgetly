@@ -1,6 +1,15 @@
 import { useState } from "react";
 import { useNavigate } from "react-router-dom";
-import { ConfirmModal } from "../../../shared/components";
+import {
+  AlertDialog,
+  AlertDialogAction,
+  AlertDialogCancel,
+  AlertDialogContent,
+  AlertDialogDescription,
+  AlertDialogFooter,
+  AlertDialogHeader,
+  AlertDialogTitle,
+} from "@/components/ui/alert-dialog";
 import { useMyInvoices } from "../hooks";
 import {
   InvoiceCard,
@@ -62,10 +71,7 @@ export default function MyInvoices() {
   // Calculate paginated data
   const totalPages = Math.ceil((filteredData?.length || 0) / itemsPerPage);
   const paginatedData = filteredData
-    ? filteredData.slice(
-        (currentPage - 1) * itemsPerPage,
-        currentPage * itemsPerPage,
-      )
+    ? filteredData.slice((currentPage - 1) * itemsPerPage, currentPage * itemsPerPage)
     : [];
 
   // Reset to page 1 when tab or filter changes
@@ -108,9 +114,7 @@ export default function MyInvoices() {
       ) : filteredData.length === 0 ? (
         <div className="text-center py-12 bg-(--color-bg) rounded-xl border-2 border-dashed border-(--color-border)">
           <p className="text-(--color-secondary)">
-            {activeTab === "invoices"
-              ? "لا توجد فواتير تطابق بحثك."
-              : "لا توجد طلبات تطابق بحثك."}
+            {activeTab === "invoices" ? "لا توجد فواتير تطابق بحثك." : "لا توجد طلبات تطابق بحثك."}
           </p>
         </div>
       ) : (
@@ -119,11 +123,7 @@ export default function MyInvoices() {
             activeTab === "invoices" ? (
               <InvoiceCard key={item._id} invoice={item} onPay={handlePay} />
             ) : (
-              <RequestCard
-                key={item._id}
-                request={item}
-                onDelete={handleDeleteRequest}
-              />
+              <RequestCard key={item._id} request={item} onDelete={handleDeleteRequest} />
             ),
           )}
         </div>
@@ -136,41 +136,70 @@ export default function MyInvoices() {
         onPrevious={() => setCurrentPage((p) => Math.max(1, p - 1))}
         onNext={() => setCurrentPage((p) => Math.min(totalPages, p + 1))}
       />
-      {/* Confirm Modal */}
-      <ConfirmModal
-        isOpen={isConfirmModalOpen}
-        onClose={() => setIsConfirmModalOpen(false)}
-        onConfirm={confirmPayment}
-        title="تأكيد الدفع"
-        message="هل أنت متأكد من دفع هذه الفاتورة؟ سيتم إرسال إشعار للمسؤول للموافقة."
-        confirmText={isPaying ? "جاري الدفع..." : "تأكيد الدفع"}
-        cancelText="إلغاء"
-        isLoading={isPaying}
-      />
 
-      <ConfirmModal
-        isOpen={isBulkPayModalOpen}
-        onClose={() => setIsBulkPayModalOpen(false)}
-        onConfirm={confirmBulkPayment}
-        title={`دفع الكل (${pendingInvoicesCount} فواتير)`}
-        message={`هل أنت متأكد من دفع جميع الفواتير المعلقة بإجمالي ${pendingInvoicesTotal.toLocaleString()} ج.م؟ سيتم إرسال طلبات دفع للمسؤول.`}
-        confirmText={isBulkPaying ? "جاري الدفع..." : "تأكيد الدفع للكل"}
-        cancelText="إلغاء"
-        isLoading={isBulkPaying}
-        type="primary"
-      />
+      <AlertDialog open={isConfirmModalOpen} onOpenChange={setIsConfirmModalOpen}>
+        <AlertDialogContent dir="rtl">
+          <AlertDialogHeader>
+            <AlertDialogTitle>تأكيد الدفع</AlertDialogTitle>
+            <AlertDialogDescription>
+              هل أنت متأكد من دفع هذه الفاتورة؟ سيتم إرسال إشعار للمسؤول للموافقة.
+            </AlertDialogDescription>
+          </AlertDialogHeader>
+          <AlertDialogFooter>
+            <AlertDialogCancel disabled={isPaying}>إلغاء</AlertDialogCancel>
+            <AlertDialogAction
+              onClick={confirmPayment}
+              disabled={isPaying}
+              className="bg-(--color-primary) text-white hover:bg-(--color-primary)/90"
+            >
+              {isPaying ? "جاري الدفع..." : "تأكيد الدفع"}
+            </AlertDialogAction>
+          </AlertDialogFooter>
+        </AlertDialogContent>
+      </AlertDialog>
 
-      <ConfirmModal
-        isOpen={isDeleteModalOpen}
-        onClose={() => setIsDeleteModalOpen(false)}
-        onConfirm={confirmDeleteRequest}
-        title="حذف الطلب"
-        message="هل أنت متأكد من حذف هذا الطلب؟ لا يمكن التراجع عن هذا الإجراء."
-        confirmText={isDeleting ? "جاري الحذف..." : "تأكيد الحذف"}
-        cancelText="إلغاء"
-        isLoading={isDeleting}
-        type="danger"
-      />
+      <AlertDialog open={isBulkPayModalOpen} onOpenChange={setIsBulkPayModalOpen}>
+        <AlertDialogContent dir="rtl">
+          <AlertDialogHeader>
+            <AlertDialogTitle>دفع الكل ({pendingInvoicesCount} فواتير)</AlertDialogTitle>
+            <AlertDialogDescription>
+              هل أنت متأكد من دفع جميع الفواتير المعلقة بإجمالي {pendingInvoicesTotal.toLocaleString()} ج.م؟
+              سيتم إرسال طلبات دفع للمسؤول.
+            </AlertDialogDescription>
+          </AlertDialogHeader>
+          <AlertDialogFooter>
+            <AlertDialogCancel disabled={isBulkPaying}>إلغاء</AlertDialogCancel>
+            <AlertDialogAction
+              onClick={confirmBulkPayment}
+              disabled={isBulkPaying}
+              className="bg-(--color-primary) text-white hover:bg-(--color-primary)/90"
+            >
+              {isBulkPaying ? "جاري الدفع..." : "تأكيد الدفع للكل"}
+            </AlertDialogAction>
+          </AlertDialogFooter>
+        </AlertDialogContent>
+      </AlertDialog>
+
+      <AlertDialog open={isDeleteModalOpen} onOpenChange={setIsDeleteModalOpen}>
+        <AlertDialogContent dir="rtl">
+          <AlertDialogHeader>
+            <AlertDialogTitle>حذف الطلب</AlertDialogTitle>
+            <AlertDialogDescription>
+              هل أنت متأكد من حذف هذا الطلب؟ لا يمكن التراجع عن هذا الإجراء.
+            </AlertDialogDescription>
+          </AlertDialogHeader>
+          <AlertDialogFooter>
+            <AlertDialogCancel disabled={isDeleting}>إلغاء</AlertDialogCancel>
+            <AlertDialogAction
+              onClick={confirmDeleteRequest}
+              disabled={isDeleting}
+              className="bg-(--color-error) text-white hover:bg-(--color-error)/90"
+            >
+              {isDeleting ? "جاري الحذف..." : "تأكيد الحذف"}
+            </AlertDialogAction>
+          </AlertDialogFooter>
+        </AlertDialogContent>
+      </AlertDialog>
     </div>
   );
 }

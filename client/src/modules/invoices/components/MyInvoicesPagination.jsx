@@ -1,4 +1,5 @@
 import { ChevronLeft, ChevronRight } from "lucide-react";
+import { Button } from "@/components/ui/button";
 
 export default function MyInvoicesPagination({
   currentPage,
@@ -11,37 +12,40 @@ export default function MyInvoicesPagination({
 
   return (
     <div className="flex items-center justify-center gap-2 py-4">
-      <button
+      <Button
         onClick={onPrevious}
         disabled={currentPage === 1}
-        className="min-w-[44px] min-h-[44px] p-2 rounded-xl border border-(--color-border) disabled:opacity-50 disabled:cursor-not-allowed hover:bg-(--color-hover) transition-colors flex items-center justify-center"
+        variant="outline"
+        size="icon"
+        className="min-w-[44px] min-h-[44px] rounded-xl border-(--color-border) hover:bg-(--color-hover)"
+        aria-label="السابق"
       >
         <ChevronRight size={20} className="text-(--color-dark)" />
-      </button>
+      </Button>
 
       <div className="flex items-center gap-1.5 overflow-x-auto">
         {Array.from({ length: totalPages }, (_, i) => i + 1).map((page) => (
-          <button
+          <Button
             key={page}
             onClick={() => onPageChange(page)}
-            className={`min-w-[44px] min-h-[44px] w-11 h-11 rounded-xl font-medium transition-colors flex items-center justify-center shrink-0 ${
-              currentPage === page
-                ? "bg-(--color-primary) text-white"
-                : "bg-(--color-surface) text-(--color-dark) hover:bg-(--color-hover) border border-(--color-border)"
-            }`}
+            variant={currentPage === page ? "default" : "outline"}
+            className={`min-w-[44px] min-h-[44px] w-11 h-11 rounded-xl font-medium flex items-center justify-center shrink-0 ${currentPage === page ? "bg-(--color-primary) text-white hover:bg-(--color-primary)/90" : "bg-(--color-surface) text-(--color-dark) hover:bg-(--color-hover) border-(--color-border)"}`}
           >
             {page}
-          </button>
+          </Button>
         ))}
       </div>
 
-      <button
+      <Button
         onClick={onNext}
         disabled={currentPage === totalPages}
-        className="min-w-[44px] min-h-[44px] p-2 rounded-xl border border-(--color-border) disabled:opacity-50 disabled:cursor-not-allowed hover:bg-(--color-hover) transition-colors flex items-center justify-center"
+        variant="outline"
+        size="icon"
+        className="min-w-[44px] min-h-[44px] rounded-xl border-(--color-border) hover:bg-(--color-hover)"
+        aria-label="التالي"
       >
         <ChevronLeft size={20} className="text-(--color-dark)" />
-      </button>
+      </Button>
     </div>
   );
 }

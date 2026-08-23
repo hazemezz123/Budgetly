@@ -8,6 +8,20 @@ import {
   getPaginationRowModel,
   flexRender,
 } from "@tanstack/react-table";
+import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
+import { Input } from "@/components/ui/input";
+import { Button } from "@/components/ui/button";
+import {
+  AlertDialog,
+  AlertDialogAction,
+  AlertDialogCancel,
+  AlertDialogContent,
+  AlertDialogDescription,
+  AlertDialogFooter,
+  AlertDialogHeader,
+  AlertDialogTitle,
+  AlertDialogTrigger,
+} from "@/components/ui/alert-dialog";
 import StatusBadge from "./StatusBadge";
 import MobileInvoiceCard from "./MobileInvoiceCard";
 
@@ -39,17 +53,13 @@ export default function InvoicesTable({
       {
         accessorKey: "description",
         header: "الوصف",
-        cell: (info) => (
-          <span className="text-(--color-dark) font-medium">{info.getValue()}</span>
-        ),
+        cell: (info) => <span className="text-(--color-dark) font-medium">{info.getValue()}</span>,
       },
       {
         accessorKey: "amount",
         header: "المبلغ",
         cell: (info) => (
-          <span className="font-bold text-(--color-dark)">
-            {Number(info.getValue()).toFixed(2)} جنيه
-          </span>
+          <span className="font-bold text-(--color-dark)">{Number(info.getValue()).toFixed(2)} جنيه</span>
         ),
       },
       {
@@ -66,20 +76,55 @@ export default function InvoicesTable({
             <div className="flex items-center justify-start gap-2">
               {invoice.status === "awaiting_approval" ? (
                 <>
-                  <button
-                    onClick={() => onApprove(invoice._id)}
-                    className="p-1.5 bg-(--color-status-approved-bg) text-(--color-status-approved) rounded-lg hover:opacity-80 transition-colors"
-                    title="موافقة"
-                  >
-                    <Check size={16} />
-                  </button>
-                  <button
-                    onClick={() => onReject(invoice._id)}
-                    className="p-1.5 bg-(--color-status-rejected-bg) text-(--color-status-rejected) rounded-lg hover:opacity-80 transition-colors"
-                    title="رفض"
-                  >
-                    <X size={16} />
-                  </button>
+                  <AlertDialog>
+                    <AlertDialogTrigger asChild>
+                      <Button
+                        variant="ghost"
+                        size="icon"
+                        className="h-7 w-7 bg-(--color-status-approved-bg) text-(--color-status-approved) hover:bg-(--color-status-approved-bg)/80 rounded-lg"
+                        aria-label="موافقة"
+                      >
+                        <Check size={16} />
+                      </Button>
+                    </AlertDialogTrigger>
+                    <AlertDialogContent dir="rtl">
+                      <AlertDialogHeader>
+                        <AlertDialogTitle>تأكيد الموافقة</AlertDialogTitle>
+                        <AlertDialogDescription>هل أنت متأكد من الموافقة على الدفع؟</AlertDialogDescription>
+                      </AlertDialogHeader>
+                      <AlertDialogFooter>
+                        <AlertDialogCancel>إلغاء</AlertDialogCancel>
+                        <AlertDialogAction onClick={() => onApprove(invoice._id)}>موافقة</AlertDialogAction>
+                      </AlertDialogFooter>
+                    </AlertDialogContent>
+                  </AlertDialog>
+                  <AlertDialog>
+                    <AlertDialogTrigger asChild>
+                      <Button
+                        variant="ghost"
+                        size="icon"
+                        className="h-7 w-7 bg-(--color-status-rejected-bg) text-(--color-status-rejected) hover:bg-(--color-status-rejected-bg)/80 rounded-lg"
+                        aria-label="رفض"
+                      >
+                        <X size={16} />
+                      </Button>
+                    </AlertDialogTrigger>
+                    <AlertDialogContent dir="rtl">
+                      <AlertDialogHeader>
+                        <AlertDialogTitle>تأكيد الرفض</AlertDialogTitle>
+                        <AlertDialogDescription>هل أنت متأكد من رفض الدفع؟</AlertDialogDescription>
+                      </AlertDialogHeader>
+                      <AlertDialogFooter>
+                        <AlertDialogCancel>إلغاء</AlertDialogCancel>
+                        <AlertDialogAction
+                          onClick={() => onReject(invoice._id)}
+                          className="bg-(--color-error) text-white hover:bg-(--color-error)/90"
+                        >
+                          رفض
+                        </AlertDialogAction>
+                      </AlertDialogFooter>
+                    </AlertDialogContent>
+                  </AlertDialog>
                 </>
               ) : (
                 <span className="text-(--color-secondary) text-xs">-</span>
@@ -127,61 +172,57 @@ export default function InvoicesTable({
 
   return (
     <div className="space-y-4">
-      <div className="flex items-center gap-2 bg-(--color-bg) p-2.5 rounded-xl border border-(--color-border) w-full md:w-64">
-        <Search size={18} className="text-(--color-secondary) shrink-0" />
-        <input
-          type="text"
-          placeholder="بحث..."
-          className="bg-transparent border-none outline-none text-base md:text-sm w-full text-(--color-dark) min-h-[24px]"
-          value={globalFilter}
-          onChange={(e) => setGlobalFilter(e.target.value)}
-        />
-      </div>
+      <Input
+        placeholder="بحث..."
+        value={globalFilter}
+        onChange={(e) => setGlobalFilter(e.target.value)}
+        className="h-10 max-w-sm bg-(--color-bg) border-(--color-border) text-(--color-dark)"
+      />
 
       {loading ? (
         <div className="flex justify-center py-12">
           <div className="animate-spin rounded-full h-8 w-8 border-2 border-(--color-primary) border-t-transparent"></div>
         </div>
       ) : table.getRowModel().rows.length === 0 ? (
-        <div className="text-center py-12 bg-(--color-bg) rounded-xl border-dashed border-2 border-(--color-border)">
+        <div className="text-center py-12 bg-(--color-bg) rounded-xl border-2 border-dashed border-(--color-border)">
           <p className="text-(--color-secondary)">لا توجد فواتير</p>
         </div>
       ) : (
         <>
           <div className="hidden md:block overflow-x-auto border border-(--color-border) rounded-xl">
-            <table className="w-full text-left border-collapse">
-              <thead className="bg-(--color-bg)">
+            <Table>
+              <TableHeader className="bg-(--color-bg)">
                 {table.getHeaderGroups().map((headerGroup) => (
-                  <tr key={headerGroup.id}>
+                  <TableRow key={headerGroup.id} className="hover:bg-transparent border-b border-(--color-border)">
                     {headerGroup.headers.map((header) => (
-                      <th
+                      <TableHead
                         key={header.id}
-                        className="py-3 px-4 text-xs font-semibold text-(--color-muted) uppercase border-b border-(--color-border) cursor-pointer hover:text-(--color-primary) transition-colors"
+                        className="py-3 px-4 text-xs font-semibold text-(--color-muted) uppercase cursor-pointer hover:text-(--color-primary) transition-colors text-start"
                         onClick={header.column.getToggleSortingHandler()}
                       >
                         <div className="flex items-center gap-1">
-                          {flexRender(header.column.columnDef.header, header.getContext())}
-                          {header.column.getCanSort() && (
-                            <ArrowUpDown size={12} className="opacity-50" />
-                          )}
+                          {header.isPlaceholder
+                            ? null
+                            : flexRender(header.column.columnDef.header, header.getContext())}
+                          {header.column.getCanSort() && <ArrowUpDown size={12} className="opacity-50" />}
                         </div>
-                      </th>
+                      </TableHead>
                     ))}
-                  </tr>
+                  </TableRow>
                 ))}
-              </thead>
-              <tbody className="divide-y divide-(--color-border) bg-(--color-surface)">
+              </TableHeader>
+              <TableBody className="bg-(--color-surface) divide-y divide-(--color-border)">
                 {table.getRowModel().rows.map((row) => (
-                  <tr key={row.id} className="hover:bg-(--color-hover) transition-colors">
+                  <TableRow key={row.id} className="hover:bg-(--color-hover) transition-colors">
                     {row.getVisibleCells().map((cell) => (
-                      <td key={cell.id} className="py-3 px-4 text-sm text-start">
+                      <TableCell key={cell.id} className="py-3 px-4 text-sm text-start">
                         {flexRender(cell.column.columnDef.cell, cell.getContext())}
-                      </td>
+                      </TableCell>
                     ))}
-                  </tr>
+                  </TableRow>
                 ))}
-              </tbody>
-            </table>
+              </TableBody>
+            </Table>
           </div>
 
           <div className="md:hidden space-y-4">
@@ -200,20 +241,17 @@ export default function InvoicesTable({
 
       <div className="flex flex-col sm:flex-row gap-3 sm:items-center justify-between text-xs text-(--color-secondary) pt-4 border-t border-(--color-border)">
         <div className="flex gap-2">
-          <button
-            className="flex-1 sm:flex-none min-h-[40px] px-4 py-2 border rounded-xl hover:bg-(--color-hover) disabled:opacity-50 transition-colors font-medium"
+          <Button
+            variant="outline"
+            size="sm"
             onClick={() => table.previousPage()}
             disabled={!table.getCanPreviousPage()}
           >
             السابق
-          </button>
-          <button
-            className="flex-1 sm:flex-none min-h-[40px] px-4 py-2 border rounded-xl hover:bg-(--color-hover) disabled:opacity-50 transition-colors font-medium"
-            onClick={() => table.nextPage()}
-            disabled={!table.getCanNextPage()}
-          >
+          </Button>
+          <Button variant="outline" size="sm" onClick={() => table.nextPage()} disabled={!table.getCanNextPage()}>
             التالي
-          </button>
+          </Button>
         </div>
         <span>
           صفحة {table.getState().pagination.pageIndex + 1} من {table.getPageCount()}

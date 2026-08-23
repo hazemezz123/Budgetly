@@ -1,25 +1,33 @@
-export default function StatusBadge({ status }) {
-  const styles = {
-    pending: "bg-(--color-status-pending-bg) text-(--color-status-pending)",
-    awaiting_approval: "bg-(--color-info-bg) text-(--color-info)",
-    paid: "bg-(--color-status-approved-bg) text-(--color-status-approved)",
-    rejected: "bg-(--color-status-rejected-bg) text-(--color-status-rejected)",
-  };
+import { Badge } from "@/components/ui/badge";
 
+export default function StatusBadge({ status }) {
   const labels = {
     pending: "مطلوب سداده",
     awaiting_approval: "في انتظار الموافقة",
     paid: "تم الدفع",
+    approved: "تمت الموافقة",
     rejected: "مرفوض",
   };
 
+  const getStatusClasses = (s) => {
+    switch (s) {
+      case "pending":
+        return "bg-(--color-status-pending-bg) text-(--color-status-pending) border-(--color-status-pending-border)";
+      case "awaiting_approval":
+        return "bg-(--color-info-bg) text-(--color-info) border-(--color-info-border) border";
+      case "paid":
+      case "approved":
+        return "bg-(--color-status-approved-bg) text-(--color-status-approved) border-(--color-status-approved-border)";
+      case "rejected":
+        return "bg-(--color-status-rejected-bg) text-(--color-status-rejected) border-(--color-status-rejected-border)";
+      default:
+        return "bg-(--color-light) text-(--color-secondary) border-(--color-border)";
+    }
+  };
+
   return (
-    <span
-      className={`px-2 py-1 rounded-full text-xs font-medium ${
-        styles[status] || "bg-(--color-light) text-(--color-secondary)"
-      }`}
-    >
+    <Badge variant="outline" className={getStatusClasses(status)}>
       {labels[status] || status}
-    </span>
+    </Badge>
   );
 }

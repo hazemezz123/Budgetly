@@ -8,11 +8,21 @@ import {
   CheckCircle2,
 } from "lucide-react";
 import { useAllInvoices } from "../hooks";
+import { InvoicesTable, MobileRequestCard, RequestDetailsModal } from "../components";
+import { Card, CardContent } from "@/components/ui/card";
+import { Button } from "@/components/ui/button";
+import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
 import {
-  InvoicesTable,
-  MobileRequestCard,
-  RequestDetailsModal,
-} from "../components";
+  AlertDialog,
+  AlertDialogAction,
+  AlertDialogCancel,
+  AlertDialogContent,
+  AlertDialogDescription,
+  AlertDialogFooter,
+  AlertDialogHeader,
+  AlertDialogTitle,
+  AlertDialogTrigger,
+} from "@/components/ui/alert-dialog";
 
 export default function AllInvoices() {
   const [selectedRequest, setSelectedRequest] = useState(null);
@@ -42,7 +52,7 @@ export default function AllInvoices() {
   };
 
   const selectedUserEligibleInvoicesCount = selectedUserInvoices.filter(
-    (invoice) => invoice.status === "awaiting_approval" && invoice.paymentRequest
+    (invoice) => invoice.status === "awaiting_approval" && invoice.paymentRequest,
   ).length;
 
   return (
@@ -52,97 +62,150 @@ export default function AllInvoices() {
           <h1 className="text-2xl font-bold text-(--color-dark)">إدارة الفواتير</h1>
           <p className="text-(--color-secondary)">متابعة الفواتير والمدفوعات لكل المستخدمين</p>
         </div>
-        <button
+        <Button
           onClick={refreshData}
-          className="self-end sm:self-auto p-2 bg-(--color-surface) border border-(--color-border) rounded-full hover:bg-(--color-bg) transition-colors text-(--color-dark)"
-          title="تحديث البيانات"
+          variant="outline"
+          size="icon"
+          className="self-end sm:self-auto rounded-full bg-(--color-surface) border-(--color-border) text-(--color-dark) hover:bg-(--color-bg)"
+          aria-label="تحديث البيانات"
         >
           <RefreshCw size={20} className={loading ? "animate-spin" : ""} />
-        </button>
+        </Button>
       </div>
 
       {pendingRequests.length > 0 && (
-        <div className="bg-(--color-surface) border border-(--color-border) rounded-2xl p-4 sm:p-6 shadow-sm">
-          <h2 className="text-xl font-bold mb-4 flex items-center gap-2 text-(--color-dark)">
-            <Clock className="text-(--color-status-pending)" />
-            طلبات معلقة ({pendingRequests.length})
-          </h2>
+        <Card className="rounded-2xl border-(--color-border) bg-(--color-surface) shadow-sm py-0 gap-0 overflow-hidden">
+          <CardContent className="p-4 sm:p-6">
+            <h2 className="text-xl font-bold mb-4 flex items-center gap-2 text-(--color-dark)">
+              <Clock className="text-(--color-status-pending)" />
+              طلبات معلقة ({pendingRequests.length})
+            </h2>
 
-          <div className="hidden md:block overflow-x-auto">
-            <table className="w-full text-left border-collapse">
-              <thead>
-                <tr className="bg-(--color-bg) text-xs uppercase text-(--color-muted)">
-                  <th className="py-3 px-4 text-start rounded-r-lg">التاريخ</th>
-                  <th className="py-3 px-4 text-start">المستخدم</th>
-                  <th className="py-3 px-4 text-start">الوصف</th>
-                  <th className="py-3 px-4 text-start">المبلغ الكلي</th>
-                  <th className="py-3 px-4 text-start rounded-l-lg">إجراءات</th>
-                </tr>
-              </thead>
-              <tbody className="divide-y divide-(--color-border)">
-                {pendingRequests.map((req) => (
-                  <tr key={req._id} className="hover:bg-(--color-hover)">
-                    <td className="py-3 px-4 text-sm text-(--color-secondary) text-start">
-                      {new Date(req.createdAt).toLocaleDateString("en-US", {
-                        month: "short",
-                        day: "numeric",
-                        year: "numeric",
-                      })}
-                    </td>
-                    <td className="py-3 px-4 text-sm font-medium text-(--color-dark) text-start">
-                      <div className="flex items-center gap-2">
-                        <div className="w-6 h-6 rounded-full bg-(--color-primary-bg) text-(--color-primary-text) flex items-center justify-center text-xs font-bold">
-                          {req.createdBy?.name?.charAt(0) || "?"}
+            <div className="hidden md:block overflow-x-auto rounded-xl border border-(--color-border)">
+              <Table>
+                <TableHeader className="bg-(--color-bg)">
+                  <TableRow className="hover:bg-transparent border-b border-(--color-border)">
+                    <TableHead className="py-3 px-4 text-start text-xs uppercase text-(--color-muted)">
+                      التاريخ
+                    </TableHead>
+                    <TableHead className="py-3 px-4 text-start text-xs uppercase text-(--color-muted)">
+                      المستخدم
+                    </TableHead>
+                    <TableHead className="py-3 px-4 text-start text-xs uppercase text-(--color-muted)">
+                      الوصف
+                    </TableHead>
+                    <TableHead className="py-3 px-4 text-start text-xs uppercase text-(--color-muted)">
+                      المبلغ الكلي
+                    </TableHead>
+                    <TableHead className="py-3 px-4 text-start text-xs uppercase text-(--color-muted)">
+                      إجراءات
+                    </TableHead>
+                  </TableRow>
+                </TableHeader>
+                <TableBody className="divide-y divide-(--color-border) bg-(--color-surface)">
+                  {pendingRequests.map((req) => (
+                    <TableRow key={req._id} className="hover:bg-(--color-hover)">
+                      <TableCell className="py-3 px-4 text-sm text-(--color-secondary) text-start">
+                        {new Date(req.createdAt).toLocaleDateString("en-US", {
+                          month: "short",
+                          day: "numeric",
+                          year: "numeric",
+                        })}
+                      </TableCell>
+                      <TableCell className="py-3 px-4 text-sm font-medium text-(--color-dark) text-start">
+                        <div className="flex items-center gap-2">
+                          <div className="w-6 h-6 rounded-full bg-(--color-primary-bg) text-(--color-primary-text) flex items-center justify-center text-xs font-bold">
+                            {req.createdBy?.name?.charAt(0) || "?"}
+                          </div>
+                          {req.createdBy?.name}
                         </div>
-                        {req.createdBy?.name}
-                      </div>
-                    </td>
-                    <td className="py-3 px-4 text-sm text-(--color-dark) text-start">
-                      {req.description}
-                    </td>
-                    <td className="py-3 px-4 text-sm font-bold text-(--color-dark) text-start">
-                      {req.totalAmount} جنيه
-                    </td>
-                    <td className="py-3 px-4 text-start">
-                      <div className="flex items-center gap-2">
-                        <button
-                          onClick={() => openRequestDetails(req)}
-                          className="px-3 py-1 bg-(--color-bg) text-(--color-secondary) border border-(--color-border) rounded-lg hover:bg-(--color-hover) text-xs font-bold transition-colors"
-                        >
-                          تفاصيل
-                        </button>
-                        <button
-                          onClick={() => handleApproveRequest(req._id)}
-                          className="px-3 py-1 bg-(--color-status-approved-bg) text-(--color-status-approved) rounded-lg hover:opacity-80 text-xs font-bold transition-colors"
-                        >
-                          موافقة
-                        </button>
-                        <button
-                          onClick={() => handleRejectRequest(req._id)}
-                          className="px-3 py-1 bg-(--color-status-rejected-bg) text-(--color-status-rejected) rounded-lg hover:opacity-80 text-xs font-bold transition-colors"
-                        >
-                          رفض
-                        </button>
-                      </div>
-                    </td>
-                  </tr>
-                ))}
-              </tbody>
-            </table>
-          </div>
+                      </TableCell>
+                      <TableCell className="py-3 px-4 text-sm text-(--color-dark) text-start">
+                        {req.description}
+                      </TableCell>
+                      <TableCell className="py-3 px-4 text-sm font-bold text-(--color-dark) text-start">
+                        {req.totalAmount} جنيه
+                      </TableCell>
+                      <TableCell className="py-3 px-4 text-start">
+                        <div className="flex items-center gap-2">
+                          <Button
+                            onClick={() => openRequestDetails(req)}
+                            variant="outline"
+                            size="sm"
+                            className="px-3 py-1 h-7 bg-(--color-bg) text-(--color-secondary) border-(--color-border) hover:bg-(--color-hover) text-xs font-bold rounded-lg"
+                          >
+                            تفاصيل
+                          </Button>
+                          <AlertDialog>
+                            <AlertDialogTrigger asChild>
+                              <Button
+                                size="sm"
+                                className="px-3 py-1 h-7 bg-(--color-status-approved-bg) text-(--color-status-approved) hover:bg-(--color-status-approved-bg)/80 text-xs font-bold rounded-lg"
+                              >
+                                موافقة
+                              </Button>
+                            </AlertDialogTrigger>
+                            <AlertDialogContent dir="rtl">
+                              <AlertDialogHeader>
+                                <AlertDialogTitle>تأكيد الموافقة</AlertDialogTitle>
+                                <AlertDialogDescription>
+                                  هل أنت متأكد من الموافقة على هذا الطلب؟
+                                </AlertDialogDescription>
+                              </AlertDialogHeader>
+                              <AlertDialogFooter>
+                                <AlertDialogCancel>إلغاء</AlertDialogCancel>
+                                <AlertDialogAction onClick={() => handleApproveRequest(req._id)}>
+                                  موافقة
+                                </AlertDialogAction>
+                              </AlertDialogFooter>
+                            </AlertDialogContent>
+                          </AlertDialog>
+                          <AlertDialog>
+                            <AlertDialogTrigger asChild>
+                              <Button
+                                size="sm"
+                                className="px-3 py-1 h-7 bg-(--color-status-rejected-bg) text-(--color-status-rejected) hover:bg-(--color-status-rejected-bg)/80 text-xs font-bold rounded-lg"
+                              >
+                                رفض
+                              </Button>
+                            </AlertDialogTrigger>
+                            <AlertDialogContent dir="rtl">
+                              <AlertDialogHeader>
+                                <AlertDialogTitle>تأكيد الرفض</AlertDialogTitle>
+                                <AlertDialogDescription>هل أنت متأكد من رفض هذا الطلب؟</AlertDialogDescription>
+                              </AlertDialogHeader>
+                              <AlertDialogFooter>
+                                <AlertDialogCancel>إلغاء</AlertDialogCancel>
+                                <AlertDialogAction
+                                  onClick={() => handleRejectRequest(req._id)}
+                                  className="bg-(--color-error) text-white hover:bg-(--color-error)/90"
+                                >
+                                  رفض
+                                </AlertDialogAction>
+                              </AlertDialogFooter>
+                            </AlertDialogContent>
+                          </AlertDialog>
+                        </div>
+                      </TableCell>
+                    </TableRow>
+                  ))}
+                </TableBody>
+              </Table>
+            </div>
 
-          <div className="md:hidden space-y-4">
-            {pendingRequests.map((req) => (
-              <MobileRequestCard
-                key={req._id}
-                request={req}
-                onOpenDetails={openRequestDetails}
-                onApprove={handleApproveRequest}
-                onReject={handleRejectRequest}
-              />
-            ))}
-          </div>
-        </div>
+            <div className="md:hidden space-y-4">
+              {pendingRequests.map((req) => (
+                <MobileRequestCard
+                  key={req._id}
+                  request={req}
+                  onOpenDetails={openRequestDetails}
+                  onApprove={handleApproveRequest}
+                  onReject={handleRejectRequest}
+                />
+              ))}
+            </div>
+          </CardContent>
+        </Card>
       )}
 
       <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-3 sm:gap-4">
@@ -151,9 +214,7 @@ export default function AllInvoices() {
             key={u._id}
             role="button"
             tabIndex={0}
-            onClick={() =>
-              setSelectedUserId((prev) => (prev === u._id ? null : u._id))
-            }
+            onClick={() => setSelectedUserId((prev) => (prev === u._id ? null : u._id))}
             onKeyDown={(e) => {
               if (e.key === "Enter" || e.key === " ") {
                 e.preventDefault();
@@ -177,12 +238,8 @@ export default function AllInvoices() {
                 {u.name.charAt(0)}
               </div>
               <div className="overflow-hidden">
-                <h3 className="font-bold truncate text-(--color-dark)">
-                  {u.name}
-                </h3>
-                <p className="text-xs truncate text-(--color-secondary)">
-                  @{u.username}
-                </p>
+                <h3 className="font-bold truncate text-(--color-dark)">{u.name}</h3>
+                <p className="text-xs truncate text-(--color-secondary)">@{u.username}</p>
               </div>
             </div>
 
@@ -232,68 +289,80 @@ export default function AllInvoices() {
       </div>
 
       {selectedUser && (
-        <div className="bg-(--color-surface) border border-(--color-border) rounded-2xl p-4 sm:p-6 shadow-sm animate-in fade-in slide-in-from-top-4 duration-300">
-          <div className="flex flex-col gap-4 mb-6 sm:flex-row sm:justify-between sm:items-center">
-            <div className="flex items-center gap-2 text-(--color-dark)">
-              <h2 className="text-xl font-bold flex items-center gap-2">
-                <UserIcon className="text-(--color-primary)" />
-                فواتير {selectedUser.name}
-              </h2>
-              <button
-                onClick={() => setSelectedUserId(null)}
-                className="text-sm text-(--color-secondary) hover:text-(--color-primary) underline"
-              >
-                إغلاق
-              </button>
+        <Card className="rounded-2xl border-(--color-border) bg-(--color-surface) shadow-sm py-0 gap-0 overflow-hidden animate-in fade-in slide-in-from-top-4 duration-300">
+          <CardContent className="p-4 sm:p-6">
+            <div className="flex flex-col gap-4 mb-6 sm:flex-row sm:justify-between sm:items-center">
+              <div className="flex items-center gap-2 text-(--color-dark)">
+                <h2 className="text-xl font-bold flex items-center gap-2">
+                  <UserIcon className="text-(--color-primary)" />
+                  فواتير {selectedUser.name}
+                </h2>
+                <Button
+                  onClick={() => setSelectedUserId(null)}
+                  variant="ghost"
+                  size="sm"
+                  className="text-sm text-(--color-secondary) hover:text-(--color-primary) underline h-auto p-0"
+                >
+                  إغلاق
+                </Button>
+              </div>
+
+              {selectedUserEligibleInvoicesCount > 0 && (
+                <AlertDialog>
+                  <AlertDialogTrigger asChild>
+                    <Button
+                      disabled={isApprovingAllUserInvoices}
+                      className="w-full sm:w-auto min-h-[44px] px-4 py-2.5 rounded-xl bg-(--color-status-approved-bg) text-(--color-status-approved) hover:bg-(--color-status-approved-bg)/80 font-bold flex items-center justify-center disabled:opacity-60"
+                    >
+                      {isApprovingAllUserInvoices
+                        ? "جاري الموافقة..."
+                        : `موافقة على الكل (${selectedUserEligibleInvoicesCount})`}
+                    </Button>
+                  </AlertDialogTrigger>
+                  <AlertDialogContent dir="rtl">
+                    <AlertDialogHeader>
+                      <AlertDialogTitle>تأكيد الموافقة على الكل</AlertDialogTitle>
+                      <AlertDialogDescription>
+                        هل أنت متأكد من الموافقة على {selectedUserEligibleInvoicesCount} فواتير دفعة واحدة؟
+                      </AlertDialogDescription>
+                    </AlertDialogHeader>
+                    <AlertDialogFooter>
+                      <AlertDialogCancel>إلغاء</AlertDialogCancel>
+                      <AlertDialogAction
+                        onClick={() =>
+                          handleApproveAllUserInvoices(selectedUser._id, selectedUserEligibleInvoicesCount)
+                        }
+                      >
+                        موافقة
+                      </AlertDialogAction>
+                    </AlertDialogFooter>
+                  </AlertDialogContent>
+                </AlertDialog>
+              )}
             </div>
 
-            {selectedUserEligibleInvoicesCount > 0 && (
-              <button
-                onClick={() =>
-                  handleApproveAllUserInvoices(
-                    selectedUser._id,
-                    selectedUserEligibleInvoicesCount
-                  )
-                }
-                disabled={isApprovingAllUserInvoices}
-                className="w-full sm:w-auto min-h-[44px] px-4 py-2.5 rounded-xl bg-(--color-status-approved-bg) text-(--color-status-approved) font-bold hover:opacity-80 disabled:opacity-60 disabled:cursor-not-allowed transition-colors flex items-center justify-center"
-              >
-                {isApprovingAllUserInvoices
-                  ? "جاري الموافقة..."
-                  : `موافقة على الكل (${selectedUserEligibleInvoicesCount})`}
-              </button>
-            )}
-          </div>
-
-          <InvoicesTable
-            data={selectedUserInvoices}
-            loading={loading}
-            onApprove={handleApprove}
-            onReject={handleReject}
-            showUserColumn={false}
-          />
-        </div>
+            <InvoicesTable
+              data={selectedUserInvoices}
+              loading={loading}
+              onApprove={handleApprove}
+              onReject={handleReject}
+              showUserColumn={false}
+            />
+          </CardContent>
+        </Card>
       )}
 
-      <div className="bg-(--color-surface) border border-(--color-border) rounded-2xl p-4 sm:p-6 shadow-sm">
-        <h2 className="text-xl font-bold mb-6 flex items-center gap-2 text-(--color-dark)">
-          <CreditCard className="text-(--color-primary)" />
-          كل الفواتير
-        </h2>
-        <InvoicesTable
-          data={invoices}
-          loading={loading}
-          onApprove={handleApprove}
-          onReject={handleReject}
-          showUserColumn={true}
-        />
-      </div>
+      <Card className="rounded-2xl border-(--color-border) bg-(--color-surface) shadow-sm py-0 gap-0 overflow-hidden">
+        <CardContent className="p-4 sm:p-6">
+          <h2 className="text-xl font-bold mb-6 flex items-center gap-2 text-(--color-dark)">
+            <CreditCard className="text-(--color-primary)" />
+            كل الفواتير
+          </h2>
+          <InvoicesTable data={invoices} loading={loading} onApprove={handleApprove} onReject={handleReject} showUserColumn={true} />
+        </CardContent>
+      </Card>
 
-      <RequestDetailsModal
-        isOpen={isDetailsModalOpen}
-        onClose={() => setIsDetailsModalOpen(false)}
-        request={selectedRequest}
-      />
+      <RequestDetailsModal isOpen={isDetailsModalOpen} onClose={() => setIsDetailsModalOpen(false)} request={selectedRequest} />
     </div>
   );
 }
