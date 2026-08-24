@@ -189,7 +189,7 @@ export default function AllInvoices() {
                       </TableCell>
                     </TableRow>
                   ))}
-                </TableBody>
+            </TableBody>
               </Table>
             </div>
 

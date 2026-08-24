@@ -12,7 +12,10 @@ export default function NoteFilters({
   return (
     <div className="flex flex-col sm:flex-row gap-4 mb-6">
       <div className="relative flex-1 space-y-1.5">
-        <Label htmlFor="note-search" className="text-sm font-medium text-(--color-secondary)">
+        <Label
+          htmlFor="note-search"
+          className="text-sm font-medium text-(--color-secondary)"
+        >
           بحث
         </Label>
         <div className="relative">
@@ -28,8 +31,10 @@ export default function NoteFilters({
         </div>
       </div>
       <div className="relative min-w-[200px] space-y-1.5">
-        <Label htmlFor="filter-note-user" className="flex items-center gap-1.5 text-sm font-medium text-(--color-secondary)">
-          <Filter className="w-4 h-4" />
+        <Label
+          htmlFor="filter-note-user"
+          className="flex items-center gap-1.5 text-sm font-medium text-(--color-secondary)"
+        >
           المستخدم
         </Label>
         <div className="relative">
