@@ -12,10 +12,22 @@ import {
   Clock,
   Edit,
   Loader2,
+  Bell,
+  BellOff,
+  AlertTriangle,
+  Smartphone,
 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Badge } from "@/components/ui/badge";
+import {
+  Card,
+  CardContent,
+  CardDescription,
+  CardHeader,
+  CardTitle,
+} from "@/components/ui/card";
+import { Separator } from "@/components/ui/separator";
 import {
   Dialog,
   DialogContent,
@@ -24,6 +36,7 @@ import {
 } from "@/components/ui/dialog";
 import { cn } from "@/lib/utils";
 import useProfile from "../hooks/useProfile";
+import usePushNotifications from "../../../shared/hooks/usePushNotifications.js";
 
 // Available profile pictures
 const availableAvatars = [
@@ -72,6 +85,32 @@ const Profile = () => {
     isUpdatingName,
     isUpdatingEmail,
   } = useProfile(user, updateUser);
+
+  const push = usePushNotifications(true);
+  const { success: toastSuccess, error: toastError } = useToast();
+
+  const handleTogglePush = async () => {
+    try {
+      if (push.isSubscribed) {
+        await push.unsubscribe();
+        toastSuccess("تم إيقاف الإشعارات على الجهاز ده");
+      } else {
+        if (push.permission === "denied") {
+          toastError("الإشعارات مقفولة من إعدادات المتصفح، شغلها من هناك أولًا");
+          return;
+        }
+        await push.subscribe();
+        toastSuccess("تم تفعيل الإشعارات، هتتوصل عند المصاريف الجديدة!");
+      }
+    } catch (err) {
+      const msg = err?.message || "فشل في تحديث إعداد الإشعارات";
+      if (msg.includes("permission")) {
+        toastError("الرجاء السماح بالإشعارات عندما يسألك المتصفح");
+      } else {
+        toastError(msg);
+      }
+    }
+  };
 
   const [showAvatarModal, setShowAvatarModal] = useState(false);
   const [selectedAvatar, setSelectedAvatar] = useState(
@@ -499,7 +538,7 @@ const Profile = () => {
       </div>
 
       {/* Payments Status */}
-      <div className="backdrop-blur-xl p-4 sm:p-6 rounded-3xl shadow-lg bg-(--color-surface) border border-(--color-border)">
+      <div className="backdrop-blur-xl p-4 sm:p-6 rounded-3xl shadow-lg bg-(--color-surface) border border-(--color-border) mb-6">
         <h3 className="text-base sm:text-lg font-bold mb-3 sm:mb-4 text-(--color-dark)">
           حالة الدفعات
         </h3>
@@ -529,6 +568,95 @@ const Profile = () => {
           </div>
         </div>
       </div>
+
+      {/* Push Notifications Settings */}
+      <Card className="mb-6 bg-(--color-surface) border-(--color-border) rounded-3xl overflow-hidden">
+        <CardHeader className="pb-2 sm:pb-3">
+          <div className="flex items-start justify-between gap-3">
+            <div>
+              <CardTitle className="flex items-center gap-2 text-base sm:text-lg text-(--color-dark)">
+                <Bell size={18} className="text-(--color-primary)" />
+                إشعارات المصاريف
+              </CardTitle>
+              <CardDescription className="mt-1.5 text-xs sm:text-sm text-(--color-secondary)">
+                {push.isSupported
+                  ? "هيتوصل لك إشعار على الجهاز لما أي عضو يضيف مصروف جديد بانتظار المراجعة"
+                  : "المتصفح مش بيدعم الإشعارات"}
+              </CardDescription>
+            </div>
+            {push.isSubscribed ? (
+              <Badge variant="outline" className="rounded-full bg-(--color-success)/10 text-(--color-success) border-(--color-success)/30">
+                <CheckCircle size={12} className="me-1" />
+                مفعل
+              </Badge>
+            ) : push.permission === "denied" ? (
+              <Badge variant="outline" className="rounded-full bg-(--color-error)/10 text-(--color-error) border-(--color-error)/30">
+                <AlertTriangle size={12} className="me-1" />
+                مقفول
+              </Badge>
+            ) : null}
+          </div>
+        </CardHeader>
+        <CardContent>
+          <Separator className="my-3 bg-(--color-border)" />
+          <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 pt-1">
+            <div className="flex items-start gap-3">
+              <div className="p-2 rounded-xl bg-(--color-bg) mt-0.5 shrink-0">
+                <Smartphone size={18} className="text-(--color-info)" />
+              </div>
+              <div className="min-w-0">
+                <p className="text-sm font-semibold text-(--color-dark)">
+                  {push.isSupported
+                    ? push.isSubscribed
+                      ? "الإشعارات شغالة على الجهاز ده"
+                      : "فعّل الإشعارات عشان يصلك المصاريف فورًا"
+                    : "متصفحك لا يدعم الإشعارات"}
+                </p>
+                <p className="text-xs text-(--color-secondary) mt-1">
+                  {push.isSupported
+                    ? push.permission === "granted"
+                      ? push.isSubscribed
+                        ? "الإنترنت لازم يكون شغال يسطا"
+                        : "اضغط تفعيل عشان يبدأ الجهاز يستقبل الإشعارات"
+                      : push.permission === "denied"
+                      ? "السماح بالإشعارات مقفول من إعدادات المتصفح (افتح إعدادات الموقع)"
+                      : "لما تضغط تفعيل هيسألك يالك هل تسمح بالإشعارات ولا لأ"
+                    : "جرب كروم أو إيدج أو سافاري أو ثبّت التطبيق على الشاشة الرئيسية"}
+                </p>
+              </div>
+            </div>
+            <Button
+              onClick={handleTogglePush}
+              disabled={!push.isSupported || push.status === "loading"}
+              variant={push.isSubscribed ? "outline" : "default"}
+              size="sm"
+              className={cn(
+                "min-h-[44px] min-w-[140px] rounded-2xl text-sm font-bold shrink-0",
+                !push.isSubscribed &&
+                  push.isSupported &&
+                  "bg-(--color-primary) text-white hover:bg-(--color-primary)/90 border-(--color-primary)"
+              )}
+            >
+              {push.status === "loading" ? (
+                <>
+                  <Loader2 size={16} className="animate-spin" />
+                  {push.isSubscribed ? "بيقفل..." : "بيشغل..."}
+                </>
+              ) : push.isSubscribed ? (
+                <>
+                  <BellOff size={16} />
+                  إيقاف
+                </>
+              ) : (
+                <>
+                  <Bell size={16} />
+                  تفعيل
+                </>
+              )}
+            </Button>
+          </div>
+        </CardContent>
+      </Card>
 
       {/* Avatar Selector — bottom sheet on mobile, centered dialog on desktop */}
       <Dialog open={showAvatarModal} onOpenChange={setShowAvatarModal}>

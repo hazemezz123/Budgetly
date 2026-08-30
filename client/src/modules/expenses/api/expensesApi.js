@@ -6,11 +6,12 @@ export const expensesApi = {
     return data;
   },
 
-  getExpenses: async ({ page, limit = 10, createdBy }) => {
+  getExpenses: async ({ page, limit = 10, createdBy, status }) => {
     const params = new URLSearchParams();
     params.append("page", page);
     params.append("limit", limit);
     if (createdBy) params.append("createdBy", createdBy);
+    if (status) params.append("status", status);
 
     const { data } = await api.get(`/expenses?${params.toString()}`);
     return data;

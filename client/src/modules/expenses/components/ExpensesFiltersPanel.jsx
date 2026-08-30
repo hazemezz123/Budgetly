@@ -1,4 +1,4 @@
-import { Filter, X, User, DollarSign } from "lucide-react";
+import { Filter, X, User, DollarSign, Clock } from "lucide-react";
 import { Label } from "@/components/ui/label";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
@@ -11,9 +11,18 @@ export default function ExpensesFiltersPanel({
   onMinAmountChange,
   maxAmount,
   onMaxAmountChange,
+  status,
+  onStatusChange,
   hasActiveFilters,
   onClearFilters,
 }) {
+  const statusOptions = [
+    { value: "", label: "كل الحالات" },
+    { value: "approved", label: "موافق عليه" },
+    { value: "pending", label: "بانتظار المراجعة" },
+    { value: "rejected", label: "مرفوض" },
+  ];
+
   return (
     <div
       className="mb-6 p-5 rounded-2xl shadow-sm animate-in slide-in-from-top-2 duration-200"
@@ -43,7 +52,29 @@ export default function ExpensesFiltersPanel({
         )}
       </div>
 
-      <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-3 sm:gap-4">
+      <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-4 gap-3 sm:gap-4">
+        <div className="space-y-1.5">
+          <Label
+            htmlFor="filter-status"
+            className="flex items-center gap-1.5 text-sm font-medium text-(--color-secondary)"
+          >
+            <Clock size={14} />
+            الحالة
+          </Label>
+          <select
+            id="filter-status"
+            value={status || ""}
+            onChange={(e) => onStatusChange(e.target.value)}
+            className="h-11 w-full rounded-xl border border-(--color-border) bg-(--color-bg) px-3 text-sm sm:text-base text-(--color-dark) [color-scheme:light] dark:[color-scheme:dark] outline-none focus-visible:ring-2 focus-visible:ring-(--color-primary)"
+          >
+            {statusOptions.map((opt) => (
+              <option key={opt.value} value={opt.value}>
+                {opt.label}
+              </option>
+            ))}
+          </select>
+        </div>
+
         <div className="space-y-1.5">
           <Label
             htmlFor="filter-user"
@@ -86,7 +117,7 @@ export default function ExpensesFiltersPanel({
           />
         </div>
 
-        <div className="space-y-1.5 sm:col-span-2 md:col-span-1">
+        <div className="space-y-1.5">
           <Label
             htmlFor="filter-max"
             className="flex items-center gap-1.5 text-sm font-medium text-(--color-secondary)"

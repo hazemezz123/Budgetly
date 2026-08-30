@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { useAuth } from "../../../shared/context/AuthContext";
 import { useExpenses } from "../hooks";
 import {
@@ -24,6 +24,7 @@ const Expenses = () => {
   const { user } = useAuth();
   const {
     expenses,
+    allExpenses,
     loading,
     page,
     setPage,
@@ -36,8 +37,12 @@ const Expenses = () => {
     setMinAmount,
     maxAmount,
     setMaxAmount,
+    status,
+    setStatus,
     clearFilters,
     hasActiveFilters,
+    deepLinkedExpenseId,
+    setDeepLinkedExpenseId,
   } = useExpenses();
 
   const [deletingExpenseId, setDeletingExpenseId] = useState(null);
@@ -61,6 +66,18 @@ const Expenses = () => {
     setShowDetailsModal(true);
   };
 
+  useEffect(() => {
+    if (!deepLinkedExpenseId || loading) return;
+    const list = allExpenses.length ? allExpenses : expenses;
+    const matched = list.find((e) => String(e._id) === String(deepLinkedExpenseId));
+    if (matched) {
+      handleViewDetails(matched);
+      setDeepLinkedExpenseId(null);
+    } else if (page < totalPages) {
+      setPage((p) => p + 1);
+    }
+  }, [deepLinkedExpenseId, loading, allExpenses, expenses, page, totalPages]); // eslint-disable-line react-hooks/exhaustive-deps
+
   return (
     <div className="pb-8 px-4 max-w-6xl mx-auto font-primary">
       <ExpensesHeader
@@ -79,6 +96,8 @@ const Expenses = () => {
           onMinAmountChange={setMinAmount}
           maxAmount={maxAmount}
           onMaxAmountChange={setMaxAmount}
+          status={status}
+          onStatusChange={setStatus}
           hasActiveFilters={hasActiveFilters}
           onClearFilters={clearFilters}
         />
@@ -95,6 +114,7 @@ const Expenses = () => {
         onDelete={handleDeleteClick}
         onViewDetails={handleViewDetails}
         isAdmin={user.role === "admin"}
+        highlightedExpenseId={deepLinkedExpenseId}
       />
 
       {!loading && (

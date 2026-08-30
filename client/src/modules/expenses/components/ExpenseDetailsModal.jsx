@@ -21,9 +21,9 @@ import { Button } from "@/components/ui/button";
 
 const dialogClasses =
   "top-auto bottom-0 left-0 right-0 translate-x-0 translate-y-0 " +
-  "max-w-none w-full rounded-t-3xl rounded-b-none border-b-0 sm:border-b p-0 gap-0 " +
+  "max-w-none w-full rounded-t-3xl rounded-b-none border-0 p-0 gap-0 " +
   "sm:top-1/2 sm:bottom-auto sm:left-1/2 sm:right-auto sm:-translate-x-1/2 sm:-translate-y-1/2 " +
-  "sm:max-w-lg sm:w-full sm:rounded-3xl bg-(--color-surface) max-h-[85vh] sm:max-h-[90vh] flex flex-col overflow-hidden";
+  "sm:max-w-lg sm:w-full sm:rounded-3xl bg-(--color-surface) max-h-[85vh] sm:max-h-[90vh] flex flex-col overflow-hidden shadow-2xl";
 
 export default function ExpenseDetailsModal({ expense, isOpen, onClose }) {
   const formatDate = (dateString) => {

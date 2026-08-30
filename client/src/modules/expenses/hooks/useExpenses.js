@@ -1,5 +1,6 @@
-import { useState, useMemo } from "react";
+import { useState, useMemo, useEffect, useCallback } from "react";
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
+import { useSearchParams } from "react-router-dom";
 import { useToast } from "../../../shared/context/ToastContext";
 import { queryKeys } from "../../../shared/api/queryKeys";
 import { expensesApi } from "../api";
@@ -9,8 +10,43 @@ export function useExpenses() {
   const [selectedUserId, setSelectedUserId] = useState("");
   const [minAmount, setMinAmount] = useState("");
   const [maxAmount, setMaxAmount] = useState("");
+  const [status, setStatus] = useState("");
+  const [deepLinkedExpenseId, setDeepLinkedExpenseId] = useState(null);
+  const [searchParams, setSearchParams] = useSearchParams();
   const toast = useToast();
   const queryClient = useQueryClient();
+
+  useEffect(() => {
+    const statusParam = searchParams.get("status");
+    const expenseIdParam = searchParams.get("expenseId");
+    if (statusParam && !status) setStatus(statusParam);
+    if (expenseIdParam) setDeepLinkedExpenseId(expenseIdParam);
+  }, []); // eslint-disable-line react-hooks/exhaustive-deps
+
+  const handleDeepLinkEvent = useCallback((event) => {
+    const payload = event.detail || {};
+    if (payload.expenseId) {
+      setDeepLinkedExpenseId(payload.expenseId);
+      if (payload.status === "pending" || payload.type === "pending-expense") {
+        setStatus("pending");
+        setSearchParams(
+          (prev) => {
+            const next = new URLSearchParams(prev);
+            next.set("status", "pending");
+            next.set("expenseId", payload.expenseId);
+            return next;
+          },
+          { replace: true }
+        );
+      }
+    }
+  }, [setSearchParams]);
+
+  useEffect(() => {
+    window.addEventListener("budgetly:pending-expense-open", handleDeepLinkEvent);
+    return () =>
+      window.removeEventListener("budgetly:pending-expense-open", handleDeepLinkEvent);
+  }, [handleDeepLinkEvent]);
 
   const { data: users = [] } = useQuery({
     queryKey: queryKeys.users.all,
@@ -18,8 +54,9 @@ export function useExpenses() {
   });
 
   const { data, isLoading: loading, refetch } = useQuery({
-    queryKey: queryKeys.expenses.list(page, selectedUserId),
-    queryFn: () => expensesApi.getExpenses({ page, limit: 10, createdBy: selectedUserId }),
+    queryKey: queryKeys.expenses.list(page, selectedUserId, status),
+    queryFn: () =>
+      expensesApi.getExpenses({ page, limit: 10, createdBy: selectedUserId, status }),
     placeholderData: (previousData) => previousData,
   });
 
@@ -60,14 +97,40 @@ export function useExpenses() {
     setPage(1);
   };
 
+  const handleStatusChange = (newStatus) => {
+    setStatus(newStatus);
+    setPage(1);
+    setSearchParams(
+      (prev) => {
+        const next = new URLSearchParams(prev);
+        if (newStatus) next.set("status", newStatus);
+        else next.delete("status");
+        if (!newStatus) next.delete("expenseId");
+        return next;
+      },
+      { replace: true }
+    );
+  };
+
   const clearFilters = () => {
     setSelectedUserId("");
     setMinAmount("");
     setMaxAmount("");
+    setStatus("");
+    setDeepLinkedExpenseId(null);
     setPage(1);
+    setSearchParams(
+      (prev) => {
+        const next = new URLSearchParams(prev);
+        next.delete("status");
+        next.delete("expenseId");
+        return next;
+      },
+      { replace: true }
+    );
   };
 
-  const hasActiveFilters = selectedUserId || minAmount || maxAmount;
+  const hasActiveFilters = selectedUserId || minAmount || maxAmount || status;
 
   return {
     expenses: filteredExpenses,
@@ -85,7 +148,11 @@ export function useExpenses() {
     setMinAmount,
     maxAmount,
     setMaxAmount,
+    status,
+    setStatus: handleStatusChange,
     clearFilters,
     hasActiveFilters,
+    deepLinkedExpenseId,
+    setDeepLinkedExpenseId,
   };
 }

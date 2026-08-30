@@ -13,6 +13,7 @@ import { MyInvoicesPage as MyInvoices, AllInvoicesPage as AllInvoices } from "..
 import { NotesPage } from "../../modules/notes/pages";
 import { AnalyticsPage } from "../../modules/analytics/pages";
 import { ProfilePage } from "../../modules/profile/pages";
+import { NotificationsPage } from "../../modules/notifications/pages";
 import { AboutPage, ContactDeveloperPage, GuidePage } from "../../modules/info/pages";
 import { NotFoundPage } from "../pages";
 
@@ -124,6 +125,14 @@ export default function AppRoutes() {
         element={
           <ProtectedRoute>
             <NotesPage />
+          </ProtectedRoute>
+        }
+      />
+      <Route
+        path="/notifications"
+        element={
+          <ProtectedRoute>
+            <NotificationsPage />
           </ProtectedRoute>
         }
       />

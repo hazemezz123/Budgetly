@@ -17,7 +17,9 @@ import {
   Mail,
   Sun,
   Moon,
+  Bell,
 } from "lucide-react";
+import { useUnreadCount } from "../../modules/notifications/hooks/useNotifications";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
@@ -39,6 +41,8 @@ const Sidebar = () => {
   const location = useLocation();
   const [collapsed, setCollapsed] = useState(false);
   const [showLogoutModal, setShowLogoutModal] = useState(false);
+  const { data: unreadData } = useUnreadCount(Boolean(user?.house));
+  const unreadCount = unreadData?.count ?? 0;
 
   if (!user) return null;
 
@@ -89,6 +93,12 @@ const Sidebar = () => {
     {
       title: "الأدوات",
       items: [
+        {
+          path: "/notifications",
+          label: "الإشعارات",
+          icon: Bell,
+          roles: ["admin", "user"],
+        },
         {
           path: "/notes",
           label: "الملاحظات",
@@ -272,6 +282,24 @@ const Sidebar = () => {
                     >
                       {item.label}
                     </span>
+
+                    {item.path === "/notifications" && unreadCount > 0 && !collapsed && (
+                      <span
+                        className={`ms-auto min-w-[20px] h-5 px-1.5 flex items-center justify-center rounded-full text-[11px] font-bold font-numbers shrink-0 ${
+                          active
+                            ? "bg-white text-(--color-primary)"
+                            : "bg-(--color-primary) text-white"
+                        }`}
+                      >
+                        {unreadCount > 99 ? "99+" : unreadCount}
+                      </span>
+                    )}
+
+                    {item.path === "/notifications" && unreadCount > 0 && collapsed && (
+                      <span className="absolute -top-1 -left-1 min-w-[18px] h-[18px] px-1 flex items-center justify-center rounded-full text-[10px] font-bold bg-(--color-primary) text-white border-2 border-(--color-surface) font-numbers">
+                        {unreadCount > 9 ? "9+" : unreadCount}
+                      </span>
+                    )}
 
                     {collapsed && (
                       <div className="absolute right-full mr-2 top-1/2 -translate-y-1/2 hidden group-hover:block whitespace-nowrap rounded-lg bg-(--color-surface) border border-(--color-border) px-3 py-1.5 text-xs shadow-lg z-50 pointer-events-none">

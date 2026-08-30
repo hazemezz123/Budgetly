@@ -17,7 +17,9 @@ export default function MyInvoicesHeader({
           {activeTab === "invoices" ? "فواتيري" : "طلباتي"}
         </h1>
         <p className="text-(--color-secondary) mt-1">
-          {activeTab === "invoices" ? "إدارة المصاريف المستحقة عليك" : "متابعة المصاريف التي قمت بإنشائها"}
+          {activeTab === "invoices"
+            ? "إدارة المصاريف المستحقة عليك"
+            : "متابعة المصاريف التي قمت بإنشائها"}
         </p>
       </div>
 
@@ -28,7 +30,9 @@ export default function MyInvoicesHeader({
             className="flex items-center gap-2 bg-(--color-success) text-white hover:bg-(--color-success)/90 rounded-xl font-medium shadow-sm"
           >
             <CheckCircle2 size={20} />
-            <span className="hidden sm:inline">دفع الكل ({pendingInvoicesTotal.toLocaleString()} ج.م)</span>
+            <span className="hidden sm:inline">
+              دفع الكل ({pendingInvoicesTotal.toLocaleString()} ج.م)
+            </span>
             <span className="sm:hidden">دفع الكل</span>
           </Button>
         )}
@@ -38,7 +42,6 @@ export default function MyInvoicesHeader({
           className="flex items-center gap-2 bg-(--color-primary) text-white hover:bg-(--color-primary)/90 rounded-xl font-medium shadow-sm"
         >
           <Plus size={20} />
-          <span className="hidden sm:inline">طلب جديد</span>
           <span className="sm:inline hidden">طلب جديد</span>
         </Button>
 
@@ -49,7 +52,9 @@ export default function MyInvoicesHeader({
                 <Clock size={20} />
               </div>
               <div>
-                <p className="text-xs text-(--color-secondary) uppercase font-semibold">المبلغ المستحق</p>
+                <p className="text-xs text-(--color-secondary) uppercase font-semibold">
+                  المبلغ المستحق
+                </p>
                 <p className="text-xl font-bold text-(--color-dark) font-numbers">
                   {totalPending.toFixed(2)} جنيه
                 </p>

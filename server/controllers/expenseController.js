@@ -2,6 +2,12 @@ import Expense from "../models/Expense.js";
 import User from "../models/User.js";
 import Invoice from "../models/Invoice.js";
 import Payment from "../models/Payment.js";
+import House from "../models/House.js";
+import {
+  sendPushToUsers,
+  buildNotificationPayload,
+} from "../services/pushNotificationService.js";
+import { createNotificationForPendingExpense } from "../services/notificationService.js";
 
 // Get all expenses with pagination
 export const getExpenses = async (req, res) => {
@@ -141,6 +147,61 @@ export const createExpense = async (req, res) => {
       house: req.user.house,
       status,
     });
+
+    if (status === "pending") {
+      try {
+        const house = await House.findById(req.user.house).select("admin").lean();
+        if (house?.admin && String(house.admin) !== String(req.user.id)) {
+          const creatorName = req.user.name || req.user.username || "عضو";
+          const amountEGP = `${totalAmount.toLocaleString("en-US")} ج.م`;
+          const payload = buildNotificationPayload({
+            title: "مصروف جديد بانتظار المراجعة",
+            body: `${creatorName} أضاف «${title}» بقيمة ${amountEGP}`,
+            url: `/all-invoices?requestId=${expense._id}#pending-requests`,
+            tag: `pending-expense-${expense._id}`,
+            icon: "/assets/logo.png",
+            requireInteraction: true,
+            data: {
+              type: "pending-expense",
+              expenseId: expense._id.toString(),
+              createdBy: req.user.id,
+              houseId: req.user.house?.toString?.() || req.user.house,
+              title,
+              totalAmount,
+              category,
+              creatorName,
+            },
+          });
+
+          // Persistent inbox — always attempt even if push fails
+          try {
+            await createNotificationForPendingExpense({
+              recipientId: house.admin,
+              senderId: req.user.id,
+              houseId: req.user.house,
+              expense,
+              title: payload.notification.title,
+              body: payload.notification.body,
+              url: payload.notification.data.url,
+              tag: payload.notification.tag,
+              data: payload.notification.data,
+              icon: payload.notification.icon,
+              badge: payload.notification.badge,
+            });
+          } catch (notifErr) {
+            console.error("Inbox notification failed for pending expense:", notifErr.message);
+          }
+
+          try {
+            await sendPushToUsers([house.admin], payload);
+          } catch (pushErr) {
+            console.error("Push notification failed for pending expense:", pushErr.message);
+          }
+        }
+      } catch (err) {
+        console.error("Pending expense notification flow failed:", err.message);
+      }
+    }
 
     // Only generate Invoices if Admin (Approved immediately)
     if (status === "approved") {

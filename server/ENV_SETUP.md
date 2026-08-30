@@ -64,3 +64,58 @@ VITE_GOOGLE_CLIENT_ID=<your-google-oauth-client-id>
    - `http://localhost:5173`
    - `https://budgetly-frontend.vercel.app`
 5. Copy the Client ID into both env files above, then restart both dev servers.
+
+## Push Notifications (Browser Web Push)
+
+Budgetly uses [VAPID (Voluntary Application Server Identification)](https://datatracker.ietf.org/doc/html/rfc8292) so admins receive push notifications on their device when a member submits a new pending expense for review.
+
+### Option 1: Generate keys with a small Node script (Recommended)
+
+```bash
+cd server
+node -e "import('web-push').then(w=>{const k=w.generateVAPIDKeys();console.log('VAPID_PUBLIC_KEY='+k.publicKey);console.log('VAPID_PRIVATE_KEY='+k.privateKey);})"
+```
+
+Copy the two output lines into `server/.env`:
+
+```env
+# Push Notifications (VAPID) — keep keys secret, they identify YOUR server
+VAPID_PUBLIC_KEY=<long-base64url-public-key>
+VAPID_PRIVATE_KEY=<long-base64url-private-key>
+
+# Optional — required by the Web Push standard (email or HTTPS URL of project owner)
+VAPID_SUBJECT=mailto:your-email@example.com
+```
+
+### Option 2: Auto-generated (development only)
+
+If you skip these variables, the server generates disposable VAPID keys on every restart. Notifications will work temporarily, but each time you restart the server, every user's device will need to unsubscribe and re-subscribe because the public key changes. **For production, always add explicit VAPID keys to server/.env.**
+
+## Environment variable cheat sheet
+
+```env
+# Required core
+MONGODB_URI=mongodb://localhost:27017/budgetly
+JWT_SECRET=<random-long-string>
+PORT=5000
+
+# Auth
+GOOGLE_CLIENT_ID=<optional-google-oauth-client-id>
+
+# Email (optional)
+EMAIL_USERNAME=your-email@gmail.com
+EMAIL_PASSWORD=your-app-password
+# — or custom SMTP:
+SMTP_HOST=mail.example.com
+SMTP_PORT=587
+SMTP_EMAIL=user
+SMTP_PASSWORD=pass
+SENDER_EMAIL=you@example.com
+
+# Push notifications (optional but highly recommended)
+VAPID_PUBLIC_KEY=<base64url>
+VAPID_PRIVATE_KEY=<base64url>
+VAPID_SUBJECT=mailto:you@example.com
+
+CLIENT_URL=http://localhost:5173
+```

@@ -9,7 +9,7 @@ export const queryKeys = {
   },
   expenses: {
     all: ["expenses"],
-    list: (page, selectedUserId) => ["expenses", page, selectedUserId],
+    list: (page, selectedUserId, status) => ["expenses", page, selectedUserId, status],
     pendingRequests: ["pendingRequests"],
   },
   myPayments: {
@@ -56,5 +56,10 @@ export const queryKeys = {
   },
   analytics: {
     all: ["analytics"],
+  },
+  notifications: {
+    all: ["notifications"],
+    list: (page, unreadOnly) => ["notifications", page, unreadOnly],
+    unreadCount: ["notifications", "unread-count"],
   },
 };

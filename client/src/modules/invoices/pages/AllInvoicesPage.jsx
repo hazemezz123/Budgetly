@@ -1,4 +1,5 @@
-import { useState } from "react";
+import { useState, useEffect, useCallback } from "react";
+import { useSearchParams } from "react-router-dom";
 import {
   RefreshCw,
   User as UserIcon,
@@ -27,6 +28,8 @@ import {
 export default function AllInvoices() {
   const [selectedRequest, setSelectedRequest] = useState(null);
   const [isDetailsModalOpen, setIsDetailsModalOpen] = useState(false);
+  const [searchParams, setSearchParams] = useSearchParams();
+  const highlightRequestId = searchParams.get("requestId");
 
   const {
     invoices,
@@ -51,6 +54,46 @@ export default function AllInvoices() {
     setIsDetailsModalOpen(true);
   };
 
+  // Deep-link: open pending request from notification (?requestId=xxx)
+  useEffect(() => {
+    if (!highlightRequestId || pendingRequests.length === 0) return;
+    const matched = pendingRequests.find((r) => String(r._id) === String(highlightRequestId));
+    if (matched) {
+      openRequestDetails(matched);
+      // highlight scroll after modal opens
+      setTimeout(() => {
+        const el = document.getElementById(`pending-request-${highlightRequestId}`);
+        if (el) el.scrollIntoView({ behavior: "smooth", block: "center" });
+      }, 300);
+    }
+  }, [highlightRequestId, pendingRequests]);
+
+  const handlePendingRequestEvent = useCallback(
+    (event) => {
+      const payload = event.detail || {};
+      const id = payload.expenseId || payload.requestId;
+      if (!id) return;
+      // update URL to reflect highlighted request
+      setSearchParams((prev) => {
+        const next = new URLSearchParams(prev);
+        next.set("requestId", id);
+        return next;
+      });
+      const matched = pendingRequests.find((r) => String(r._id) === String(id));
+      if (matched) openRequestDetails(matched);
+    },
+    [pendingRequests, setSearchParams]
+  );
+
+  useEffect(() => {
+    window.addEventListener("budgetly:pending-request-open", handlePendingRequestEvent);
+    window.addEventListener("budgetly:pending-expense-open", handlePendingRequestEvent);
+    return () => {
+      window.removeEventListener("budgetly:pending-request-open", handlePendingRequestEvent);
+      window.removeEventListener("budgetly:pending-expense-open", handlePendingRequestEvent);
+    };
+  }, [handlePendingRequestEvent]);
+
   const selectedUserEligibleInvoicesCount = selectedUserInvoices.filter(
     (invoice) => invoice.status === "awaiting_approval" && invoice.paymentRequest,
   ).length;
@@ -74,7 +117,7 @@ export default function AllInvoices() {
       </div>
 
       {pendingRequests.length > 0 && (
-        <Card className="rounded-2xl border-(--color-border) bg-(--color-surface) shadow-sm py-0 gap-0 overflow-hidden">
+        <Card id="pending-requests" className="rounded-2xl border-(--color-border) bg-(--color-surface) shadow-sm py-0 gap-0 overflow-hidden">
           <CardContent className="p-4 sm:p-6">
             <h2 className="text-xl font-bold mb-4 flex items-center gap-2 text-(--color-dark)">
               <Clock className="text-(--color-status-pending)" />
@@ -104,7 +147,11 @@ export default function AllInvoices() {
                 </TableHeader>
                 <TableBody className="divide-y divide-(--color-border) bg-(--color-surface)">
                   {pendingRequests.map((req) => (
-                    <TableRow key={req._id} className="hover:bg-(--color-hover)">
+                    <TableRow
+                      key={req._id}
+                      id={`pending-request-${req._id}`}
+                      className={`hover:bg-(--color-hover) ${String(highlightRequestId) === String(req._id) ? "bg-(--color-primary-bg)/30 ring-2 ring-(--color-primary)/40" : ""}`}
+                    >
                       <TableCell className="py-3 px-4 text-sm text-(--color-secondary) text-start">
                         {new Date(req.createdAt).toLocaleDateString("en-US", {
                           month: "short",
@@ -195,13 +242,14 @@ export default function AllInvoices() {
 
             <div className="md:hidden space-y-4">
               {pendingRequests.map((req) => (
-                <MobileRequestCard
-                  key={req._id}
-                  request={req}
-                  onOpenDetails={openRequestDetails}
-                  onApprove={handleApproveRequest}
-                  onReject={handleRejectRequest}
-                />
+                <div key={req._id} id={`pending-request-${req._id}`} className={`${String(highlightRequestId) === String(req._id) ? "ring-2 ring-(--color-primary)/50 rounded-2xl" : ""}`}>
+                  <MobileRequestCard
+                    request={req}
+                    onOpenDetails={openRequestDetails}
+                    onApprove={handleApproveRequest}
+                    onReject={handleRejectRequest}
+                  />
+                </div>
               ))}
             </div>
           </CardContent>
@@ -362,7 +410,19 @@ export default function AllInvoices() {
         </CardContent>
       </Card>
 
-      <RequestDetailsModal isOpen={isDetailsModalOpen} onClose={() => setIsDetailsModalOpen(false)} request={selectedRequest} />
+      <RequestDetailsModal
+        isOpen={isDetailsModalOpen}
+        onClose={() => setIsDetailsModalOpen(false)}
+        request={selectedRequest}
+        onApprove={(id) => {
+          handleApproveRequest(id);
+          setIsDetailsModalOpen(false);
+        }}
+        onReject={(id) => {
+          handleRejectRequest(id);
+          setIsDetailsModalOpen(false);
+        }}
+      />
     </div>
   );
 }

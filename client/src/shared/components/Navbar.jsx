@@ -17,6 +17,7 @@ import {
 } from "lucide-react";
 
 import { useState } from "react";
+import NotificationBell from "./NotificationBell.jsx";
 
 import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
@@ -99,6 +100,10 @@ const Navbar = () => {
 
           {/* Header Quick Tools */}
           <div className="flex items-center gap-1 sm:gap-2 shrink-0">
+            <div className={`${isLocked ? "opacity-50 pointer-events-none" : ""}`}>
+              <NotificationBell />
+            </div>
+
             {/* Notes Shortcut */}
             <Link
               to="/notes"

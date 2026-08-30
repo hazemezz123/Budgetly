@@ -1,7 +1,9 @@
 import mongoose from "mongoose";
 import Invoice from "../models/Invoice.js";
 import Expense from "../models/Expense.js";
-import User from "../models/User.js";
+
+
+
 
 // Get monthly analytics for user
 export const getMonthlyAnalytics = async (req, res) => {

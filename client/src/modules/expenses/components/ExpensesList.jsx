@@ -1,5 +1,6 @@
 import { Receipt } from "lucide-react";
 import ExpenseCard from "./ExpenseCard";
+import { cn } from "@/lib/utils";
 
 export default function ExpensesList({
   expenses,
@@ -7,6 +8,7 @@ export default function ExpensesList({
   onDelete,
   onViewDetails,
   isAdmin,
+  highlightedExpenseId,
 }) {
   if (loading) {
     return (
@@ -33,13 +35,23 @@ export default function ExpensesList({
   return (
     <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
       {expenses.map((expense) => (
-        <ExpenseCard
+        <div
           key={expense._id}
-          expense={expense}
-          onDelete={onDelete}
-          onViewDetails={onViewDetails}
-          isAdmin={isAdmin}
-        />
+          id={`expense-${expense._id}`}
+          className={cn(
+            "rounded-2xl transition-all",
+            highlightedExpenseId && String(expense._id) === String(highlightedExpenseId)
+              ? "ring-4 ring-(--color-primary)/60 shadow-xl scale-[1.02] animate-pulse-once"
+              : ""
+          )}
+        >
+          <ExpenseCard
+            expense={expense}
+            onDelete={onDelete}
+            onViewDetails={onViewDetails}
+            isAdmin={isAdmin}
+          />
+        </div>
       ))}
     </div>
   );
