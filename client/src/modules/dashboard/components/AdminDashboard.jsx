@@ -1,17 +1,15 @@
-import { TrendingUp, TrendingDown, Users, Wallet } from "lucide-react";
+import { TrendingUp, TrendingDown, Users } from "lucide-react";
 import StatCard from "./StatCard";
 import { Card, CardContent, CardHeader } from "@/components/ui/card";
 
 export default function AdminDashboard({ stats }) {
-  const adminBalance = stats.overview.adminBalance || 0;
-
   return (
     <div className="space-y-6 sm:space-y-8">
       <section aria-labelledby="overview-heading">
         <h2 id="overview-heading" className="sr-only">
           نظرة عامة
         </h2>
-        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-3 sm:gap-6">
+        <div className="grid grid-cols-1 sm:grid-cols-3 gap-3 sm:gap-6">
           <StatCard
             title="إجمالي المصاريف"
             value={`${stats.overview.totalExpenseAmount.toFixed(2)} جنيه`}
@@ -21,11 +19,6 @@ export default function AdminDashboard({ stats }) {
             title="إجمالي المستحق"
             value={`${stats.overview.totalOwed.toFixed(2)} جنيه`}
             icon={TrendingDown}
-          />
-          <StatCard
-            title={adminBalance > 0 ? "اللي فلوس ليك" : "اللي عليك"}
-            value={`${Math.abs(adminBalance).toFixed(2)} جنيه`}
-            icon={Wallet}
           />
           <StatCard title="عدد الأعضاء" value={stats.overview.totalUsers} icon={Users} />
         </div>

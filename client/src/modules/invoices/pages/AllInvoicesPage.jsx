@@ -10,6 +10,7 @@ import {
 } from "lucide-react";
 import { useAllInvoices } from "../hooks";
 import { InvoicesTable, MobileRequestCard, RequestDetailsModal } from "../components";
+import MyInvoices from "./MyInvoicesPage";
 import { Card, CardContent } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
@@ -30,6 +31,23 @@ export default function AllInvoices() {
   const [isDetailsModalOpen, setIsDetailsModalOpen] = useState(false);
   const [searchParams, setSearchParams] = useSearchParams();
   const highlightRequestId = searchParams.get("requestId");
+
+  const [activeView, setActiveView] = useState(() => {
+    return searchParams.get("view") === "my-invoices" ? "my-invoices" : "manage";
+  });
+
+  const handleViewChange = (view) => {
+    setActiveView(view);
+    setSearchParams((prev) => {
+      const next = new URLSearchParams(prev);
+      if (view === "my-invoices") {
+        next.set("view", "my-invoices");
+      } else {
+        next.delete("view");
+      }
+      return next;
+    });
+  };
 
   const {
     invoices,
@@ -59,6 +77,7 @@ export default function AllInvoices() {
     if (!highlightRequestId || pendingRequests.length === 0) return;
     const matched = pendingRequests.find((r) => String(r._id) === String(highlightRequestId));
     if (matched) {
+      setActiveView("manage");
       openRequestDetails(matched);
       // highlight scroll after modal opens
       setTimeout(() => {
@@ -73,6 +92,7 @@ export default function AllInvoices() {
       const payload = event.detail || {};
       const id = payload.expenseId || payload.requestId;
       if (!id) return;
+      setActiveView("manage");
       // update URL to reflect highlighted request
       setSearchParams((prev) => {
         const next = new URLSearchParams(prev);
@@ -99,22 +119,52 @@ export default function AllInvoices() {
   ).length;
 
   return (
-    <div className="space-y-8 pb-20 md:pb-0" dir="rtl">
-      <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4">
-        <div>
-          <h1 className="text-2xl font-bold text-(--color-dark)">إدارة الفواتير</h1>
-          <p className="text-(--color-secondary)">متابعة الفواتير والمدفوعات لكل المستخدمين</p>
-        </div>
+    <div className="space-y-6 pb-20 md:pb-0" dir="rtl">
+      {/* View Switcher: Management vs Personal Invoices */}
+      <div className="flex bg-(--color-surface) p-1 rounded-2xl border border-(--color-border) w-full sm:w-fit shadow-xs">
         <Button
-          onClick={refreshData}
-          variant="outline"
-          size="icon"
-          className="self-end sm:self-auto rounded-full bg-(--color-surface) border-(--color-border) text-(--color-dark) hover:bg-(--color-bg)"
-          aria-label="تحديث البيانات"
+          onClick={() => handleViewChange("manage")}
+          variant={activeView === "manage" ? "default" : "ghost"}
+          className={`flex-1 sm:flex-none min-h-[44px] px-6 py-2 rounded-xl text-sm font-bold transition-all ${
+            activeView === "manage"
+              ? "bg-(--color-primary) text-white shadow-sm hover:bg-(--color-primary)/90"
+              : "text-(--color-secondary) hover:bg-(--color-hover)"
+          }`}
         >
-          <RefreshCw size={20} className={loading ? "animate-spin" : ""} />
+          إدارة الفواتير والطلبات
+        </Button>
+        <Button
+          onClick={() => handleViewChange("my-invoices")}
+          variant={activeView === "my-invoices" ? "default" : "ghost"}
+          className={`flex-1 sm:flex-none min-h-[44px] px-6 py-2 rounded-xl text-sm font-bold transition-all ${
+            activeView === "my-invoices"
+              ? "bg-(--color-primary) text-white shadow-sm hover:bg-(--color-primary)/90"
+              : "text-(--color-secondary) hover:bg-(--color-hover)"
+          }`}
+        >
+          فواتيري الشخصية
         </Button>
       </div>
+
+      {activeView === "my-invoices" ? (
+        <MyInvoices />
+      ) : (
+        <div className="space-y-8">
+          <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4">
+            <div>
+              <h1 className="text-2xl font-bold text-(--color-dark)">إدارة الفواتير</h1>
+              <p className="text-(--color-secondary)">متابعة الفواتير والمدفوعات لكل المستخدمين</p>
+            </div>
+            <Button
+              onClick={refreshData}
+              variant="outline"
+              size="icon"
+              className="self-end sm:self-auto rounded-full bg-(--color-surface) border-(--color-border) text-(--color-dark) hover:bg-(--color-bg)"
+              aria-label="تحديث البيانات"
+            >
+              <RefreshCw size={20} className={loading ? "animate-spin" : ""} />
+            </Button>
+          </div>
 
       {pendingRequests.length > 0 && (
         <Card id="pending-requests" className="rounded-2xl border-(--color-border) bg-(--color-surface) shadow-sm py-0 gap-0 overflow-hidden">
@@ -423,6 +473,8 @@ export default function AllInvoices() {
           setIsDetailsModalOpen(false);
         }}
       />
+        </div>
+      )}
     </div>
   );
 }

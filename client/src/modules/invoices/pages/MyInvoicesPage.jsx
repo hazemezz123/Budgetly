@@ -1,5 +1,6 @@
 import { useState } from "react";
 import { useNavigate } from "react-router-dom";
+import { useAuth } from "../../../shared/context/AuthContext";
 import {
   AlertDialog,
   AlertDialogAction,
@@ -21,6 +22,7 @@ import {
 
 export default function MyInvoices() {
   const navigate = useNavigate();
+  const { user } = useAuth();
 
   const {
     activeTab,
@@ -142,7 +144,9 @@ export default function MyInvoices() {
           <AlertDialogHeader>
             <AlertDialogTitle>تأكيد الدفع</AlertDialogTitle>
             <AlertDialogDescription>
-              هل أنت متأكد من دفع هذه الفاتورة؟ سيتم إرسال إشعار للمسؤول للموافقة.
+              {user?.role === "admin"
+                ? "هل أنت متأكد من سداد هذه الفاتورة؟ سيتم اعتماد الدفع فوراً وتسوية رصيدك."
+                : "هل أنت متأكد من دفع هذه الفاتورة؟ سيتم إرسال إشعار للمسؤول للموافقة."}
             </AlertDialogDescription>
           </AlertDialogHeader>
           <AlertDialogFooter>
@@ -163,8 +167,9 @@ export default function MyInvoices() {
           <AlertDialogHeader>
             <AlertDialogTitle>دفع الكل ({pendingInvoicesCount} فواتير)</AlertDialogTitle>
             <AlertDialogDescription>
-              هل أنت متأكد من دفع جميع الفواتير المعلقة بإجمالي {pendingInvoicesTotal.toLocaleString()} ج.م؟
-              سيتم إرسال طلبات دفع للمسؤول.
+              {user?.role === "admin"
+                ? `هل أنت متأكد من سداد جميع الفواتير المعلقة بإجمالي ${pendingInvoicesTotal.toLocaleString()} ج.م؟ سيتم اعتماد الدفع فوراً وتسوية رصيدك.`
+                : `هل أنت متأكد من دفع جميع الفواتير المعلقة بإجمالي ${pendingInvoicesTotal.toLocaleString()} ج.م؟ سيتم إرسال طلبات دفع للمسؤول.`}
             </AlertDialogDescription>
           </AlertDialogHeader>
           <AlertDialogFooter>

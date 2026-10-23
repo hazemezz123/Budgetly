@@ -73,7 +73,7 @@ export const payInvoice = async (req, res) => {
         .json({ message: "Not authorized to pay this invoice" });
     }
 
-    if (invoice.user.toString() !== req.user.id) {
+    if (invoice.user.toString() !== req.user.id.toString()) {
       return res
         .status(403)
         .json({ message: "Not authorized to pay this invoice" });
@@ -89,20 +89,25 @@ export const payInvoice = async (req, res) => {
         .json({ message: "Payment request already exists" });
     }
 
-    // Create Payment Record (Pending)
+    const isAdmin = req.user.role === "admin";
+    const paymentStatus = isAdmin ? "approved" : "pending";
+    const invoiceStatus = isAdmin ? "paid" : "awaiting_approval";
+
+    // Create Payment Record (Approved immediately if Admin, Pending if Member)
     const payment = await Payment.create({
       user: req.user.id,
       amount: invoice.amount,
       description: `Payment for Invoice: ${invoice.description}`,
-      status: "pending",
+      status: paymentStatus,
       transactionType: "payment",
       recordedBy: req.user.id,
+      ...(isAdmin ? { approvedBy: req.user.id } : {}),
       house: invoice.house,
       // We could add `linkedInvoice` to Payment model if we wanted bidirectionality
     });
 
     // Update Invoice
-    invoice.status = "awaiting_approval";
+    invoice.status = invoiceStatus;
     invoice.paymentRequest = payment._id;
     await invoice.save();
 
@@ -290,23 +295,27 @@ export const payBulkInvoices = async (req, res) => {
     }
 
     const updatedInvoices = [];
+    const isAdmin = req.user.role === "admin";
+    const paymentStatus = isAdmin ? "approved" : "pending";
+    const invoiceStatus = isAdmin ? "paid" : "awaiting_approval";
 
     // Process each invoice
     // We use a loop to create individual payment requests for better tracking
     for (const invoice of pendingInvoices) {
-      // Create Payment Record (Pending)
+      // Create Payment Record (Approved immediately if Admin, Pending if Member)
       const payment = await Payment.create({
         user: req.user.id,
         amount: invoice.amount,
         description: `Bulk Payment for Invoice: ${invoice.description}`,
-        status: "pending",
+        status: paymentStatus,
         transactionType: "payment",
         recordedBy: req.user.id,
+        ...(isAdmin ? { approvedBy: req.user.id } : {}),
         house: invoice.house,
       });
 
       // Update Invoice
-      invoice.status = "awaiting_approval";
+      invoice.status = invoiceStatus;
       invoice.paymentRequest = payment._id;
       await invoice.save();
       updatedInvoices.push(invoice);
