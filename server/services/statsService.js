@@ -38,6 +38,7 @@ export const buildHouseBalanceSnapshot = ({ users, expenses, invoices, payments 
   const approvedExpensePayerById = new Map();
   const approvedPaymentAmountById = new Map();
   const receivedPaymentsByPayerId = new Map();
+  const expenseShareByUserId = new Map();
 
   for (const user of users) {
     ensureUserBalance(balancesByUserId, user._id);
@@ -72,8 +73,16 @@ export const buildHouseBalanceSnapshot = ({ users, expenses, invoices, payments 
 
   for (const invoice of invoices) {
     const userBalance = ensureUserBalance(balancesByUserId, invoice.user);
-    if (userBalance && invoice.status !== "paid") {
-      userBalance.invoicesAssigned += invoice.amount;
+    if (userBalance) {
+      const userId = toIdString(invoice.user);
+      expenseShareByUserId.set(
+        userId,
+        (expenseShareByUserId.get(userId) || 0) + invoice.amount
+      );
+
+      if (invoice.status !== "paid") {
+        userBalance.invoicesAssigned += invoice.amount;
+      }
     }
 
     if (!invoice.paymentRequest) {
@@ -105,11 +114,11 @@ export const buildHouseBalanceSnapshot = ({ users, expenses, invoices, payments 
     }
   }
 
-  for (const balance of Object.values(balancesByUserId)) {
+  for (const [userId, balance] of Object.entries(balancesByUserId)) {
     balance.balance =
       balance.externalPaid +
       balance.internalSent -
-      (balance.invoicesAssigned + balance.internalReceived);
+      ((expenseShareByUserId.get(userId) || 0) + balance.internalReceived);
   }
 
   return {
