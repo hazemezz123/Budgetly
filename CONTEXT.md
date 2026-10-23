@@ -1,6 +1,7 @@
 # Budgetly
 
-Shared-expense tracker for a single Egyptian house — members record مصاريف and payments, the admin approves them, and balances show who owes whom.
+Shared-expense tracker for a single Egyptian house — members record   مصاريف and payments, the admin approves them, and balances show who owes whom.
+
 
 ## Language
 
