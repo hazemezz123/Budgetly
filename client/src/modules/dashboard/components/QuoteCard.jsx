@@ -34,7 +34,7 @@ const QuoteCard = () => {
           <div className="flex items-center justify-between mb-1.5 sm:mb-2">
             <h3 className="text-xs font-bold text-(--color-primary-text) font-cairo flex items-center gap-1.5">
               <Quote size={13} aria-hidden="true" />
-              <span>حكمة اليوم</span>
+              <span>رفاعي الدسوقي</span>
             </h3>
             <Button
               variant="ghost"
