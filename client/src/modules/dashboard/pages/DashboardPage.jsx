@@ -4,6 +4,7 @@ import { RoleRotationWidget } from "../../house/components";
 import { useDashboardStats } from "../hooks";
 import {
   AdminDashboard,
+  BalanceCard,
   QuoteCard,
   UserDashboard,
   WelcomeModal,
@@ -15,6 +16,14 @@ const Dashboard = () => {
 
   const houseId =
     typeof user?.house === "object" ? user?.house?._id : user?.house;
+
+  const userBalance =
+    user?.role === "admin"
+      ? (stats?.overview?.adminBalance ?? 0)
+      : (stats?.balance ?? 0);
+
+  const houseName =
+    typeof user?.house === "object" ? user?.house?.name : undefined;
 
   if (loading)
     return (
@@ -49,15 +58,24 @@ const Dashboard = () => {
 
       <WelcomeModal />
 
+      <div className="mb-4">
+        <BalanceCard
+          balance={userBalance}
+          userName={user?.name || user?.username}
+          houseName={houseName}
+          role={user?.role}
+        />
+      </div>
+
+      <div className="mb-6">
+        <QuoteCard />
+      </div>
+
       {houseId && (
         <div className="mb-6">
           <RoleRotationWidget houseId={houseId} />
         </div>
       )}
-
-      <div className="mb-8">
-        <QuoteCard />
-      </div>
 
       {user.role === "admin" ? (
         <AdminDashboard stats={stats} />

@@ -1,4 +1,4 @@
-import { Wallet, TrendingDown, DollarSign } from "lucide-react";
+import { TrendingDown, DollarSign } from "lucide-react";
 import StatCard from "./StatCard";
 import { Card, CardContent, CardHeader } from "@/components/ui/card";
 
@@ -7,16 +7,9 @@ export default function UserDashboard({ stats }) {
     <div className="space-y-6 sm:space-y-8">
       <section aria-labelledby="balance-heading">
         <h2 id="balance-heading" className="sr-only">
-          رصيدي
+          إحصائياتي
         </h2>
-        <div className="grid grid-cols-1 sm:grid-cols-3 gap-3 sm:gap-6">
-          <StatCard
-            title="رصيدي"
-            value={`${Math.abs(stats.balance).toFixed(2)} جنيه`}
-            subtext={stats.balance >= 0 ? "(مفيش فلوس عليك)" : "( عليك فلوس)"}
-            type={stats.balance >= 0 ? "positive" : "negative"}
-            icon={Wallet}
-          />
+        <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 sm:gap-6">
           <StatCard
             title="اللي دفعته"
             value={`${stats.totalPaid.toFixed(2)} جنيه`}

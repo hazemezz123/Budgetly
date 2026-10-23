@@ -37,8 +37,16 @@ export function useMyInvoices() {
     mutationFn: invoicesApi.payInvoice,
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: queryKeys.myInvoices.all });
+      queryClient.invalidateQueries({ queryKey: queryKeys.allInvoices.all });
+      queryClient.invalidateQueries({ queryKey: queryKeys.users.all });
       queryClient.invalidateQueries({ queryKey: queryKeys.profileStats.byUser(userId) });
-      toast.success("تم إرسال طلب الدفع بنجاح!");
+      queryClient.invalidateQueries({ queryKey: queryKeys.dashboardStats.byUserRole(userId, user?.role) });
+
+      const msg =
+        user?.role === "admin"
+          ? "تم سداد الفاتورة واعتمادها بنجاح!"
+          : "تم إرسال طلب الدفع بنجاح!";
+      toast.success(msg);
       setIsConfirmModalOpen(false);
       setSelectedInvoiceId(null);
     },
@@ -53,8 +61,17 @@ export function useMyInvoices() {
     mutationFn: invoicesApi.bulkPayInvoices,
     onSuccess: (data) => {
       queryClient.invalidateQueries({ queryKey: queryKeys.myInvoices.all });
+      queryClient.invalidateQueries({ queryKey: queryKeys.allInvoices.all });
+      queryClient.invalidateQueries({ queryKey: queryKeys.users.all });
       queryClient.invalidateQueries({ queryKey: queryKeys.profileStats.byUser(userId) });
-      toast.success(`تم إرسال طلبات الدفع لـ ${data.data.count} فاتورة بنجاح!`);
+      queryClient.invalidateQueries({ queryKey: queryKeys.dashboardStats.byUserRole(userId, user?.role) });
+
+      const count = data?.data?.count ?? data?.count ?? "";
+      const msg =
+        user?.role === "admin"
+          ? `تم سداد ${count} فواتير واعتمادها بنجاح!`
+          : `تم إرسال طلبات الدفع لـ ${count} فاتورة بنجاح!`;
+      toast.success(msg);
       setIsBulkPayModalOpen(false);
     },
     onError: (error) => {
