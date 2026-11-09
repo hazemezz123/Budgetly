@@ -35,7 +35,5 @@ export const invoicesApi = {
     return data.expenses || [];
   },
 
-  payInvoice: (invoiceId) => api.post(`/invoices/${invoiceId}/pay`),
-  bulkPayInvoices: () => api.post("/invoices/bulk-pay"),
   deleteMyRequest: (requestId) => api.delete(`/expenses/${requestId}/my-request`),
 };

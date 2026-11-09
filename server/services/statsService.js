@@ -2,129 +2,25 @@ import Expense from "../models/Expense.js";
 import Payment from "../models/Payment.js";
 import Invoice from "../models/Invoice.js";
 import User from "../models/User.js";
+import { buildSettlementSnapshot } from "./settlementService.js";
 
-const toIdString = (value) => {
-  if (!value) {
-    return null;
-  }
-
-  return typeof value === "string" ? value : value.toString();
-};
-
-const createEmptyBalance = () => ({
-  externalPaid: 0,
-  internalSent: 0,
-  invoicesAssigned: 0,
-  internalReceived: 0,
-  balance: 0,
-});
-
-const ensureUserBalance = (balancesByUserId, userId) => {
-  const normalizedUserId = toIdString(userId);
-
-  if (!normalizedUserId) {
-    return null;
-  }
-
-  if (!balancesByUserId[normalizedUserId]) {
-    balancesByUserId[normalizedUserId] = createEmptyBalance();
-  }
-
-  return balancesByUserId[normalizedUserId];
-};
-
-export const buildHouseBalanceSnapshot = ({ users, expenses, invoices, payments }) => {
-  const balancesByUserId = Object.create(null);
-  const approvedExpensePayerById = new Map();
-  const approvedPaymentAmountById = new Map();
-  const receivedPaymentsByPayerId = new Map();
-  const expenseShareByUserId = new Map();
-
-  for (const user of users) {
-    ensureUserBalance(balancesByUserId, user._id);
-  }
-
-  for (const payment of payments) {
-    if (payment.status !== "approved" || payment.transactionType !== "payment") {
-      continue;
-    }
-
-    const userBalance = ensureUserBalance(balancesByUserId, payment.user);
-    if (userBalance) {
-      userBalance.internalSent += payment.amount;
-    }
-
-    approvedPaymentAmountById.set(toIdString(payment._id), payment.amount);
-  }
-
-  for (const expense of expenses) {
-    if (expense.status !== "approved") {
-      continue;
-    }
-
-    const payerId = toIdString(expense.paidBy || expense.createdBy);
-    approvedExpensePayerById.set(toIdString(expense._id), payerId);
-
-    const payerBalance = ensureUserBalance(balancesByUserId, payerId);
-    if (payerBalance) {
-      payerBalance.externalPaid += expense.totalAmount;
-    }
-  }
-
-  for (const invoice of invoices) {
-    const userBalance = ensureUserBalance(balancesByUserId, invoice.user);
-    if (userBalance) {
-      const userId = toIdString(invoice.user);
-      expenseShareByUserId.set(
-        userId,
-        (expenseShareByUserId.get(userId) || 0) + invoice.amount
-      );
-
-      if (invoice.status !== "paid") {
-        userBalance.invoicesAssigned += invoice.amount;
-      }
-    }
-
-    if (!invoice.paymentRequest) {
-      continue;
-    }
-
-    const payerId = approvedExpensePayerById.get(toIdString(invoice.expense));
-    const paymentRequestId = toIdString(invoice.paymentRequest);
-    const approvedPaymentAmount = approvedPaymentAmountById.get(paymentRequestId);
-
-    if (!payerId || approvedPaymentAmount == null) {
-      continue;
-    }
-
-    let seenPaymentIds = receivedPaymentsByPayerId.get(payerId);
-    if (!seenPaymentIds) {
-      seenPaymentIds = new Set();
-      receivedPaymentsByPayerId.set(payerId, seenPaymentIds);
-    }
-
-    if (seenPaymentIds.has(paymentRequestId)) {
-      continue;
-    }
-
-    seenPaymentIds.add(paymentRequestId);
-    const payerBalance = ensureUserBalance(balancesByUserId, payerId);
-    if (payerBalance) {
-      payerBalance.internalReceived += approvedPaymentAmount;
-    }
-  }
-
-  for (const [userId, balance] of Object.entries(balancesByUserId)) {
-    balance.balance =
-      balance.externalPaid +
-      balance.internalSent -
-      ((expenseShareByUserId.get(userId) || 0) + balance.internalReceived);
-  }
+export const buildHouseBalanceSnapshot = ({
+  users,
+  expenses,
+  invoices,
+  payments,
+}) => {
+  const snapshot = buildSettlementSnapshot({
+    users,
+    expenses,
+    invoices,
+    payments,
+  });
 
   return {
-    balancesByUserId,
-    approvedExpensePayerById,
-    approvedPaymentAmountById,
+    balancesByUserId: snapshot.balancesByUserId,
+    approvedExpensePayerById: snapshot.approvedExpensePayerById,
+    approvedPaymentAmountById: snapshot.approvedPaymentAmountById,
   };
 };
 
@@ -141,10 +37,14 @@ export const getHouseStatsSnapshot = async (
       .select("totalAmount status paidBy createdBy category house")
       .lean(),
     Invoice.find({ house: houseId })
-      .select("user expense amount status paymentRequest createdAt")
+      .select(
+        "user expense amount status paymentRequest paidAmount offsetAmount createdAt"
+      )
       .lean(),
     Payment.find({ house: houseId })
-      .select("user amount status transactionType createdAt")
+      .select(
+        "user recipient amount status transactionType approvedBy createdAt"
+      )
       .lean(),
   ];
 

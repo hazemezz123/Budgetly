@@ -29,15 +29,24 @@ export function useAllInvoices() {
   const refreshData = () => {
     queryClient.invalidateQueries({ queryKey: queryKeys.users.all });
     queryClient.invalidateQueries({ queryKey: queryKeys.allInvoices.all });
+    queryClient.invalidateQueries({ queryKey: queryKeys.settlements.all });
     queryClient.invalidateQueries({ queryKey: queryKeys.expenses.pendingRequests });
+    queryClient.invalidateQueries({ queryKey: ["dashboardStats"] });
+  };
+
+  const invalidateAfterPaymentChange = () => {
+    queryClient.invalidateQueries({ queryKey: queryKeys.allInvoices.all });
+    queryClient.invalidateQueries({ queryKey: queryKeys.users.all });
+    queryClient.invalidateQueries({ queryKey: queryKeys.settlements.all });
+    queryClient.invalidateQueries({ queryKey: ["dashboardStats"] });
+    queryClient.invalidateQueries({ queryKey: ["profileStats"] });
   };
 
   const approvePaymentMutation = useMutation({
     mutationFn: invoicesApi.approveInvoice,
     onSuccess: () => {
       toast.success("تم الموافقة على الدفع");
-      queryClient.invalidateQueries({ queryKey: queryKeys.allInvoices.all });
-      queryClient.invalidateQueries({ queryKey: queryKeys.users.all });
+      invalidateAfterPaymentChange();
     },
     onError: (err) => {
       console.error("Approval error:", err);
@@ -49,8 +58,7 @@ export function useAllInvoices() {
     mutationFn: invoicesApi.approveAllUserInvoices,
     onSuccess: (data) => {
       toast.success(data?.message || "تمت الموافقة على جميع الفواتير");
-      queryClient.invalidateQueries({ queryKey: queryKeys.allInvoices.all });
-      queryClient.invalidateQueries({ queryKey: queryKeys.users.all });
+      invalidateAfterPaymentChange();
     },
     onError: (err) => {
       console.error("Bulk approval error:", err);
@@ -62,7 +70,7 @@ export function useAllInvoices() {
     mutationFn: invoicesApi.rejectInvoice,
     onSuccess: () => {
       toast.info("تم رفض الدفع");
-      queryClient.invalidateQueries({ queryKey: queryKeys.allInvoices.all });
+      invalidateAfterPaymentChange();
     },
     onError: (err) => {
       console.error("Rejection error:", err);
@@ -75,7 +83,7 @@ export function useAllInvoices() {
     onSuccess: () => {
       toast.success("تم الموافقة على الطلب وإنشاء الفواتير");
       queryClient.invalidateQueries({ queryKey: queryKeys.expenses.pendingRequests });
-      queryClient.invalidateQueries({ queryKey: queryKeys.allInvoices.all });
+      invalidateAfterPaymentChange();
     },
     onError: (err) => {
       console.error("Approval error:", err);

@@ -7,4 +7,5 @@ export { default as MyInvoicesHeader } from "./MyInvoicesHeader";
 export { default as MyInvoicesPagination } from "./MyInvoicesPagination";
 export { default as RequestCard } from "./RequestCard";
 export { default as RequestDetailsModal } from "./RequestDetailsModal";
+export { default as SettlementPanel } from "./SettlementPanel";
 export { default as StatusBadge } from "./StatusBadge";

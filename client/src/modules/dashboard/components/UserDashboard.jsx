@@ -16,7 +16,7 @@ export default function UserDashboard({ stats }) {
             icon={DollarSign}
           />
           <StatCard
-            title="اجمالي المصاريف"
+            title="صافي المستحق عليك"
             value={`${stats.totalOwed.toFixed(2)} جنيه`}
             icon={TrendingDown}
           />

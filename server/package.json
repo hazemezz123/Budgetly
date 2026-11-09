@@ -6,7 +6,8 @@
   "scripts": {
     "test": "node --test",
     "start": "node server.js",
-    "dev": "nodemon server.js"
+    "dev": "nodemon server.js",
+    "backfill:settlements": "node scripts/backfillSettlementData.js"
   },
   "keywords": [],
   "author": "",

@@ -6,11 +6,15 @@ import { payInvoice, payBulkInvoices } from "../controllers/invoiceController.js
 import Invoice from "../models/Invoice.js";
 import Payment from "../models/Payment.js";
 import User from "../models/User.js";
+import Expense from "../models/Expense.js";
 
 const originalInvoiceFindById = Invoice.findById;
 const originalInvoiceFind = Invoice.find;
 const originalPaymentCreate = Payment.create;
+const originalPaymentFind = Payment.find;
+const originalUserFind = User.find;
 const originalUserFindById = User.findById;
+const originalExpenseFind = Expense.find;
 
 const createRes = () => {
   const res = {
@@ -35,7 +39,11 @@ test.afterEach(() => {
   Invoice.findById = originalInvoiceFindById;
   Invoice.find = originalInvoiceFind;
   Payment.create = originalPaymentCreate;
+  Payment.find = originalPaymentFind;
+  User.find = originalUserFind;
   User.findById = originalUserFindById;
+  Expense.find = originalExpenseFind;
+  delete mongoose.connection.readyState;
 });
 
 test("payInvoice returns 403 when user is not the invoice owner", async () => {
@@ -145,6 +153,175 @@ test("payInvoice immediately approves and sets invoice to paid when admin pays",
   assert.equal(mockInvoice.status, "paid");
   assert.equal(createdPaymentPayload.status, "approved");
   assert.equal(createdPaymentPayload.approvedBy, adminId);
+});
+
+test("payInvoice refuses an invoice fully covered by netting", async () => {
+  const houseId = objectId();
+  const userId = objectId();
+
+  const mockInvoice = {
+    _id: objectId(),
+    user: userId,
+    house: houseId,
+    amount: 50,
+    paidAmount: 0,
+    offsetAmount: 50,
+    description: "Netted invoice",
+    status: "pending",
+    paymentRequest: null,
+  };
+
+  Invoice.findById = async () => mockInvoice;
+
+  const req = {
+    params: { id: mockInvoice._id.toString() },
+    user: { id: userId, house: houseId, role: "user" },
+  };
+  const res = createRes();
+
+  await payInvoice(req, res);
+
+  assert.equal(res.statusCode, 400);
+  assert.match(res.body.message, /offset|settled/i);
+});
+
+test("payInvoice only charges the remaining amount on a partially paid invoice", async () => {
+  const houseId = objectId();
+  const userId = objectId();
+
+  const mockInvoice = {
+    _id: objectId(),
+    user: userId,
+    house: houseId,
+    amount: 50,
+    paidAmount: 20,
+    offsetAmount: 10,
+    description: "Partially settled invoice",
+    status: "partially_paid",
+    paymentRequest: null,
+    saved: false,
+    async save() {
+      this.saved = true;
+    },
+  };
+
+  Invoice.findById = async () => mockInvoice;
+
+  let createdPaymentPayload = null;
+  Payment.create = async (payload) => {
+    createdPaymentPayload = payload;
+    return { _id: objectId(), ...payload };
+  };
+
+  const req = {
+    params: { id: mockInvoice._id.toString() },
+    user: { id: userId, house: houseId, role: "user" },
+  };
+  const res = createRes();
+
+  await payInvoice(req, res);
+
+  assert.equal(res.statusCode, 200);
+  assert.equal(createdPaymentPayload.amount, 20);
+});
+
+test("payInvoice rejects a legacy invoice payment above current net debt", async () => {
+  const houseId = objectId();
+  const debtorId = objectId();
+  const creditorId = objectId();
+  const dinnerExpenseId = objectId();
+  const taxiExpenseId = objectId();
+
+  const dinnerInvoice = {
+    _id: objectId(),
+    user: debtorId,
+    house: houseId,
+    expense: dinnerExpenseId,
+    amount: 100,
+    paidAmount: 0,
+    offsetAmount: 0,
+    description: "Dinner",
+    status: "pending",
+    paymentRequest: null,
+    saveCalls: 0,
+    async save() {
+      this.saveCalls += 1;
+    },
+  };
+  const taxiInvoice = {
+    _id: objectId(),
+    user: creditorId,
+    house: houseId,
+    expense: taxiExpenseId,
+    amount: 50,
+    paidAmount: 0,
+    offsetAmount: 0,
+    description: "Taxi",
+    status: "pending",
+    paymentRequest: null,
+  };
+
+  Invoice.findById = async () => dinnerInvoice;
+  Invoice.find = () => ({
+    select: () => ({ lean: async () => [dinnerInvoice, taxiInvoice] }),
+  });
+  User.find = () => ({
+    select: () => ({
+      lean: async () => [
+        { _id: debtorId, name: "Debtor", username: "debtor" },
+        { _id: creditorId, name: "Creditor", username: "creditor" },
+      ],
+    }),
+  });
+  Expense.find = () => ({
+    select: () => ({
+      lean: async () => [
+        {
+          _id: dinnerExpenseId,
+          house: houseId,
+          status: "approved",
+          paidBy: creditorId,
+          createdBy: creditorId,
+          totalAmount: 100,
+        },
+        {
+          _id: taxiExpenseId,
+          house: houseId,
+          status: "approved",
+          paidBy: debtorId,
+          createdBy: debtorId,
+          totalAmount: 50,
+        },
+      ],
+    }),
+  });
+  Payment.find = () => ({
+    select: () => ({ lean: async () => [] }),
+  });
+
+  let created = false;
+  Payment.create = async () => {
+    created = true;
+    return {};
+  };
+
+  Object.defineProperty(mongoose.connection, "readyState", {
+    value: 1,
+    configurable: true,
+  });
+
+  const req = {
+    params: { id: dinnerInvoice._id.toString() },
+    user: { id: debtorId, house: houseId, role: "user" },
+  };
+  const res = createRes();
+
+  await payInvoice(req, res);
+
+  assert.equal(res.statusCode, 409);
+  assert.match(res.body.message, /net debt|settlement/i);
+  assert.equal(created, false);
+  assert.equal(dinnerInvoice.saveCalls, 0);
 });
 
 test("payBulkInvoices immediately approves all invoices when admin pays", async () => {

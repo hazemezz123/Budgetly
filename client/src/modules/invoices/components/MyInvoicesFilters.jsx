@@ -8,7 +8,9 @@ const statusFilterLabelsByTab = {
     all: "الكل",
     pending: "مطلوب سداده",
     awaiting_approval: "في انتظار الموافقة",
+    partially_paid: "مدفوع جزئيًا",
     paid: "تم الدفع",
+    offset: "مقاصة",
   },
   requests: {
     all: "الكل",
@@ -19,7 +21,14 @@ const statusFilterLabelsByTab = {
 };
 
 const filterOptionsByTab = {
-  invoices: ["all", "pending", "awaiting_approval", "paid"],
+  invoices: [
+    "all",
+    "pending",
+    "awaiting_approval",
+    "partially_paid",
+    "paid",
+    "offset",
+  ],
   requests: ["all", "pending", "approved", "rejected"],
 };
 

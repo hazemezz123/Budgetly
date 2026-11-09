@@ -32,6 +32,10 @@ export const queryKeys = {
   allInvoices: {
     all: ["allInvoices"],
   },
+  settlements: {
+    all: ["settlements"],
+    byUser: (userId) => ["settlements", userId],
+  },
   profileStats: {
     byUser: (userId) => ["profileStats", userId],
   },

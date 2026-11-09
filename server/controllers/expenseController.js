@@ -8,6 +8,7 @@ import {
   buildNotificationPayload,
 } from "../services/pushNotificationService.js";
 import { createNotificationForPendingExpense } from "../services/notificationService.js";
+import { reconcileHouseInvoices } from "../services/settlementService.js";
 
 // Get all expenses with pagination
 export const getExpenses = async (req, res) => {
@@ -211,12 +212,22 @@ export const createExpense = async (req, res) => {
           user: split.user,
           expense: expense._id,
           amount: split.amount,
+          paidAmount: isPayer ? split.amount : 0,
           description: title,
           status: isPayer ? "paid" : "pending",
           house: req.user.house,
         });
       });
       await Promise.all(invoicePromises);
+
+      try {
+        await reconcileHouseInvoices(req.user.house);
+      } catch (reconcileError) {
+        console.error(
+          "Settlement reconciliation failed after expense creation:",
+          reconcileError.message
+        );
+      }
     }
 
     // Build the populated response directly instead of re-fetching the
@@ -292,6 +303,7 @@ export const approveExpense = async (req, res) => {
         user: split.user,
         expense: expense._id,
         amount: split.amount,
+        paidAmount: isPayer ? split.amount : 0,
         description: expense.title,
         status: isPayer ? "paid" : "pending",
         house: expense.house,
@@ -299,6 +311,15 @@ export const approveExpense = async (req, res) => {
     });
 
     await Promise.all(invoicePromises);
+
+    try {
+      await reconcileHouseInvoices(expense.house);
+    } catch (reconcileError) {
+      console.error(
+        "Settlement reconciliation failed after expense approval:",
+        reconcileError.message
+      );
+    }
 
     res.json({ message: "Expense approved and invoices created", expense });
   } catch (error) {
@@ -430,6 +451,15 @@ export const deleteExpense = async (req, res) => {
     // Now delete the expense
     await Expense.findByIdAndDelete(req.params.id);
 
+    try {
+      await reconcileHouseInvoices(expense.house);
+    } catch (reconcileError) {
+      console.error(
+        "Settlement reconciliation failed after expense deletion:",
+        reconcileError.message
+      );
+    }
+
     res.json({ message: "Expense and related invoices deleted" });
   } catch (error) {
     console.error("Delete expense error:", error);
@@ -487,6 +517,15 @@ export const deleteMyRequest = async (req, res) => {
 
     // Now delete the expense
     await Expense.findByIdAndDelete(req.params.id);
+
+    try {
+      await reconcileHouseInvoices(expense.house);
+    } catch (reconcileError) {
+      console.error(
+        "Settlement reconciliation failed after request deletion:",
+        reconcileError.message
+      );
+    }
 
     res.json({ message: "Request deleted successfully" });
   } catch (error) {

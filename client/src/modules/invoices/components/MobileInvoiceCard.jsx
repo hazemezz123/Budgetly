@@ -20,6 +20,13 @@ export default function MobileInvoiceCard({
   onReject,
   showUser,
 }) {
+  const paidAmount = Number(invoice.paidAmount || 0);
+  const offsetAmount = Number(invoice.offsetAmount || 0);
+  const remainingAmount =
+    invoice.remainingAmount != null
+      ? Number(invoice.remainingAmount)
+      : Math.max(0, Number(invoice.amount || 0) - paidAmount - offsetAmount);
+
   return (
     <Card className="rounded-2xl border-(--color-border) bg-(--color-surface) shadow-sm py-0 gap-0 overflow-hidden">
       <CardContent className="p-3.5 sm:p-4 space-y-3 min-w-0">
@@ -54,9 +61,27 @@ export default function MobileInvoiceCard({
           <p className="font-medium text-sm sm:text-base text-(--color-dark) break-words line-clamp-2">
             {invoice.description}
           </p>
+          {invoice.expense?.paidBy?.name && (
+            <p className="text-xs text-(--color-secondary) mt-0.5">
+              لصالح: {invoice.expense.paidBy.name}
+            </p>
+          )}
           <p className="text-lg sm:text-xl font-bold text-(--color-primary-text) mt-1 font-numbers">
             {Number(invoice.amount).toFixed(2)} جنيه
           </p>
+          {remainingAmount > 0 &&
+            remainingAmount !== Number(invoice.amount) && (
+              <p className="text-xs text-(--color-info) font-medium">
+                متبقي {remainingAmount.toFixed(2)} جنيه
+              </p>
+            )}
+          {(paidAmount > 0 || offsetAmount > 0) && (
+            <p className="text-xs text-(--color-secondary)">
+              {paidAmount > 0 ? `مدفوع ${paidAmount.toFixed(2)}` : ""}
+              {paidAmount > 0 && offsetAmount > 0 ? " • " : ""}
+              {offsetAmount > 0 ? `مقاصة ${offsetAmount.toFixed(2)}` : ""}
+            </p>
+          )}
         </div>
 
         {invoice.status === "awaiting_approval" && (

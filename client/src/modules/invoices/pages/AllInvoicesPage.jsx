@@ -9,7 +9,12 @@ import {
   CheckCircle2,
 } from "lucide-react";
 import { useAllInvoices } from "../hooks";
-import { InvoicesTable, MobileRequestCard, RequestDetailsModal } from "../components";
+import {
+  InvoicesTable,
+  MobileRequestCard,
+  RequestDetailsModal,
+  SettlementPanel,
+} from "../components";
 import MyInvoices from "./MyInvoicesPage";
 import { Card, CardContent } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
@@ -165,6 +170,8 @@ export default function AllInvoices() {
               <RefreshCw size={20} className={loading ? "animate-spin" : ""} />
             </Button>
           </div>
+
+      <SettlementPanel showApprovals />
 
       {pendingRequests.length > 0 && (
         <Card id="pending-requests" className="rounded-2xl border-(--color-border) bg-(--color-surface) shadow-sm py-0 gap-0 overflow-hidden">

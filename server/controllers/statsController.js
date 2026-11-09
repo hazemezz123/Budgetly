@@ -134,13 +134,18 @@ export const getAdminDashboard = async (req, res) => {
     );
     const totalInvoicesAmount = invoices.reduce((sum, i) => sum + i.amount, 0);
 
-    // Total Owed = Sum of Invoices that are NOT paid
-    const totalOwed = invoices
-      .filter((i) => i.status !== "paid")
-      .reduce((sum, i) => sum + i.amount, 0);
+    // Outstanding debt is the sum of net debtor balances, not gross invoices.
+    const totalOwed = balances.reduce(
+      (sum, user) => sum + Math.max(0, -user.balance),
+      0
+    );
 
     const totalPaymentsAmount = payments
-      .filter((p) => p.status === "approved")
+      .filter(
+        (p) =>
+          p.status === "approved" &&
+          (!p.transactionType || p.transactionType !== "received")
+      )
       .reduce((sum, p) => sum + p.amount, 0);
 
     const expenseCategoryById = new Map(

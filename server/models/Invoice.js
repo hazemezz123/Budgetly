@@ -17,13 +17,29 @@ const invoiceSchema = new mongoose.Schema(
       required: true,
       min: 0,
     },
+    paidAmount: {
+      type: Number,
+      default: 0,
+      min: 0,
+    },
+    offsetAmount: {
+      type: Number,
+      default: 0,
+      min: 0,
+    },
     description: {
       type: String,
       required: true,
     },
     status: {
       type: String,
-      enum: ["pending", "awaiting_approval", "paid"],
+      enum: [
+        "pending",
+        "awaiting_approval",
+        "partially_paid",
+        "paid",
+        "offset",
+      ],
       default: "pending",
     },
     paymentRequest: {

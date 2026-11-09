@@ -37,13 +37,14 @@ This document describes the current backend behavior as implemented in the serve
 
 ### Invoice
 - `user`, `expense`, `amount`, `description`.
-- `status`: `pending`, `awaiting_approval`, `paid`.
-- `paymentRequest` reference (Payment).
+- `status`: `pending`, `awaiting_approval`, `partially_paid`, `paid`, `offset`.
+- `paidAmount` (cash allocated), `offsetAmount` (netted amount).
+- `paymentRequest` reference (Payment), used only by the legacy invoice-payment flow.
 - `house`, `dueDate`.
 
 ### Payment
-- `user`, `amount`, `description`.
-- `transactionType`: `payment` or `received` (default `payment`).
+- `user` (sender), `recipient` (settlement receiver), `amount`, `description`.
+- `transactionType`: `payment`, `received`, or `settlement` (default `payment`).
 - `status`: `pending`, `approved`, `rejected`.
 - `recordedBy`, `approvedBy`.
 - `linkedExpense` (optional), `house`, `date`.
@@ -75,36 +76,47 @@ This document describes the current backend behavior as implemented in the serve
 - Delete expense (admin): deletes related invoices and any linked payment requests, then deletes the expense.
 - Delete own pending request: only creator can delete, only if `pending`.
 
-### Invoices and Payments
+### Net Settlement
+- `buildSettlementSnapshot` computes each member's net balance from approved expenses, invoice shares, and approved payments.
+- Approved cash payments are allocated to direct debtor→creditor invoices FIFO; the remainder of each debtor's invoices is marked `offset` up to their net debt.
+- A greedy plan matches net debtors to net creditors. Transfer amounts never exceed the current net balance.
+- `GET /api/settlements` returns the current net balance, payables, receivables, pending requests, history, and (for admins) the full plan.
+- `POST /api/settlements` creates a `Payment` with `transactionType: "settlement"`; members need admin approval and admins record immediately.
+- `PUT /api/settlements/:id/approve` uses a per-house `House.settlementLock` acquired by atomic `findOneAndUpdate`, then re-reads the settlement and revalidates net debt under that lock before changing `pending → approved` and reconciling invoices inside a DB transaction.
+- If two different settlements compete for the same debt, the second revalidation fails after the first approval; the stale request is marked `rejected` and the API returns `409`.
+- The lock has a 60-second expiry and a 2-second acquisition wait. If it is still busy, approval returns `409` and leaves the request pending for a retry.
+- Transactional path (replica set): payment approval and invoice reconciliation commit or roll back together.
+- Standalone fallback: the per-house lock still prevents concurrent over-approval because lock acquisition is a single-document atomic update. However, payment approval and invoice reconciliation are separate writes, so a process crash between them can leave the payment approved while invoice allocations are stale. The next read or write reconciliation repairs the invoice fields; it cannot undo an approved payment.
+- `PUT /api/settlements/:id/reject` atomically rejects a pending settlement.
+
+### Invoices and Payments (legacy compatibility)
 - Get invoices:
-  - My invoices: filters by `user` and `house`, populates expense fields.
-  - All invoices (admin): filters by `house`, populates user, expense, and paymentRequest.
-- Pay invoice (user):
-  - Requires invoice ownership, same house, and `status === "pending"`.
+  - My invoices: filters by `user` and `house`, populates expense/creditor fields, and returns `remainingAmount`.
+  - All invoices (admin): filters by `house`, populates user, expense, creditor, and paymentRequest.
+- The member UI now uses settlement requests instead of per-invoice Pay/bulk-pay.
+- Legacy pay invoice endpoint still exists:
+  - Rejects fully offset/settled invoices and only charges the remaining amount.
+  - Checks the live net debt before creating or approving a legacy payment.
   - Creates a `Payment` with `status: pending` and links it in `invoice.paymentRequest`.
   - Sets invoice status to `awaiting_approval`.
-- Approve invoice payment (admin):
-  - Requires same house, invoice status `awaiting_approval`, and existing `paymentRequest`.
-  - Sets payment status to `approved`, `approvedBy` to admin.
-  - Sets invoice status to `paid`.
-- Reject invoice payment (admin):
-  - Requires same house and existing `paymentRequest`.
-  - Sets payment status to `rejected` and appends reason to description.
-  - Resets invoice status to `pending` and clears `paymentRequest`.
-- Bulk pay invoices (user):
-  - Finds all `pending` invoices for user in their house.
-  - Creates individual payment requests and marks each invoice `awaiting_approval`.
+- Approve legacy invoice payment (admin):
+  - Rechecks net debt, then sets payment `approved` and invoice `paid`; reconciliation repairs allocations.
+- Reject legacy invoice payment (admin):
+  - Sets payment `rejected`, resets invoice to `pending`, clears `paymentRequest`, then reconciles.
+- Bulk legacy pay:
+  - Includes pending and partially paid invoices, charges only remaining amounts, and rechecks net debt.
 
 ### Stats and Balances
 - Balance calculation uses:
 - `externalPaid`: sum of approved expenses paid by the user (`paidBy`, fallback `createdBy`).
-- `internalSent`: sum of approved payments where `user` is the payer.
-- `invoicesAssigned`: sum of unpaid invoices for the user.
-- `internalReceived`: sum of approved payments linked to invoices on expenses paid by the user.
-  - `balance = externalPaid + internalSent - (invoicesAssigned + internalReceived)`.
-- `getBalances`: returns balance per active user in house.
+- `internalSent`: sum of approved payments where `user` is the sender.
+- `expenseShare`: sum of the user's invoice amounts for approved expenses.
+- `internalReceived`: sum of approved payments where the user is the recipient, with legacy `invoice.paymentRequest` fallback.
+  - `balance = externalPaid + internalSent - (expenseShare + internalReceived)`.
+- `invoicesAssigned = max(0, -balance)`, so it reports net debt rather than the gross sum of pending invoices.
+- `getBalances`: returns net balance, total paid, and net owed per active user in the house.
 - `getUserStats`: includes recent invoices and category breakdown based on invoices.
-- `getAdminDashboard`: aggregates totals for users, expenses, invoices, payments, plus category breakdown from invoices.
+- `getAdminDashboard`: aggregates totals for users, expenses, invoices, payments, plus category breakdown from invoices. `totalOwed` is the sum of net debtor balances.
 
 ### Analytics
 - Monthly analytics:
@@ -201,10 +213,16 @@ This document describes the current backend behavior as implemented in the serve
 ### Invoices
 - `GET /api/invoices/my-invoices`
 - `GET /api/invoices/all` (admin)
-- `POST /api/invoices/:id/pay`
-- `POST /api/invoices/bulk-pay`
-- `PUT /api/invoices/:id/approve` (admin)
-- `PUT /api/invoices/:id/reject` (admin)
+- `POST /api/invoices/:id/pay` (legacy)
+- `POST /api/invoices/bulk-pay` (legacy)
+- `PUT /api/invoices/:id/approve` (admin, legacy)
+- `PUT /api/invoices/:id/reject` (admin, legacy)
+
+### Settlements
+- `GET /api/settlements`
+- `POST /api/settlements`
+- `PUT /api/settlements/:id/approve` (admin)
+- `PUT /api/settlements/:id/reject` (admin)
 
 ### Stats
 - `GET /api/stats/balances`
@@ -228,4 +246,5 @@ This document describes the current backend behavior as implemented in the serve
 - `DELETE /api/ai/chats/:chatId`
 
 ## Notes
-- There is no dedicated `/api/payments` route mounted in the server; payments are created via invoice actions.
+- There is no dedicated `/api/payments` route mounted in the server; payments are created via settlement actions or the legacy invoice flow.
+- Run `npm run backfill:settlements` after deploying the net-settlement changes to populate invoice allocations and legacy payment recipients.

@@ -1,6 +1,5 @@
 import { useState } from "react";
 import { useNavigate } from "react-router-dom";
-import { useAuth } from "../../../shared/context/AuthContext";
 import {
   AlertDialog,
   AlertDialogAction,
@@ -18,11 +17,11 @@ import {
   MyInvoicesHeader,
   MyInvoicesFilters,
   MyInvoicesPagination,
+  SettlementPanel,
 } from "../components";
 
 export default function MyInvoices() {
   const navigate = useNavigate();
-  const { user } = useAuth();
 
   const {
     activeTab,
@@ -35,36 +34,12 @@ export default function MyInvoices() {
     sortBy,
     setSortBy,
     filteredData,
-    totalPending,
-    isConfirmModalOpen,
-    setIsConfirmModalOpen,
-    handlePay,
-    confirmPayment,
-    isPaying,
-    // Bulk Payment
-    isBulkPayModalOpen,
-    setIsBulkPayModalOpen,
-    handleBulkPay,
-    confirmBulkPayment,
-    isBulkPaying,
-    // Delete Request
     isDeleteModalOpen,
     setIsDeleteModalOpen,
     handleDeleteRequest,
     confirmDeleteRequest,
     isDeleting,
   } = useMyInvoices();
-
-  // Calculate pending invoices count and total for bulk payment
-  const pendingInvoicesCount = filteredData
-    ? filteredData.filter((item) => item.status === "pending").length
-    : 0;
-
-  const pendingInvoicesTotal = filteredData
-    ? filteredData
-        .filter((item) => item.status === "pending")
-        .reduce((sum, item) => sum + (item.amount || 0), 0)
-    : 0;
 
   // Pagination state
   const [currentPage, setCurrentPage] = useState(1);
@@ -89,13 +64,11 @@ export default function MyInvoices() {
 
   return (
     <div className="space-y-6" dir="rtl">
+      <SettlementPanel />
+
       <MyInvoicesHeader
         activeTab={activeTab}
-        pendingInvoicesCount={pendingInvoicesCount}
-        pendingInvoicesTotal={pendingInvoicesTotal}
-        onBulkPay={handleBulkPay}
         onCreateRequest={() => navigate("/add-expense")}
-        totalPending={totalPending}
       />
 
       <MyInvoicesFilters
@@ -123,7 +96,7 @@ export default function MyInvoices() {
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
           {paginatedData.map((item) =>
             activeTab === "invoices" ? (
-              <InvoiceCard key={item._id} invoice={item} onPay={handlePay} />
+              <InvoiceCard key={item._id} invoice={item} />
             ) : (
               <RequestCard key={item._id} request={item} onDelete={handleDeleteRequest} />
             ),
@@ -138,52 +111,6 @@ export default function MyInvoices() {
         onPrevious={() => setCurrentPage((p) => Math.max(1, p - 1))}
         onNext={() => setCurrentPage((p) => Math.min(totalPages, p + 1))}
       />
-
-      <AlertDialog open={isConfirmModalOpen} onOpenChange={setIsConfirmModalOpen}>
-        <AlertDialogContent dir="rtl">
-          <AlertDialogHeader>
-            <AlertDialogTitle>تأكيد الدفع</AlertDialogTitle>
-            <AlertDialogDescription>
-              {user?.role === "admin"
-                ? "هل أنت متأكد من سداد هذه الفاتورة؟ سيتم اعتماد الدفع فوراً وتسوية رصيدك."
-                : "هل أنت متأكد من دفع هذه الفاتورة؟ سيتم إرسال إشعار للمسؤول للموافقة."}
-            </AlertDialogDescription>
-          </AlertDialogHeader>
-          <AlertDialogFooter>
-            <AlertDialogCancel disabled={isPaying}>إلغاء</AlertDialogCancel>
-            <AlertDialogAction
-              onClick={confirmPayment}
-              disabled={isPaying}
-              className="bg-(--color-primary) text-white hover:bg-(--color-primary)/90"
-            >
-              {isPaying ? "جاري الدفع..." : "تأكيد الدفع"}
-            </AlertDialogAction>
-          </AlertDialogFooter>
-        </AlertDialogContent>
-      </AlertDialog>
-
-      <AlertDialog open={isBulkPayModalOpen} onOpenChange={setIsBulkPayModalOpen}>
-        <AlertDialogContent dir="rtl">
-          <AlertDialogHeader>
-            <AlertDialogTitle>دفع الكل ({pendingInvoicesCount} فواتير)</AlertDialogTitle>
-            <AlertDialogDescription>
-              {user?.role === "admin"
-                ? `هل أنت متأكد من سداد جميع الفواتير المعلقة بإجمالي ${pendingInvoicesTotal.toLocaleString()} ج.م؟ سيتم اعتماد الدفع فوراً وتسوية رصيدك.`
-                : `هل أنت متأكد من دفع جميع الفواتير المعلقة بإجمالي ${pendingInvoicesTotal.toLocaleString()} ج.م؟ سيتم إرسال طلبات دفع للمسؤول.`}
-            </AlertDialogDescription>
-          </AlertDialogHeader>
-          <AlertDialogFooter>
-            <AlertDialogCancel disabled={isBulkPaying}>إلغاء</AlertDialogCancel>
-            <AlertDialogAction
-              onClick={confirmBulkPayment}
-              disabled={isBulkPaying}
-              className="bg-(--color-primary) text-white hover:bg-(--color-primary)/90"
-            >
-              {isBulkPaying ? "جاري الدفع..." : "تأكيد الدفع للكل"}
-            </AlertDialogAction>
-          </AlertDialogFooter>
-        </AlertDialogContent>
-      </AlertDialog>
 
       <AlertDialog open={isDeleteModalOpen} onOpenChange={setIsDeleteModalOpen}>
         <AlertDialogContent dir="rtl">

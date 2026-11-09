@@ -16,7 +16,7 @@ export default function AdminDashboard({ stats }) {
             icon={TrendingUp}
           />
           <StatCard
-            title="إجمالي المستحق"
+            title="صافي المستحق"
             value={`${stats.overview.totalOwed.toFixed(2)} جنيه`}
             icon={TrendingDown}
           />

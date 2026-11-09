@@ -54,14 +54,58 @@ export default function InvoicesTable({
       {
         accessorKey: "description",
         header: "الوصف",
-        cell: (info) => <span className="text-(--color-dark) font-medium">{info.getValue()}</span>,
+        cell: (info) => {
+          const invoice = info.row.original;
+          const creditor = invoice.expense?.paidBy;
+          return (
+            <div className="min-w-0">
+              <span className="text-(--color-dark) font-medium block truncate">
+                {info.getValue()}
+              </span>
+              {creditor?.name && (
+                <span className="text-xs text-(--color-secondary)">
+                  لصالح: {creditor.name}
+                </span>
+              )}
+            </div>
+          );
+        },
       },
       {
         accessorKey: "amount",
         header: "المبلغ",
-        cell: (info) => (
-          <span className="font-bold text-(--color-dark)">{Number(info.getValue()).toFixed(2)} جنيه</span>
-        ),
+        cell: (info) => {
+          const invoice = info.row.original;
+          const paidAmount = Number(invoice.paidAmount || 0);
+          const offsetAmount = Number(invoice.offsetAmount || 0);
+          const remainingAmount =
+            invoice.remainingAmount != null
+              ? Number(invoice.remainingAmount)
+              : Math.max(
+                  0,
+                  Number(invoice.amount || 0) - paidAmount - offsetAmount
+                );
+          return (
+            <div className="space-y-0.5">
+              <span className="font-bold text-(--color-dark) block">
+                {Number(info.getValue()).toFixed(2)} جنيه
+              </span>
+              {remainingAmount > 0 &&
+                remainingAmount !== Number(invoice.amount) && (
+                  <span className="text-xs text-(--color-primary-text) block">
+                    متبقي {remainingAmount.toFixed(2)}
+                  </span>
+                )}
+              {(paidAmount > 0 || offsetAmount > 0) && (
+                <span className="text-xs text-(--color-secondary) block">
+                  {paidAmount > 0 ? `مدفوع ${paidAmount.toFixed(2)}` : ""}
+                  {paidAmount > 0 && offsetAmount > 0 ? " • " : ""}
+                  {offsetAmount > 0 ? `مقاصة ${offsetAmount.toFixed(2)}` : ""}
+                </span>
+              )}
+            </div>
+          );
+        },
       },
       {
         accessorKey: "status",

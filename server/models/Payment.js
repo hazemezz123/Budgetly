@@ -7,9 +7,13 @@ const paymentSchema = new mongoose.Schema(
       ref: "User",
       required: true,
     },
+    recipient: {
+      type: mongoose.Schema.Types.ObjectId,
+      ref: "User",
+    },
     transactionType: {
       type: String,
-      enum: ["payment", "received"],
+      enum: ["payment", "received", "settlement"],
       default: "payment", // Default ensures existing records work without migration
     },
     amount: {
@@ -53,6 +57,7 @@ const paymentSchema = new mongoose.Schema(
 );
 
 paymentSchema.index({ house: 1, user: 1, status: 1, transactionType: 1 });
+paymentSchema.index({ house: 1, recipient: 1, status: 1 });
 paymentSchema.index({ house: 1, createdAt: -1 });
 
 export default mongoose.model("Payment", paymentSchema);

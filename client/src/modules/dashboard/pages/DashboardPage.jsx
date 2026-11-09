@@ -1,6 +1,7 @@
 import { Wallet, Loader2 } from "lucide-react";
 import { useAuth } from "../../../shared/context/AuthContext";
 import { RoleRotationWidget } from "../../house/components";
+import { SettlementPanel } from "../../invoices/components";
 import { useDashboardStats } from "../hooks";
 import {
   AdminDashboard,
@@ -66,6 +67,12 @@ const Dashboard = () => {
           role={user?.role}
         />
       </div>
+
+      {houseId && (
+        <div className="mb-6">
+          <SettlementPanel showApprovals />
+        </div>
+      )}
 
       <div className="mb-6">
         <QuoteCard />

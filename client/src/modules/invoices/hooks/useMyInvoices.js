@@ -14,8 +14,6 @@ export function useMyInvoices() {
   const [filterStatus, setFilterStatus] = useState("all");
   const [searchTerm, setSearchTerm] = useState("");
   const [sortBy, setSortBy] = useState("date_desc");
-  const [isConfirmModalOpen, setIsConfirmModalOpen] = useState(false);
-  const [selectedInvoiceId, setSelectedInvoiceId] = useState(null);
 
   const { data: invoices = [], isLoading: loadingInvoices } = useQuery({
     queryKey: queryKeys.myInvoices.byUser(userId),
@@ -29,57 +27,7 @@ export function useMyInvoices() {
     enabled: !!userId,
   });
 
-  const [isBulkPayModalOpen, setIsBulkPayModalOpen] = useState(false);
-
   const loading = loadingInvoices || loadingRequests;
-
-  const payInvoiceMutation = useMutation({
-    mutationFn: invoicesApi.payInvoice,
-    onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: queryKeys.myInvoices.all });
-      queryClient.invalidateQueries({ queryKey: queryKeys.allInvoices.all });
-      queryClient.invalidateQueries({ queryKey: queryKeys.users.all });
-      queryClient.invalidateQueries({ queryKey: queryKeys.profileStats.byUser(userId) });
-      queryClient.invalidateQueries({ queryKey: queryKeys.dashboardStats.byUserRole(userId, user?.role) });
-
-      const msg =
-        user?.role === "admin"
-          ? "تم سداد الفاتورة واعتمادها بنجاح!"
-          : "تم إرسال طلب الدفع بنجاح!";
-      toast.success(msg);
-      setIsConfirmModalOpen(false);
-      setSelectedInvoiceId(null);
-    },
-    onError: (error) => {
-      console.error("Payment error:", error);
-      const msg = error.response?.data?.message || "فشل إرسال طلب الدفع";
-      toast.error(msg);
-    },
-  });
-
-  const payAllInvoicesMutation = useMutation({
-    mutationFn: invoicesApi.bulkPayInvoices,
-    onSuccess: (data) => {
-      queryClient.invalidateQueries({ queryKey: queryKeys.myInvoices.all });
-      queryClient.invalidateQueries({ queryKey: queryKeys.allInvoices.all });
-      queryClient.invalidateQueries({ queryKey: queryKeys.users.all });
-      queryClient.invalidateQueries({ queryKey: queryKeys.profileStats.byUser(userId) });
-      queryClient.invalidateQueries({ queryKey: queryKeys.dashboardStats.byUserRole(userId, user?.role) });
-
-      const count = data?.data?.count ?? data?.count ?? "";
-      const msg =
-        user?.role === "admin"
-          ? `تم سداد ${count} فواتير واعتمادها بنجاح!`
-          : `تم إرسال طلبات الدفع لـ ${count} فاتورة بنجاح!`;
-      toast.success(msg);
-      setIsBulkPayModalOpen(false);
-    },
-    onError: (error) => {
-      console.error("Bulk Payment error:", error);
-      const msg = error.response?.data?.message || "حدث خطأ أثناء الدفع الجماعي";
-      toast.error(msg);
-    },
-  });
 
   const [isDeleteModalOpen, setIsDeleteModalOpen] = useState(false);
   const [selectedRequestId, setSelectedRequestId] = useState(null);
@@ -88,6 +36,8 @@ export function useMyInvoices() {
     mutationFn: invoicesApi.deleteMyRequest,
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: queryKeys.myRequests.all });
+      queryClient.invalidateQueries({ queryKey: queryKeys.settlements.all });
+      queryClient.invalidateQueries({ queryKey: ["dashboardStats"] });
       toast.success("تم حذف الطلب بنجاح!");
       setIsDeleteModalOpen(false);
       setSelectedRequestId(null);
@@ -98,25 +48,6 @@ export function useMyInvoices() {
       toast.error(msg);
     },
   });
-
-  const handlePay = (invoiceId) => {
-    setSelectedInvoiceId(invoiceId);
-    setIsConfirmModalOpen(true);
-  };
-
-  const confirmPayment = () => {
-    if (selectedInvoiceId) {
-      payInvoiceMutation.mutate(selectedInvoiceId);
-    }
-  };
-
-  const handleBulkPay = () => {
-    setIsBulkPayModalOpen(true);
-  };
-
-  const confirmBulkPayment = () => {
-    payAllInvoicesMutation.mutate();
-  };
 
   const handleDeleteRequest = (requestId) => {
     setSelectedRequestId(requestId);
@@ -161,10 +92,6 @@ export function useMyInvoices() {
         })
   );
 
-  const totalPending = invoices
-    .filter((inv) => inv.status === "pending")
-    .reduce((sum, inv) => sum + inv.amount, 0);
-
   return {
     activeTab,
     setActiveTab,
@@ -178,17 +105,6 @@ export function useMyInvoices() {
     sortBy,
     setSortBy,
     filteredData,
-    totalPending,
-    isConfirmModalOpen,
-    setIsConfirmModalOpen,
-    handlePay,
-    confirmPayment,
-    isPaying: payInvoiceMutation.isPending,
-    isBulkPayModalOpen,
-    setIsBulkPayModalOpen,
-    handleBulkPay,
-    confirmBulkPayment,
-    isBulkPaying: payAllInvoicesMutation.isPending,
     isDeleteModalOpen,
     setIsDeleteModalOpen,
     handleDeleteRequest,

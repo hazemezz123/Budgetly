@@ -105,6 +105,14 @@ const houseSchema = new mongoose.Schema(
         history: [],
       }),
     },
+    settlementLock: {
+      owner: {
+        type: String,
+      },
+      expiresAt: {
+        type: Date,
+      },
+    },
   },
   {
     timestamps: true,

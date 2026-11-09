@@ -495,7 +495,7 @@ const Profile = () => {
         <div className="p-4 sm:p-5 rounded-2xl bg-(--color-surface) border border-(--color-border)">
           <div className="flex items-center gap-2 mb-2">
             <TrendingUp size={16} className="text-(--color-error)" />
-            <p className="text-xs sm:text-sm text-(--color-secondary)">إجمالي المصاريف</p>
+            <p className="text-xs sm:text-sm text-(--color-secondary)">صافي المستحق</p>
           </div>
           <p className="text-xl sm:text-2xl font-bold text-(--color-dark) font-numbers">
             {stats.totalOwed.toFixed(2)}
