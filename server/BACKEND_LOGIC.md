@@ -4,7 +4,9 @@ This document describes the current backend behavior as implemented in the serve
 
 ## Overview
 - Runtime: Node.js + Express + MongoDB (Mongoose).
-- Server entry: `server/server.js`.
+
+
+- Server   entry: `server/server.js`.
 - Middleware: CORS, JSON body parsing, rate limiter.
 - Routes are mounted under `/api/*`.
 - Mongo connection uses `MONGODB_URI` or defaults to `mongodb://localhost:27017/expense-tracker`.
