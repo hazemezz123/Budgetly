@@ -259,11 +259,12 @@ Expenses and Invoices constitute the financial core of Budgetly. When an expense
   - `400 Bad Request`: Expense is already approved or rejected.
   - `403 Forbidden`: Not authorized (user is not the creator).
   - `404 Not Found`: Expense request not found.
+  - `409 Conflict`: Linked payment records are approved or in an unknown state; nothing is deleted.
 
 ---
 
 ### DELETE `/api/expenses/:id`
-- **Description**: Cascade deletes an expense along with all linked invoices and payment requests. Admin only.
+- **Description**: Cascade deletes a pending or rejected expense along with linked invoices and pending/rejected payment requests. Approved expenses are not deletable. Admin only.
 - **Auth Required**: Yes (Admin only)
 - **Headers**:
   - `Authorization: Bearer <token>`
@@ -276,6 +277,7 @@ Expenses and Invoices constitute the financial core of Budgetly. When an expense
 - **Error Responses**:
   - `403 Forbidden`: Admin role required.
   - `404 Not Found`: Expense not found.
+  - `409 Conflict`: Expense is approved, or a linked payment is approved or in an unknown state; nothing is deleted.
 
 ---
 

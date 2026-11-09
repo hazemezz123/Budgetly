@@ -278,20 +278,34 @@ export const createExpense = async (req, res) => {
   }
 };
 
+const transitionExpenseStatus = async (id, nextStatus) => {
+  const expense = await Expense.findOneAndUpdate(
+    { _id: id, status: "pending" },
+    { $set: { status: nextStatus } },
+    { new: true },
+  );
+
+  if (expense) return { expense };
+
+  const exists = await Expense.exists({ _id: id });
+  return { notFound: !exists };
+};
+
 // Approve Expense (Admin only)
 export const approveExpense = async (req, res) => {
   try {
-    const expense = await Expense.findById(req.params.id);
-    if (!expense) {
+    const { expense, notFound } = await transitionExpenseStatus(
+      req.params.id,
+      "approved",
+    );
+
+    if (notFound) {
       return res.status(404).json({ message: "Expense not found" });
     }
 
-    if (expense.status !== "pending") {
+    if (!expense) {
       return res.status(400).json({ message: "Expense is not pending" });
     }
-
-    expense.status = "approved";
-    await expense.save();
 
     // Generate Invoices
     const invoicePromises = expense.splits.map((split) => {
@@ -331,17 +345,18 @@ export const approveExpense = async (req, res) => {
 // Reject Expense (Admin only)
 export const rejectExpense = async (req, res) => {
   try {
-    const expense = await Expense.findById(req.params.id);
-    if (!expense) {
+    const { expense, notFound } = await transitionExpenseStatus(
+      req.params.id,
+      "rejected",
+    );
+
+    if (notFound) {
       return res.status(404).json({ message: "Expense not found" });
     }
 
-    if (expense.status !== "pending") {
+    if (!expense) {
       return res.status(400).json({ message: "Expense is not pending" });
     }
-
-    expense.status = "rejected";
-    await expense.save();
 
     res.json({ message: "Expense rejected", expense });
   } catch (error) {
@@ -425,6 +440,54 @@ export const updateExpense = async (req, res) => {
   }
 };
 
+const deleteExpenseCascade = async (expense, allowedStatuses) => {
+  const invoices = await Invoice.find({ expense: expense._id }).select(
+    "paymentRequest",
+  );
+  const paymentIds = invoices
+    .map((invoice) => invoice.paymentRequest)
+    .filter(Boolean);
+
+  if (paymentIds.length > 0) {
+    const unsafePayments = await Payment.find({
+      _id: { $in: paymentIds },
+      status: { $nin: ["pending", "rejected"] },
+    })
+      .select("_id")
+      .lean();
+
+    if (unsafePayments.length > 0) return "unsafe_payments";
+  }
+
+  const deletedExpense = await Expense.findOneAndDelete({
+    _id: expense._id,
+    status: { $in: allowedStatuses },
+  });
+
+  if (!deletedExpense) return "state_changed";
+
+  if (paymentIds.length > 0) {
+    await Payment.deleteMany({
+      _id: { $in: paymentIds },
+      status: { $in: ["pending", "rejected"] },
+    });
+  }
+
+  // Cascade delete: Remove all invoices linked to this expense
+  await Invoice.deleteMany({ expense: expense._id });
+
+  try {
+    await reconcileHouseInvoices(expense.house);
+  } catch (reconcileError) {
+    console.error(
+      "Settlement reconciliation failed after expense deletion:",
+      reconcileError.message,
+    );
+  }
+
+  return null;
+};
+
 // Delete expense (Admin only)
 export const deleteExpense = async (req, res) => {
   try {
@@ -434,30 +497,25 @@ export const deleteExpense = async (req, res) => {
       return res.status(404).json({ message: "Expense not found" });
     }
 
-    const invoices = await Invoice.find({ expense: expense._id }).select(
-      "paymentRequest"
-    );
-    const paymentIds = invoices
-      .map((invoice) => invoice.paymentRequest)
-      .filter(Boolean);
-
-    if (paymentIds.length > 0) {
-      await Payment.deleteMany({ _id: { $in: paymentIds } });
+    if (expense.status === "approved") {
+      return res
+        .status(409)
+        .json({ message: "Approved expenses cannot be deleted" });
     }
 
-    // Cascade delete: Remove all invoices linked to this expense
-    await Invoice.deleteMany({ expense: expense._id });
+    const blocked = await deleteExpenseCascade(expense, ["pending", "rejected"]);
 
-    // Now delete the expense
-    await Expense.findByIdAndDelete(req.params.id);
+    if (blocked === "unsafe_payments") {
+      return res.status(409).json({
+        message:
+          "Expense has approved or unknown payment records and cannot be deleted",
+      });
+    }
 
-    try {
-      await reconcileHouseInvoices(expense.house);
-    } catch (reconcileError) {
-      console.error(
-        "Settlement reconciliation failed after expense deletion:",
-        reconcileError.message
-      );
+    if (blocked === "state_changed") {
+      return res
+        .status(409)
+        .json({ message: "Expense is no longer deletable" });
     }
 
     res.json({ message: "Expense and related invoices deleted" });
@@ -501,30 +559,19 @@ export const deleteMyRequest = async (req, res) => {
       });
     }
 
-    const invoices = await Invoice.find({ expense: expense._id }).select(
-      "paymentRequest"
-    );
-    const paymentIds = invoices
-      .map((invoice) => invoice.paymentRequest)
-      .filter(Boolean);
+    const blocked = await deleteExpenseCascade(expense, ["pending"]);
 
-    if (paymentIds.length > 0) {
-      await Payment.deleteMany({ _id: { $in: paymentIds } });
+    if (blocked === "unsafe_payments") {
+      return res.status(409).json({
+        message:
+          "Request has approved or unknown payment records and cannot be deleted",
+      });
     }
 
-    // Cascade delete: Remove all invoices linked to this expense (should be none for pending, but just in case)
-    await Invoice.deleteMany({ expense: expense._id });
-
-    // Now delete the expense
-    await Expense.findByIdAndDelete(req.params.id);
-
-    try {
-      await reconcileHouseInvoices(expense.house);
-    } catch (reconcileError) {
-      console.error(
-        "Settlement reconciliation failed after request deletion:",
-        reconcileError.message
-      );
+    if (blocked === "state_changed") {
+      return res
+        .status(409)
+        .json({ message: "Request is no longer deletable" });
     }
 
     res.json({ message: "Request deleted successfully" });

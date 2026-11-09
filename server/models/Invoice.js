@@ -64,5 +64,6 @@ invoiceSchema.index({ house: 1, user: 1, status: 1, createdAt: -1 });
 invoiceSchema.index({ house: 1, expense: 1 });
 invoiceSchema.index({ paymentRequest: 1 });
 invoiceSchema.index({ user: 1, status: 1, createdAt: -1 });
+invoiceSchema.index({ expense: 1, user: 1 }, { unique: true });
 
 export default mongoose.model("Invoice", invoiceSchema);

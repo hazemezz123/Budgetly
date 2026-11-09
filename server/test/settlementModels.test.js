@@ -34,6 +34,17 @@ test("invoice defaults allocation fields and accepts net-settlement statuses", (
   assert.equal(partialInvoice.validateSync(), undefined);
 });
 
+test("invoice schema enforces one invoice per expense and user", () => {
+  const index = Invoice.schema
+    .indexes()
+    .find(
+      ([fields, options]) =>
+        fields.expense === 1 && fields.user === 1 && options.unique === true,
+    );
+
+  assert.ok(index, "expected a unique { expense, user } invoice index");
+});
+
 test("payment accepts a settlement recipient and transaction type", () => {
   const payment = new Payment({
     user: objectId(),

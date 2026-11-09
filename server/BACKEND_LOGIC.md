@@ -71,12 +71,12 @@ This document describes the current backend behavior as implemented in the serve
   - `createdBy` is always the requester; `paidBy` is the chosen payer (admin) or requester.
   - If approved immediately, invoices are generated for each split. The payer's invoice is marked `paid`, others `pending`.
 - Approve expense (admin):
-  - Sets expense status to `approved`.
+  - Atomically transitions `pending → approved`; only the winning request generates invoices.
   - Generates invoices for each split. Payer is `paidBy` (fallback `createdBy`).
-- Reject expense (admin): sets status to `rejected`.
+- Reject expense (admin): atomically transitions `pending → rejected`.
 - Update expense (admin): only pending expenses can be updated; updates fields and recalculates splits.
-- Delete expense (admin): deletes related invoices and any linked payment requests, then deletes the expense.
-- Delete own pending request: only creator can delete, only if `pending`.
+- Delete expense (admin): only pending/rejected expenses can be deleted; approved expenses return `409`. Linked payments must be `pending`/`rejected`, otherwise deletion returns `409`. Pending/rejected payments and invoices are cascade-deleted, then the expense is deleted with an atomic status check.
+- Delete own pending request: only creator can delete, only if `pending`; same payment-safety guard applies.
 
 ### Net Settlement
 - `buildSettlementSnapshot` computes each member's net balance from approved expenses, invoice shares, and approved payments.
